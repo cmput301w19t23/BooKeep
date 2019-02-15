@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2019 cmput301w19t23
+Copyright (c) 2019 Hugh Bagan, Nolan Brost, Kyle Fujishige, Nafee Khan, Jeffery Kirker, Dusan Krstic
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
