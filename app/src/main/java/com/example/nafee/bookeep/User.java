@@ -8,29 +8,39 @@ public class User implements Serializable {
 
     private String firstname;
     private String lastname;
-    private ArrayList<Book> borrowed;
-    private ArrayList<Book> owned;
+    private ArrayList<Book> borrowed = new ArrayList<Book>();
+    private ArrayList<Book> owned = new ArrayList<Book>();
     private Address address;
     private PhoneNumber phoneNumber;
     private String email;
-    private UUID userId;
+    //private UUID userId;
+    private String imageURL;
+
 
     public User(String email, String firstname, String lastname){
 
         this.email = email;
         this.firstname = firstname;
         this.lastname = lastname;
-        this.userId = UUID.randomUUID();
+        //this.userId = UUID.randomUUID();
 
     }
 
     public User(){
-        this.userId = UUID.randomUUID();
+        //this.userId = UUID.randomUUID();
     }
 
-    public UUID getUserId() {
-        return userId;
+    public String getImageURL() {
+        return imageURL;
     }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
+
+   /// public UUID getUserId() {
+        //return userId;
+   // }
 
     public String getFirstname() {
         return firstname;

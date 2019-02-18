@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class Book implements Serializable {
 
-    private String author;
+    private ArrayList<String> authors;
     private String title;
     private String description;
     private Integer ISBN;
@@ -14,7 +14,8 @@ public class Book implements Serializable {
     private User owner;
     private BookStatus status;
     private User currentBorrower;
-    private ArrayList<User> requests;
+    private ArrayList<User> requests = new ArrayList<User>();
+    private String imageURL;
 
     public Book(Integer ISBN, User owner){
         this.ISBN = ISBN;
@@ -26,6 +27,14 @@ public class Book implements Serializable {
     public Book(){
         this.bookId = UUID.randomUUID();
         this.status = BookStatus.AVAILABLE;
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
 
     public ArrayList<User> getRequests(){
@@ -40,12 +49,12 @@ public class Book implements Serializable {
 
     }
 
-    public String getAuthor() {
-        return author;
+    public ArrayList<String> getAuthors() {
+        return authors;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setAuthor(ArrayList<String> authors) {
+        this.authors = authors;
     }
 
     public String getTitle() {
