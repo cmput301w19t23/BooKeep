@@ -94,7 +94,9 @@ public class Book implements Serializable {
     }
 
     public void setOwner(UUID ownerId) {
+
         this.ownerId = ownerId;
+
     }
 
     public BookStatus getStatus() {
