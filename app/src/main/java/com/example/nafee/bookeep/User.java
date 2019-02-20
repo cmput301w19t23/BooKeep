@@ -8,12 +8,12 @@ public class User implements Serializable {
 
     private String firstname;
     private String lastname;
-    private ArrayList<Book> borrowed = new ArrayList<Book>();
-    private ArrayList<Book> owned = new ArrayList<Book>();
+    private ArrayList<UUID> borrowedIds = new ArrayList<UUID>();
+    private ArrayList<UUID> ownedIds = new ArrayList<UUID>();
     private Address address;
     private PhoneNumber phoneNumber;
     private String email;
-    //private UUID userId;
+    private UUID userId;
     private String imageURL;
 
 
@@ -22,7 +22,7 @@ public class User implements Serializable {
         this.email = email;
         this.firstname = firstname;
         this.lastname = lastname;
-        //this.userId = UUID.randomUUID();
+        this.userId = UUID.randomUUID();
 
     }
 
@@ -38,9 +38,13 @@ public class User implements Serializable {
         this.imageURL = imageURL;
     }
 
-   /// public UUID getUserId() {
-        //return userId;
-   // }
+   public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId){
+        this.userId = userId;
+    }
 
     public String getFirstname() {
         return firstname;
@@ -58,20 +62,20 @@ public class User implements Serializable {
         this.lastname = lastname;
     }
 
-    public ArrayList<Book> getBorrowed() {
-        return borrowed;
+    public ArrayList<UUID> getBorrowedIds() {
+        return borrowedIds;
     }
 
-    public void addToBorrowed(Book book){
-        this.borrowed.add(book);
+    public void addToBorrowed(UUID bookId){
+        this.borrowedIds.add(bookId);
     }
 
-    public ArrayList<Book> getOwned() {
-        return owned;
+    public ArrayList<UUID> getOwnedId() {
+        return ownedIds;
     }
 
-    public void addToOwned(Book book){
-        this.owned.add(book);
+    public void addToOwned(UUID bookId){
+        this.ownedIds.add(bookId);
     }
 
     public Address getAddress() {

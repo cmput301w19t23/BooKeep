@@ -11,15 +11,15 @@ public class Book implements Serializable {
     private String description;
     private Integer ISBN;
     private UUID bookId;
-    private User owner;
+    private UUID ownerId;
     private BookStatus status;
-    private User currentBorrower;
-    private ArrayList<User> requests = new ArrayList<User>();
+    private UUID currentBorrowerId;
+    private ArrayList<UUID> requesterIds = new ArrayList<UUID>();
     private String imageURL;
 
-    public Book(Integer ISBN, User owner){
+    public Book(Integer ISBN, UUID ownerId){
         this.ISBN = ISBN;
-        this.owner = owner;
+        this.ownerId = ownerId;
         this.bookId = UUID.randomUUID();
         this.status = BookStatus.AVAILABLE;
     }
@@ -37,14 +37,14 @@ public class Book implements Serializable {
         this.imageURL = imageURL;
     }
 
-    public ArrayList<User> getRequests(){
-        return this.requests;
+    public ArrayList<UUID> getRequesterIds(){
+        return this.requesterIds;
     }
 
-    public void addRequest(User requester){
+    public void addRequest(UUID requesterId){
 
         if(this.status == BookStatus.AVAILABLE || this.status == BookStatus.REQUESTED) {
-            this.requests.add(requester);
+            this.requesterIds.add(requesterId);
         }
 
     }
@@ -85,12 +85,16 @@ public class Book implements Serializable {
         return bookId;
     }
 
-    public User getOwner() {
-        return owner;
+    public void setBookId(UUID bookId){
+        this.bookId = bookId;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public UUID getOwner() {
+        return ownerId;
+    }
+
+    public void setOwner(UUID ownerId) {
+        this.ownerId = ownerId;
     }
 
     public BookStatus getStatus() {
@@ -101,12 +105,12 @@ public class Book implements Serializable {
         this.status = status;
     }
 
-    public User getCurrentBorrower() {
-        return currentBorrower;
+    public UUID getCurrentBorrowerId() {
+        return currentBorrowerId;
     }
 
-    public void setCurrentBorrower(User currentBorrower) {
-        this.currentBorrower = currentBorrower;
+    public void setCurrentBorrower(UUID currentBorrowerId) {
+        this.currentBorrowerId = currentBorrowerId;
     }
 
 

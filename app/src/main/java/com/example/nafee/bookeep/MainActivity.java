@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         user.setAddress(address);
         PhoneNumber phoneNumber = new PhoneNumber(587,938,3713);
         user.setPhoneNumber(phoneNumber);
-        mDatabase.child("users").child("nafee").setValue(user);
+        mDatabase.child("users").child(user.getUserId().toString()).setValue(user);
         if(isNetworkAvailable()){
             //GoogleApiRequest.execute("");
             GoogleApiRequest googleApiRequest = new GoogleApiRequest();
