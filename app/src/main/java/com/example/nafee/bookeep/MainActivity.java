@@ -7,6 +7,8 @@ import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,8 +25,10 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
-    private JSONObject obj;
-    TextView txtView;
+    //private JSONObject obj;
+    //TextView txtView;
+    Button addBook;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -75,11 +79,25 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }*/
         //new IntentIntegrator(this).initiateScan();
-
+        addBook = (Button) findViewById(R.id.btnAddBook);
+        addBook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, BookDetailsActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
 
     }
+
+}
+
+
+
+
+
     /*
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
@@ -127,5 +145,6 @@ public class MainActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 
     }*/
+    //public void onActivityResult
 
-}
+

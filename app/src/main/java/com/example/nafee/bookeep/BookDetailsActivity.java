@@ -28,7 +28,9 @@ import org.json.JSONObject;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
-
+/**
+ * authors: Nafee Khan, Kyle Fujishige
+ * */
 public class BookDetailsActivity extends AppCompatActivity {
 
     private ImageView bookImage;
@@ -71,6 +73,7 @@ public class BookDetailsActivity extends AppCompatActivity {
 
 
     }
+    //https://stackoverflow.com/questions/18543668/integrate-zxing-in-android-studio
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if(result != null) {
@@ -93,15 +96,19 @@ public class BookDetailsActivity extends AppCompatActivity {
                         JSONObject volumeInfo = item1.getJSONObject("volumeInfo");
 
                         String title = volumeInfo.getString("title");
+                        bookTitle.setText(title);
 
                         String authors = volumeInfo.getJSONArray("authors").getString(0);
+                        bookAuthors.setText(authors);
 
                         //String isbn = volumeInfo.getString()
                         JSONArray industryIdentifiers = (JSONArray) volumeInfo.getJSONArray("industryIdentifiers");
                         JSONObject isbn13 = industryIdentifiers.getJSONObject(1);
-                        String isbn13String = isbn13.getString("identifiers");
+                        String isbn13String = isbn13.getString("identifier");
+                        isbn.setText(isbn13String);
 
                         String description = volumeInfo.getString("description");
+                        bookDescription.setText(description);
 
                         JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
                         String imageURL = imageLinks.getString("thumbnail");
@@ -111,11 +118,11 @@ public class BookDetailsActivity extends AppCompatActivity {
                         Bitmap bookImageBitMap = downloadImageTask.execute(imageURL).get();
                         bookImage.setImageBitmap(bookImageBitMap);
 
-                        bookTitle.setText(title);
-                        bookAuthors.setText(authors);
-                        isbn.setText(isbn13String);
+
+
+
                         bookStatus.setText(BookStatus.AVAILABLE.toString());
-                        bookDescription.setText(description);
+
 
                         //txtView.setText(author);
                     } catch (ExecutionException e) {
@@ -154,6 +161,7 @@ public class BookDetailsActivity extends AppCompatActivity {
             return null;
         }
     }*/
+    //https://stackoverflow.com/questions/6407324/how-to-display-image-from-url-on-android
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         //ImageView bmImage;
         //public DownloadImageTask(ImageView bmImage) {
