@@ -69,11 +69,11 @@ public class BookDetailsActivity extends AppCompatActivity {
                 new IntentIntegrator(BookDetailsActivity.this).initiateScan();
 
             }
+
         });
 
-
     }
-    //https://stackoverflow.com/questions/18543668/integrate-zxing-in-android-studio
+    //taken from https://stackoverflow.com/questions/18543668/integrate-zxing-in-android-studio
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if(result != null) {
@@ -87,6 +87,7 @@ public class BookDetailsActivity extends AppCompatActivity {
                 if(isNetworkAvailable()){
                     //GoogleApiRequest.execute("");
                     GoogleApiRequest googleApiRequest = new GoogleApiRequest();
+
                     try {
                         jsonObject = (JSONObject) googleApiRequest.execute(result.getContents()).get();
                         //txtView.setText(obj.toString());
@@ -161,16 +162,20 @@ public class BookDetailsActivity extends AppCompatActivity {
             return null;
         }
     }*/
-    //https://stackoverflow.com/questions/6407324/how-to-display-image-from-url-on-android
+
+    //taken from https://stackoverflow.com/questions/6407324/how-to-display-image-from-url-on-android
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+
         //ImageView bmImage;
         //public DownloadImageTask(ImageView bmImage) {
            // BookDetailsActivity.this.bookImage = bmImage;
         //}
 
         protected Bitmap doInBackground(String... urls) {
+
             String urldisplay = urls[0];
             Bitmap mIcon11 = null;
+
             try {
                 InputStream in = new java.net.URL(urldisplay).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
@@ -178,12 +183,15 @@ public class BookDetailsActivity extends AppCompatActivity {
                 Log.e("Error", e.getMessage());
                 e.printStackTrace();
             }
+
             return mIcon11;
+
         }
 
         protected void onPostExecute(Bitmap result) {
             //bmImage.setImageBitmap(result);
         }
+
     }
 
 }
