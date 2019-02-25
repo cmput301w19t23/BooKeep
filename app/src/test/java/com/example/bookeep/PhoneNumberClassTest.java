@@ -33,14 +33,14 @@ public class PhoneNumberClassTest {
         phoneNumber.setExchange(654);
         assertTrue(654 == phoneNumber.getExchange());//tests get/set exchange
 
-        phoneNumber.setExtension(987);
-        assertTrue(987 == phoneNumber.getExtension());//test get/set extension
+        phoneNumber.setExtension(9870);
+        assertTrue(9870 == phoneNumber.getExtension());//test get/set extension
     }
 
     //tests toString method
     @Test
     public void toStringTest(){
-        PhoneNumber phoneNumber = new PhoneNumber(0,0,0);
-        assertEquals("000-000-0000", phoneNumber.toString());
+        PhoneNumber phoneNumber = new PhoneNumber(780,123,4567);
+        assertEquals("780-123-4567", phoneNumber.toString());
     }
 }

@@ -14,6 +14,10 @@ public class PhoneNumber implements Serializable {
         this.extension = extension;
     }
 
+    public String toString() {
+        return getArea().toString()+"-"+getExchange().toString()+"-"+getExtension().toString();
+    }
+
     public Integer getArea() {
         return area;
     }
