@@ -7,8 +7,4 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".MainActivity"
     tools:showIn="@layout/app_bar_main">
-
-    <!--Probably want a recycler view here to display our books. this code can
-    be reused for both the shelf and stand once it is written. - Jeffk-->
-
 </android.support.constraint.ConstraintLayout>
