@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">BooKeep</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="book_title">title</string>
+    <string name="book_authors">Author(s)</string>
+    <string name="isbn">ISBN</string>
+    <string name="book_description">Description</string>
+    <string name="title_activity_test">test</string>
+</resources>
