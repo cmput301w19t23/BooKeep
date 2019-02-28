@@ -1,4 +1,4 @@
-package com.example.nafee.bookeep;
+package com.example.bookeep;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
+import com.example.bookeep.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -80,7 +81,7 @@ public class FireBaseController {
 
                             User user = dataSnapshot.getValue(User.class);
                             Gson gson = new Gson();
-                            Intent intent = new Intent(context, NavigationActivity.class);
+                            Intent intent = new Intent(context, MainActivity.class);
                             intent.putExtra("CurrentUser", gson.toJson(user));
                             context.startActivity(intent);
 
