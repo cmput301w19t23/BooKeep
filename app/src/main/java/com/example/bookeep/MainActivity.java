@@ -1,11 +1,8 @@
 package com.example.bookeep;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -15,8 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.bookeep.Fragments.shelfFragment;
-import com.example.bookeep.Fragments.standFragment;
+import com.example.bookeep.Fragments.ShelfFragment;
+import com.example.bookeep.Fragments.StandFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -30,7 +27,7 @@ public class MainActivity extends AppCompatActivity
 
         Fragment fragment = null;
         Class fragmentClass = null;
-        fragmentClass = shelfFragment.class;
+        fragmentClass = StandFragment.class;
         try {
             fragment = (Fragment) fragmentClass.newInstance();
         } catch (Exception e) {
@@ -144,9 +141,9 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_stand) {
-            fragmentClass = standFragment.class;
+            fragmentClass = StandFragment.class;
         } else {
-            fragmentClass = shelfFragment.class;
+            fragmentClass = ShelfFragment.class;
         }
         try {
             fragment = (Fragment) fragmentClass.newInstance();
