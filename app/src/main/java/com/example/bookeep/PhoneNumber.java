@@ -4,41 +4,47 @@ import java.io.Serializable;
 
 public class PhoneNumber implements Serializable {
 
-    private Integer area;
-    private Integer exchange;
-    private Integer extension;
+    private String area;
+    private String exchange;
+    private String extension;
 
-    public PhoneNumber(Integer area, Integer exchange, Integer extension){
+    public PhoneNumber(String area, String exchange, String extension){
         this.area = area;
         this.exchange = exchange;
         this.extension = extension;
     }
 
-    public String toString() {
-        return getArea().toString()+"-"+getExchange().toString()+"-"+getExtension().toString();
+    public PhoneNumber(){
+        
     }
 
-    public Integer getArea() {
+    public String toString() {
+        //if area is 001 handle: do later
+        //return getArea().toString()+"-"+getExchange().toString()+"-"+getExtension().toString();
+        return area + exchange + extension;
+    }
+
+    public String getArea() {
         return area;
     }
 
-    public void setArea(Integer area) {
+    public void setArea(String area) {
         this.area = area;
     }
 
-    public Integer getExchange() {
+    public String getExchange() {
         return exchange;
     }
 
-    public void setExchange(Integer exchange) {
+    public void setExchange(String exchange) {
         this.exchange = exchange;
     }
 
-    public Integer getExtension() {
+    public String getExtension() {
         return extension;
     }
 
-    public void setExtension(Integer extension) {
+    public void setExtension(String extension) {
         this.extension = extension;
     }
 
