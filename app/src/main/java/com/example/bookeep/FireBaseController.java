@@ -30,14 +30,15 @@ public class FireBaseController {
     private Context context;
 
     public FireBaseController(Context context) {
+        this.context = context;
         firebaseAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference();
         firebaseUser = firebaseAuth.getCurrentUser();
-        this.context = context;
+        //this.context = context;
     }
 
-    public void createNewUser(final String email, String password, final String firstName, final String lastName, PhoneNumber phoneNumber){
+    public void createNewUser(final String email, String password, final String firstName, final String lastName, final PhoneNumber phoneNumber){
         final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
             @Override
@@ -49,6 +50,7 @@ public class FireBaseController {
                     firebaseUser = firebaseAuth.getCurrentUser();
 
                     User user = new User(email, firstName,lastName, firebaseUser.getUid());
+                    user.setPhoneNumber(phoneNumber);
 
                     databaseReference.child("users").child(user.getUserId()).setValue(user);
 
@@ -115,6 +117,34 @@ public class FireBaseController {
     public void signOut(){
 
         firebaseAuth.signOut();
+
+    }
+
+    public void launchMainActivity(){
+
+        if(isUserLoggedIn()) {
+
+            databaseReference.child("users").child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    User user = dataSnapshot.getValue(User.class);
+                    Gson gson = new Gson();
+                    Intent intent = new Intent(context, MainActivity.class);
+                    intent.putExtra("CurrentUser", gson.toJson(user));
+                    context.startActivity(intent);
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+
+            });
+        } else {
+            Toast.makeText(context, "sign in first", Toast.LENGTH_SHORT);
+        }
 
     }
 

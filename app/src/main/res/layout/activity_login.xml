@@ -12,6 +12,7 @@
         android:layout_height="33dp"
         android:layout_marginStart="73dp"
         android:layout_marginLeft="73dp"
+        android:layout_marginTop="100dp"
         android:layout_marginEnd="73dp"
         android:layout_marginRight="73dp"
         android:gravity="center_vertical|center_horizontal"
@@ -19,7 +20,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="100dp" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/edit_email"

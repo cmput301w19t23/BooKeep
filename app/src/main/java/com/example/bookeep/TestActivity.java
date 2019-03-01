@@ -12,6 +12,7 @@ public class TestActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
+        /*
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         User user = new User("nafee@ualberta.ca", "Nafee", "Khan");
         Address address = new Address();
@@ -20,8 +21,8 @@ public class TestActivity extends AppCompatActivity {
         address.setStreetAddress("10959 102St NW");
         address.setZipCode("T5H2V1");
         user.setAddress(address);
-        PhoneNumber phoneNumber = new PhoneNumber(587,938,3713);
+        PhoneNumber phoneNumber = new PhoneNumber("587","938","3713");
         user.setPhoneNumber(phoneNumber);
-        mDatabase.child("users").child(user.getUserId().toString()).setValue(user);
+        mDatabase.child("users").child(user.getUserId().toString()).setValue(user);*/
     }
 }
