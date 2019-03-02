@@ -9,17 +9,15 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
 
-import com.example.bookeep.Book;
 import com.example.bookeep.BookDetailsActivity;
 import com.example.bookeep.R;
+import com.example.bookeep.Fragments.dummy.DummyContent;
+import com.example.bookeep.Fragments.dummy.DummyContent.DummyItem;
 
-
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -27,27 +25,25 @@ import java.util.ArrayList;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class StandFragment extends Fragment {
-    ArrayList<Book> BookList;
-    MyStandRecyclerViewAdapter adapter;
+public class shelfFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
-
+    private int mColumnCount = 2;
     private OnListFragmentInteractionListener mListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public StandFragment() {
+    public shelfFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static StandFragment newInstance(int columnCount) {
-        StandFragment fragment = new StandFragment();
+    public static shelfFragment newInstance(int columnCount) {
+        shelfFragment fragment = new shelfFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -57,27 +53,29 @@ public class StandFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getArguments() != null) {
+            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Create a dummy book list
-        BookList = MyStandRecyclerViewAdapter.createBookList(6);
-
-        View view = inflater.inflate(R.layout.fragment_stand_list, container, false);
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.stand_recycler_view);
+        View view = inflater.inflate(R.layout.fragment_shelf_list, container, false);
 
         // Set the adapter
-        adapter = new MyStandRecyclerViewAdapter(BookList, mListener);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(adapter);
+        if (view instanceof RecyclerView) {
+            Context context = view.getContext();
+            RecyclerView recyclerView = (RecyclerView) view;
+            if (mColumnCount <= 1) {
+                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            } else {
+                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+            }
+            recyclerView.setAdapter(new MyshelfRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+        }
 
-        //Set grid layout for cards
-        Context context = view.getContext();
-        recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
-
-        // FAB to add more buttons
         FloatingActionButton addBook = (FloatingActionButton) view.findViewById(R.id.addBook);
         addBook.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -118,9 +116,6 @@ public class StandFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(Book item);
-    }
-    public void removeBook(int position){
-
+        void onListFragmentInteraction(DummyItem item);
     }
 }
