@@ -1,5 +1,7 @@
 package com.example.bookeep;
 
+import com.example.bookeep.BookStatus;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -10,22 +12,22 @@ public class Book implements Serializable {
     private String title;
     private String description;
     private Integer ISBN;
-    private UUID bookId;
-    private UUID ownerId;
+    private String bookId;
+    private String ownerId;
     private BookStatus status;
-    private UUID currentBorrowerId;
-    private ArrayList<UUID> requesterIds = new ArrayList<UUID>();
+    private String currentBorrowerId;
+    private ArrayList<String> requesterIds = new ArrayList<String>();
     private String imageURL;
 
-    public Book(Integer ISBN, UUID ownerId){
+    public Book(Integer ISBN, String ownerId){
         this.ISBN = ISBN;
         this.ownerId = ownerId;
-        this.bookId = UUID.randomUUID();
+        this.bookId = UUID.randomUUID().toString();
         this.status = BookStatus.AVAILABLE;
     }
 
     public Book(){
-        this.bookId = UUID.randomUUID();
+        this.bookId = UUID.randomUUID().toString();
         this.status = BookStatus.AVAILABLE;
     }
 
@@ -37,11 +39,11 @@ public class Book implements Serializable {
         this.imageURL = imageURL;
     }
 
-    public ArrayList<UUID> getRequesterIds(){
+    public ArrayList<String> getRequesterIds(){
         return this.requesterIds;
     }
 
-    public void addRequest(UUID requesterId){
+    public void addRequest(String requesterId){
 
         if(this.status == BookStatus.AVAILABLE || this.status == BookStatus.REQUESTED) {
             this.requesterIds.add(requesterId);
@@ -81,19 +83,19 @@ public class Book implements Serializable {
         this.ISBN = ISBN;
     }
 
-    public UUID getBookId() {
+    public String getBookId() {
         return bookId;
     }
 
-    public void setBookId(UUID bookId){
+    public void setBookId(String bookId){
         this.bookId = bookId;
     }
 
-    public UUID getOwner() {
+    public String getOwner() {
         return ownerId;
     }
 
-    public void setOwner(UUID ownerId) {
+    public void setOwner(String ownerId) {
 
         this.ownerId = ownerId;
 
@@ -107,11 +109,11 @@ public class Book implements Serializable {
         this.status = status;
     }
 
-    public UUID getCurrentBorrowerId() {
+    public String getCurrentBorrowerId() {
         return currentBorrowerId;
     }
 
-    public void setCurrentBorrower(UUID currentBorrowerId) {
+    public void setCurrentBorrower(String currentBorrowerId) {
         this.currentBorrowerId = currentBorrowerId;
     }
 

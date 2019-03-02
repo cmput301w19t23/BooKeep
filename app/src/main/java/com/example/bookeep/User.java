@@ -1,3 +1,4 @@
+
 package com.example.bookeep;
 
 import java.io.Serializable;
@@ -8,12 +9,12 @@ public class User implements Serializable {
 
     private String firstname;
     private String lastname;
-    private ArrayList<UUID> borrowedIds = new ArrayList<UUID>();
-    private ArrayList<UUID> ownedIds = new ArrayList<UUID>();
+    private ArrayList<String> borrowedIds = new ArrayList<String>();
+    private ArrayList<String> ownedIds = new ArrayList<String>();
     private Address address;
     private PhoneNumber phoneNumber;
     private String email;
-    private UUID userId;
+    private String userId;
     private String imageURL;
 
 
@@ -22,7 +23,16 @@ public class User implements Serializable {
         this.email = email;
         this.firstname = firstname;
         this.lastname = lastname;
-        this.userId = UUID.randomUUID();
+        this.userId = UUID.randomUUID().toString();
+
+    }
+
+    public User(String email, String firstname, String lastname, String userId){
+
+        this.email = email;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.userId = userId;
 
     }
 
@@ -38,11 +48,11 @@ public class User implements Serializable {
         this.imageURL = imageURL;
     }
 
-   public UUID getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(UUID userId){
+    public void setUserId(String userId){
         this.userId = userId;
     }
 
@@ -62,19 +72,19 @@ public class User implements Serializable {
         this.lastname = lastname;
     }
 
-    public ArrayList<UUID> getBorrowedIds() {
+    public ArrayList<String> getBorrowedIds() {
         return borrowedIds;
     }
 
-    public void addToBorrowed(UUID bookId){
+    public void addToBorrowed(String bookId){
         this.borrowedIds.add(bookId);
     }
 
-    public ArrayList<UUID> getOwnedId() {
+    public ArrayList<String> getOwnedId() {
         return ownedIds;
     }
 
-    public void addToOwned(UUID bookId){
+    public void addToOwned(String bookId){
         this.ownedIds.add(bookId);
     }
 

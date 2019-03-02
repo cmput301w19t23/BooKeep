@@ -1,13 +1,17 @@
 package com.example.bookeep;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,6 +36,8 @@ import java.util.concurrent.ExecutionException;
  * authors: Nafee Khan, Kyle Fujishige
  * */
 public class BookDetailsActivity extends AppCompatActivity {
+
+    public static final int MY_PERMISSIONS_REQUEST_CAMERA = 0;
 
     private ImageView bookImage;
     private EditText bookTitle;
@@ -65,14 +71,46 @@ public class BookDetailsActivity extends AppCompatActivity {
         scanBook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                new IntentIntegrator(BookDetailsActivity.this).initiateScan();
-
+                if (ContextCompat.checkSelfPermission(BookDetailsActivity.this, Manifest.permission.CAMERA)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    // Permission has already been granted
+                    new IntentIntegrator(BookDetailsActivity.this).initiateScan();
+                } else {
+                    // Permission is NOT granted
+                    // Prompt the user for permission
+                    ActivityCompat.requestPermissions(
+                            BookDetailsActivity.this,
+                            new String[]{Manifest.permission.CAMERA},
+                            MY_PERMISSIONS_REQUEST_CAMERA
+                    );
+                }
             }
-
         });
 
     }
+
+    //https://developer.android.com/training/permissions/requesting#java
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CAMERA: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission was granted.
+                    new IntentIntegrator(BookDetailsActivity.this).initiateScan();
+                } else {
+                    // permission denied. Go back?
+                }
+                return;
+            }
+
+            // Make more cases to check for other permissions.
+        }
+    }
+
+
     //taken from https://stackoverflow.com/questions/18543668/integrate-zxing-in-android-studio
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
