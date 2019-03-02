@@ -2,8 +2,12 @@ package com.example.bookeep.Fragments;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.example.bookeep.Book;
@@ -14,9 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link com.example.bookeep.Fragments.dummy.DummyBooks} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a BookList and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
  */
 public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecyclerViewAdapter.ViewHolder> {
 
@@ -28,6 +31,7 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
         mListener = listener;
     }
 
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -36,11 +40,16 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).getTitle());
         holder.mContentView.setText(mValues.get(position).getAuthors().toString());
-
+        holder.overflow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPopupMenu(holder.overflow, position);
+            }
+        });
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,6 +60,8 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
                 }
             }
         });
+
+
     }
 
     @Override
@@ -58,17 +69,22 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
         return mValues.size();
     }
 
+    /**
+     * RecyclerView ViewHolder
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
         public Book mItem;
+        public final ImageButton overflow;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.book_title);
             mContentView = (TextView) view.findViewById(R.id.book_author);
+            overflow = (ImageButton) view.findViewById(R.id.overflow_menu);
         }
 
         @Override
@@ -77,6 +93,12 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
         }
     }
 
+
+    /**
+     * TODO: Get rid of this once firebase is fully integrated
+     * @param COUNT
+     * @return A dummy book list
+     */
     public static ArrayList<Book> createBookList(int COUNT) {
         ArrayList<Book> BookList = new ArrayList<Book>();
         Book newBook = new Book();
@@ -89,5 +111,51 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
         }
 
         return BookList;
+    }
+
+    /**
+     * Method to show the popup menu when the overflow button is pressed
+     * @param view
+     * @param position
+     */
+    private void showPopupMenu(View view, int position) {
+        // inflate menu
+        PopupMenu popup = new PopupMenu(view.getContext(), view);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.stand_card_overflow, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenuItemClickListener(position));
+        popup.show();
+    }
+
+    /** Custom click listener to make sure each card has a unique menu
+     *
+     */
+    class PopupMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
+
+        private int position;
+
+        public PopupMenuItemClickListener(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            int id = menuItem.getItemId();
+
+            if (id == R.id.delete_book) {
+                removeBook(position);
+            }
+            return false;
+        }
+    }
+
+    /**
+     *  TODO: When deleting the last book, the app crashes! Fix this.
+     *  TODO: Should only remove books that are status "AVAILABLE"
+     * @param position
+     */
+    public void removeBook(int position) {
+        mValues.remove(position);
+        notifyItemRemoved(position);
     }
 }

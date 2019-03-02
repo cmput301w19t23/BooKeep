@@ -77,6 +77,8 @@ public class MyShelfRecyclerViewAdapter extends RecyclerView.Adapter<MyShelfRecy
         }
     }
 
+
+    // Method to make dummy book list
     public static ArrayList<Book> createBookList(int COUNT) {
         ArrayList<Book> BookList = new ArrayList<Book>();
         Book newBook = new Book();
