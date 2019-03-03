@@ -38,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         if( fireBaseController.isUserLoggedIn()){
 
             fireBaseController.launchMainActivity();
+            finish();
 
         }
 

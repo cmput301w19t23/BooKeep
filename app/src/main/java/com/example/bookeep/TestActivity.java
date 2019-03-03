@@ -10,8 +10,11 @@ public class TestActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+        
         setContentView(R.layout.activity_test);
+
         /*
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         User user = new User("nafee@ualberta.ca", "Nafee", "Khan");
@@ -24,5 +27,7 @@ public class TestActivity extends AppCompatActivity {
         PhoneNumber phoneNumber = new PhoneNumber("587","938","3713");
         user.setPhoneNumber(phoneNumber);
         mDatabase.child("users").child(user.getUserId().toString()).setValue(user);*/
+
     }
+
 }

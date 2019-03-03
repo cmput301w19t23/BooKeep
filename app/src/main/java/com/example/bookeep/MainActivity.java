@@ -23,10 +23,13 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FirebaseAuth.AuthStateListener {
-
+    private FireBaseController fireBaseController = new FireBaseController(this);
+    public Integer ADD_REQUEST = 0;
+    public Integer EDIT_REQUEST = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -47,7 +50,7 @@ public class MainActivity extends AppCompatActivity
 //        addBook.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
-//                Intent intent = new Intent(MainActivity.this, BookDetailsActivity.class);
+//                Intent intent = new Intent(MainActivity.this, AddEditBookActivity.class);
 //                startActivity(intent);
 //            }
 //        });
@@ -115,6 +118,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+        //moveTaskToBack(true);
 
     }
 

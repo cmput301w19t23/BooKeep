@@ -1,198 +1,161 @@
 package com.example.bookeep;
 
-import android.content.Context;
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
+import com.example.bookeep.Fragments.shelfFragment;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+public class BookDetailsActivity extends AppCompatActivity implements BookDetailsFragment.OnFragmentInteractionListener, RequestsOnBookFragment.OnFragmentInteractionListener{
 
-import java.io.InputStream;
-import java.net.URL;
-import java.util.concurrent.ExecutionException;
-/**
- * authors: Nafee Khan, Kyle Fujishige
- * */
-public class BookDetailsActivity extends AppCompatActivity {
+    private Menu menu;
+    private Book book;
+    private User currentUser;
+    private String currentUserId;//= "nafee1";
+    private FireBaseController fireBaseController = new FireBaseController(this);
 
-    private ImageView bookImage;
-    private EditText bookTitle;
-    private EditText bookAuthors;
-    private EditText isbn;
-    private EditText bookDescription;
-    private TextView bookStatus;
-    private Button scanBook;
-    private Button saveBook;
-    private JSONObject jsonObject;
-
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_book_details);
+        setContentView(R.layout.activity_book_details2);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Title");
+        setSupportActionBar(toolbar);
 
-        bookImage = (ImageView) findViewById(R.id.bookImage);
-        bookTitle = (EditText) findViewById(R.id.editBookTitle);
-        bookAuthors = (EditText) findViewById(R.id.editBookAuthor);
-        isbn = (EditText) findViewById(R.id.editISBN);
-        bookStatus = (TextView) findViewById(R.id.txtBookStatus);
-        bookDescription = (EditText) findViewById(R.id.editBookDescription);
-        scanBook = (Button) findViewById(R.id.btnScanBook);
-        saveBook = (Button) findViewById(R.id.btnSaveBook);
-         /*
-        public void onClickScan(View v) {
+        Intent received = getIntent();
+        String bookId = received.getStringExtra("Bookd ID");
 
-            new IntentIntegrator(this).initiateScan();
-        }*/
-        scanBook.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        book = fireBaseController.getBookByBookId(bookId);
+        currentUser = fireBaseController.getCurrentUser();
+        currentUserId = fireBaseController.getCurrentUserId();
 
-                new IntentIntegrator(BookDetailsActivity.this).initiateScan();
-
-            }
-
-        });
-
-    }
-    //taken from https://stackoverflow.com/questions/18543668/integrate-zxing-in-android-studio
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if(result != null) {
-            if(result.getContents() == null) {
-                Log.d("MainActivity", "Cancelled scan");
-                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
-            } else {
-                Log.d("MainActivity", "Scanned");
-                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
-                //txtView = findViewById(R.id.text1);
-                if(isNetworkAvailable()){
-                    //GoogleApiRequest.execute("");
-                    GoogleApiRequest googleApiRequest = new GoogleApiRequest();
-
-                    try {
-                        jsonObject = (JSONObject) googleApiRequest.execute(result.getContents()).get();
-                        //txtView.setText(obj.toString());
-
-                        JSONArray jsonArray = (JSONArray) jsonObject.getJSONArray("items");
-                        JSONObject item1 = jsonArray.getJSONObject(0);
-                        JSONObject volumeInfo = item1.getJSONObject("volumeInfo");
-
-                        String title = volumeInfo.getString("title");
-                        bookTitle.setText(title);
-
-                        String authors = volumeInfo.getJSONArray("authors").getString(0);
-                        bookAuthors.setText(authors);
-
-                        //String isbn = volumeInfo.getString()
-                        JSONArray industryIdentifiers = (JSONArray) volumeInfo.getJSONArray("industryIdentifiers");
-                        JSONObject isbn13 = industryIdentifiers.getJSONObject(1);
-                        String isbn13String = isbn13.getString("identifier");
-                        isbn.setText(isbn13String);
-
-                        String description = volumeInfo.getString("description");
-                        bookDescription.setText(description);
-
-                        JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
-                        String imageURL = imageLinks.getString("thumbnail");
-
-                        //Drawable bookImage = (Drawable) loadImageFromWebOperations(imageURL);
-                        DownloadImageTask downloadImageTask = new DownloadImageTask();
-                        Bitmap bookImageBitMap = downloadImageTask.execute(imageURL).get();
-                        bookImage.setImageBitmap(bookImageBitMap);
-
-
-
-
-                        bookStatus.setText(BookStatus.AVAILABLE.toString());
-
-
-                        //txtView.setText(author);
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
+        /*book = new Book();
+        book.setTitle("book1");
+        book.setOwner("nafee");
+        currentUser = new User();
+        currentUser.setUserId("nafee");*/
+        // Below: code for if user IS book owner:
+        if (currentUserId.equals(book.getOwner())){
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
                 }
+            });
 
-
-
-            }
         } else {
-            // This is important, otherwise the result will not be passed to the fragment
-            super.onActivityResult(requestCode, resultCode, data);
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            fab.setEnabled(false);
+            fab.setVisibility(View.GONE);
         }
-    }
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 
-    }
 
-    /*
-    public static Drawable loadImageFromWebOperations(String url) {
+        BookDetailsFragment fragment = null;
+        //Class fragmentClass = null;
+        //fragmentClass = BookDetailsFragment.class;
         try {
-            InputStream is = (InputStream) new URL(url).getContent();
-            Drawable d = Drawable.createFromStream(is, "src name");
-            return d;
+            fragment = (BookDetailsFragment) BookDetailsFragment.newInstance(book, currentUser);
         } catch (Exception e) {
-            return null;
+            e.printStackTrace();
         }
-    }*/
 
-    //taken from https://stackoverflow.com/questions/6407324/how-to-display-image-from-url-on-android
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.book_details_fragment_container, fragment).commit();
+        /*
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });*/
+    }
 
-        //ImageView bmImage;
-        //public DownloadImageTask(ImageView bmImage) {
-           // BookDetailsActivity.this.bookImage = bmImage;
-        //}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        this.menu = menu;
+        getMenuInflater().inflate(R.menu.menu_book_details, menu);
+        //hideOption(R.id.action_edit);
+        return true;
+    }
 
-        protected Bitmap doInBackground(String... urls) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        Fragment fragment = null;
+        Class fragmentClass = null;
 
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
+        if (currentUserId.equals(book.getOwner())){
 
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
+            //BookDetailsFragment bookDetailsFragment;
+            //RequestsOnBookFragment requestsOnBookFragment;
+
+            if (id == R.id.action_edit) {
+                return true;
+            } else if (id == R.id.action_requesters) {
+                //return true;
+                fragment = RequestsOnBookFragment.newInstance(book, currentUser);
+            }
+            else if (id == R.id.action_book_details) {
+                fragment = BookDetailsFragment.newInstance(book, currentUser);
+                //return true;
+            }
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.book_details_fragment_container, fragment).commit();
+
+            //return true;
+
+        } else {//noinspection SimplifiableIfStatement
+            if (id == R.id.action_edit) {
+                return true;
+            } else if (id == R.id.action_requesters) {
+                return true;
+            } else if (id == R.id.action_book_details) {
+                return true;
             }
 
-            return mIcon11;
-
+            //return true;
         }
 
-        protected void onPostExecute(Bitmap result) {
-            //bmImage.setImageBitmap(result);
-        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void hideOption(int id) {
+        MenuItem item = menu.findItem(id);
+        item.setVisible(false);
+    }
+
+    private void showOption(int id) {
+        MenuItem item = menu.findItem(id);
+        item.setVisible(true);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
     }
+/*
+    public Book getBook() {
+        return this.book;
+    }*/
 
 }
 

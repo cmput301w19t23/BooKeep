@@ -12,12 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.bookeep.BookDetailsActivity;
+import com.example.bookeep.AddEditBookActivity;
 import com.example.bookeep.R;
 import com.example.bookeep.Fragments.dummy.DummyContent;
 import com.example.bookeep.Fragments.dummy.DummyContent.DummyItem;
-
-import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -79,7 +77,7 @@ public class shelfFragment extends Fragment {
         FloatingActionButton addBook = (FloatingActionButton) view.findViewById(R.id.addBook);
         addBook.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), BookDetailsActivity.class);
+                Intent intent = new Intent(getActivity(), AddEditBookActivity.class);
                 startActivity(intent);
             }
         });
