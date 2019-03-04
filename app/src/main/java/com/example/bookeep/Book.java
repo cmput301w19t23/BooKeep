@@ -51,8 +51,12 @@ public class Book implements Serializable {
 
     }
 
-    public ArrayList<String> getAuthors() {
-        return authors;
+    public String getAuthors() {
+        String authorsString = null;
+        for(String author: authors){
+            authorsString = authorsString+author;
+        }
+        return authorsString;
     }
 
     public void setAuthor(ArrayList<String> authors) {

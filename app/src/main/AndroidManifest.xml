@@ -15,8 +15,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".AddEditBookActivity" />
         <activity android:name=".TestActivity" />
-        <activity android:name=".LoginActivity">
-        </activity>
+        <activity android:name=".LoginActivity"></activity>
         <activity android:name=".SignUpActivity" />
         <activity
             android:name=".BookDetailsActivity"
@@ -27,13 +26,14 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.bookeep.MainActivity" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
+        <activity android:name=".UserProfileActivity"></activity>
     </application>
 
 </manifest>

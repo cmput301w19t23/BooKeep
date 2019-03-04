@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.example.bookeep.Fragments.shelfFragment;
 
@@ -23,6 +24,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
     private User currentUser;
     private String currentUserId;//= "nafee1";
     private FireBaseController fireBaseController = new FireBaseController(this);
+    private ImageView bookImage;
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -30,7 +32,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_details2);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Title");
+        //toolbar.setTitle("Title");
         setSupportActionBar(toolbar);
 
         Intent received = getIntent();
@@ -39,6 +41,8 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
         book = fireBaseController.getBookByBookId(bookId);
         currentUser = fireBaseController.getCurrentUser();
         currentUserId = fireBaseController.getCurrentUserId();
+        toolbar.setTitle(book.getTitle());
+        bookImage = (ImageView) findViewById(R.id.book_image);
 
         /*book = new Book();
         book.setTitle("book1");

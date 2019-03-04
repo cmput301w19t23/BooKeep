@@ -1,6 +1,8 @@
 package com.example.bookeep;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -31,6 +33,11 @@ public class BookDetailsFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     private TextView bookTitle;
+    private TextView bookAuthors;
+    private TextView bookISBN;
+    private TextView bookStatus;
+    private TextView bookDescription;
+    private TextView bookOwner;
 
     //public BookDetailsActivity activity;
 
@@ -76,7 +83,30 @@ public class BookDetailsFragment extends Fragment {
         //activity = (BookDetailsActivity) getActivity();
         //b = BookDetailsActivity.book;
         bookTitle = (TextView) view.findViewById(R.id.book_title);
-        //bookTitle.setText(mBook.getTitle());
+        bookAuthors = (TextView) view.findViewById(R.id.book_authors);
+        bookISBN = (TextView) view.findViewById(R.id.book_isbn);
+        bookStatus = view.findViewById(R.id.book_status);
+        bookDescription = view.findViewById(R.id.book_description);
+        bookOwner = view.findViewById(R.id.book_owner);
+
+        bookAuthors.setText(mBook.getAuthors());
+        bookISBN.setText(mBook.getISBN());
+        bookStatus.setText(mBook.getStatus().toString());
+        bookDescription.setText(mBook.getDescription());
+        bookOwner.setText(mUser.getEmail());
+        bookOwner.setTextColor(Color.BLUE);
+        bookOwner.setClickable(true);
+        bookOwner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), UserProfileActivity.class);
+                intent.putExtra("Current User", mUser);
+                startActivity(intent);
+            }
+        });
+
+
+        bookTitle.setText(mBook.getTitle());
         return view;
 
     }
