@@ -9,13 +9,11 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
 
+import com.example.bookeep.AddEditBookActivity;
 import com.example.bookeep.Book;
-import com.example.bookeep.BookDetailsActivity;
 import com.example.bookeep.R;
 
 
@@ -81,7 +79,7 @@ public class StandFragment extends Fragment {
         FloatingActionButton addBook = (FloatingActionButton) view.findViewById(R.id.addBook);
         addBook.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), BookDetailsActivity.class);
+                Intent intent = new Intent(getActivity(), AddEditBookActivity.class);
                 startActivity(intent);
             }
         });
