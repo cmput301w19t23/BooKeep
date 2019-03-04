@@ -157,5 +157,6 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
     public void removeBook(int position) {
         mValues.remove(position);
         notifyItemRemoved(position);
+        notifyItemRangeChanged(position, mValues.size());
     }
 }
