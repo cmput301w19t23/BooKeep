@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -31,7 +32,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 /**
  * authors: Nafee Khan, Kyle Fujishige
@@ -52,9 +56,11 @@ public class AddEditBookActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_book);
+
+        Intent intent = getIntent();
+        setResult(RESULT_CANCELED, intent);
 
         bookImage = (ImageView) findViewById(R.id.bookImage);
         bookTitle = (EditText) findViewById(R.id.editBookTitle);
@@ -125,6 +131,24 @@ public class AddEditBookActivity extends AppCompatActivity {
 
 
         if (pass) {
+            Book book = new Book(/*input user ID here*/);
+
+            ArrayList<String> Authors = new ArrayList<>();
+            Authors.add(bookAuthors.getText().toString().trim());
+            book.setAuthor(Authors);
+            book.setISBN(isbn.getText().toString().trim());
+            book.setTitle(bookTitle.getText().toString().trim());
+            BitmapDrawable drawable = (BitmapDrawable) bookImage.getDrawable();
+            //book.setBookImage(drawable.getBitmap());
+            book.setStatus(BookStatus.AVAILABLE);
+
+
+            Intent intent = new Intent();
+            intent.putExtra("key", book);
+            setResult(RESULT_OK, intent);
+            finish();
+
+
             //book gets saved here. Create book object, save the user ID in book
             //and save the book in users list of owned books. Return back to
             //activity/fragment that called this.

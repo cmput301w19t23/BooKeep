@@ -19,6 +19,8 @@ import com.example.bookeep.R;
 
 import java.util.ArrayList;
 
+import static android.app.Activity.RESULT_OK;
+
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -61,7 +63,8 @@ public class StandFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Create a dummy book list
-        BookList = MyStandRecyclerViewAdapter.createBookList(6);
+        //BookList = MyStandRecyclerViewAdapter.createBookList(6);
+        BookList = new ArrayList<>();
 
         View view = inflater.inflate(R.layout.fragment_stand_list, container, false);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.stand_recycler_view);
@@ -80,14 +83,24 @@ public class StandFragment extends Fragment {
         addBook.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), AddEditBookActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, 23);
             }
         });
         return view;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 23) {
+            if (resultCode == RESULT_OK) {
+                Book book = (Book) data.getSerializableExtra("key");
+                BookList.add(book);
+            }
+        }
+    }
 
-//    @Override
+    //    @Override
 //    public void onAttach(Context context) {
 //        super.onAttach(context);
 //        if (context instanceof OnListFragmentInteractionListener) {
