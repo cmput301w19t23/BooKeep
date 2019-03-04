@@ -11,4 +11,6 @@
     <string name="isbn">ISBN</string>
     <string name="book_description">Description</string>
     <string name="title_activity_test">test</string>
+    <string name="edit_book">Edit Details</string>
+    <string name="delete_book">Delete Book</string>
 </resources>
