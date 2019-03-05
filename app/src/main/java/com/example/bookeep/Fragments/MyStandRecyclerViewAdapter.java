@@ -17,6 +17,8 @@ import com.example.bookeep.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.bookeep.BookStatus.AVAILABLE;
+
 /**
  * {@link RecyclerView.Adapter} that can display a BookList and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
@@ -154,7 +156,7 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
      * @param position
      */
     public void removeBook(int position) {
-        if (mValues.get(position).getStatus() == BookStatus.AVAILABLE) {
+        if (mValues.get(position).getStatus() == AVAILABLE) {
             mValues.remove(position);
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, mValues.size());
