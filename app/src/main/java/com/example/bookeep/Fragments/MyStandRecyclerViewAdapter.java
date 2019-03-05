@@ -150,12 +150,14 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
     }
 
     /**
-     *  TODO: When deleting the last book, the app crashes! Fix this.
-     *  TODO: Should only remove books that are status "AVAILABLE"
+     * 
      * @param position
      */
     public void removeBook(int position) {
-        mValues.remove(position);
-        notifyItemRemoved(position);
+        if (mValues.get(position).getStatus() == BookStatus.AVAILABLE) {
+            mValues.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, mValues.size());
+        }
     }
 }
