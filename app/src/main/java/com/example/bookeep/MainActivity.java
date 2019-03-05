@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.example.bookeep.Fragments.shelfFragment;
 import com.example.bookeep.Fragments.standFragment;
@@ -122,6 +123,10 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        TextView userText = findViewById(R.id.userTextView);
+        FireBaseController fireBaseController = new FireBaseController(this);
+        //User user = fireBaseController.getCurrentUser();
+        //userText.setText(user.getFirstName() + " " + user.getLastName());
         return true;
     }
 
@@ -158,6 +163,7 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
