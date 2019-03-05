@@ -14,6 +14,7 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText edtFirstName;
     private EditText edtLastName;
     private EditText edtPhone;
+    private EditText edtUserName;
     private Button btnSignUp;
     private FireBaseController fireBaseController = new FireBaseController(this);
 
@@ -24,6 +25,7 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+        edtUserName = (EditText) findViewById(R.id.user_name);
         edtFirstName = (EditText) findViewById(R.id.first_name);
         edtLastName = (EditText) findViewById(R.id.last_name);
         edtEmail = (EditText) findViewById(R.id.signup_email);
@@ -38,7 +40,8 @@ public class SignUpActivity extends AppCompatActivity {
                 if(validation()){
 
                     PhoneNumber phoneNumber = makePhoneNumber();
-                    fireBaseController.createNewUser(edtEmail.getText().toString(),
+                    fireBaseController.createNewUser(edtUserName.getText().toString(),
+                            edtEmail.getText().toString(),
                             edtPassword.getText().toString(),
                             edtFirstName.getText().toString(),
                             edtLastName.getText().toString(),
@@ -61,6 +64,7 @@ public class SignUpActivity extends AppCompatActivity {
         boolean phoneValid = false;
         boolean firstNameValid = false;
         boolean lastNameValid = false;
+        boolean userNameValid = false;
 
         //boolean heartValid = false;
         //boolean dateValid = false;
@@ -81,6 +85,9 @@ public class SignUpActivity extends AppCompatActivity {
         if (edtLastName.getText().toString().length() > 0){
             lastNameValid = true;
         }
+        if (edtUserName.getText().toString().length() > 5) { //Need to test for uniqueness
+            userNameValid = true;
+        }
         /*
         if (editHeartRate.getText().toString().length() > 0) {
             heartValid = true;
@@ -92,7 +99,7 @@ public class SignUpActivity extends AppCompatActivity {
             timeValid = true;
         }*/
 
-        return (emailValid && passwordValid && phoneValid && firstNameValid && lastNameValid);
+        return (emailValid && passwordValid && phoneValid && firstNameValid && lastNameValid && userNameValid);
     }
 
     private PhoneNumber makePhoneNumber(){

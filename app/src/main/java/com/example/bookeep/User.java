@@ -7,6 +7,7 @@ import java.util.UUID;
 
 public class User implements Serializable {
 
+    private String userName;
     private String firstname;
     private String lastname;
     private ArrayList<String> borrowedIds = new ArrayList<String>();
@@ -18,8 +19,9 @@ public class User implements Serializable {
     private String imageURL;
 
 
-    public User(String email, String firstname, String lastname){
+    public User(String userName, String email, String firstname, String lastname){
 
+        this.userName = userName;
         this.email = email;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -27,8 +29,9 @@ public class User implements Serializable {
 
     }
 
-    public User(String email, String firstname, String lastname, String userId){
+    public User(String userName, String email, String firstname, String lastname, String userId){
 
+        this.userName = userName;
         this.email = email;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -38,6 +41,14 @@ public class User implements Serializable {
 
     public User(){
         //this.userId = UUID.randomUUID();
+    }
+
+    public String getUserName(){
+        return userName;
+    }
+
+    public void setUserName(String userName){
+        this.userName = userName;
     }
 
     public String getImageURL() {

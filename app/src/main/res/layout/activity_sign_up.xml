@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="85dp"
         android:layout_marginLeft="85dp"
-        android:layout_marginTop="45dp"
+        android:layout_marginTop="29dp"
         android:layout_marginEnd="85dp"
         android:layout_marginRight="85dp"
         android:ems="10"
@@ -20,7 +20,7 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/user_name" />
 
     <EditText
         android:id="@+id/last_name"
@@ -99,5 +99,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/phone" />
+
+    <EditText
+        android:id="@+id/user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:ems="10"
+        android:hint="Enter Unique Username"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="@+id/first_name"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

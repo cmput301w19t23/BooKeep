@@ -15,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.bookeep.Fragments.shelfFragment;
@@ -127,6 +129,14 @@ public class MainActivity extends AppCompatActivity
         FireBaseController fireBaseController = new FireBaseController(this);
         //User user = fireBaseController.getCurrentUser();
         //userText.setText(user.getFirstName() + " " + user.getLastName());
+        ImageButton updateProfile = findViewById(R.id.UserProfileButton);
+        updateProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, EditUserActivity.class);
+                startActivity(intent);
+            }
+        });
         return true;
     }
 
@@ -155,7 +165,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_stand) {
             fragmentClass = standFragment.class;
-        } else {
+        } else  {
             fragmentClass = shelfFragment.class;
         }
         try {
