@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.example.bookeep.Fragments.ShelfFragment;
 import com.example.bookeep.Fragments.StandFragment;
@@ -60,6 +61,24 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // Set the Drawer layout to display the currently logged in User
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        // Check to make sure user is signed in.
+        if (currentUser != null) {
+            View headerView = navigationView.getHeaderView(0);
+            TextView name = (TextView) headerView.findViewById(R.id.name);
+            name.setText(currentUser.getDisplayName()); // This isn't actually set anywhere
+            TextView email = (TextView) headerView.findViewById(R.id.email);
+            email.setText(currentUser.getEmail());
+        } else {
+            // User is not signed in: set default text
+            View headerView = navigationView.getHeaderView(0);
+            TextView name = (TextView) headerView.findViewById(R.id.name);
+            name.setText(R.string.app_name);
+            TextView email = (TextView) headerView.findViewById(R.id.email);
+            email.setText(R.string.not_signed_in);
+        }
 
 
         /*DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
