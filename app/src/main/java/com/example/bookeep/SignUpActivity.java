@@ -1,13 +1,26 @@
 package com.example.bookeep;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class SignUpActivity extends AppCompatActivity {
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
+
+public class SignUpActivity extends AppCompatActivity{
 
     private EditText edtEmail;
     private EditText edtPassword;
@@ -17,6 +30,10 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText edtUserName;
     private Button btnSignUp;
     private FireBaseController fireBaseController = new FireBaseController(this);
+    private FirebaseAuth firebaseAuth;
+    private FirebaseDatabase database;
+    private DatabaseReference databaseReference;
+    private FirebaseUser firebaseUser;
 
 
     @Override
@@ -57,7 +74,7 @@ public class SignUpActivity extends AppCompatActivity {
 
 
     }
-    private boolean validation(){
+    private boolean validation() {
 
         boolean emailValid = false;
         boolean passwordValid = false;
@@ -86,7 +103,46 @@ public class SignUpActivity extends AppCompatActivity {
             lastNameValid = true;
         }
         if (edtUserName.getText().toString().length() > 5) { //Need to test for uniqueness
-            userNameValid = true;
+            firebaseAuth = FirebaseAuth.getInstance();
+            database = FirebaseDatabase.getInstance();
+            databaseReference = database.getReference();
+            firebaseUser = firebaseAuth.getCurrentUser();
+            final ArrayList<String> usernames= new ArrayList<String>();
+            databaseReference.child("users/userName").addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    String user = dataSnapshot.getValue(String.class);
+                    usernames.add(user);
+                }
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+            try {
+                Thread.sleep(1000);
+            } catch(InterruptedException ex){
+                Thread.currentThread().interrupt();
+            }
+
+            userNameValid = !(usernames.contains(edtUserName.getText().toString()));
+
         }
         /*
         if (editHeartRate.getText().toString().length() > 0) {
@@ -115,6 +171,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         PhoneNumber phoneNumber = new PhoneNumber(areaString, exchangeString, extensionString);
         return phoneNumber;
+
 
 
     }
