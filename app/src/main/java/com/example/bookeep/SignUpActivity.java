@@ -69,27 +69,27 @@ public class SignUpActivity extends AppCompatActivity {
         if (Patterns.EMAIL_ADDRESS.matcher(edtEmail.getText().toString().trim()).matches()) {
             emailValid = true;
         } else {
-            edtEmail.setError("Invalid email!");
+            edtEmail.setError("Invalid email.");
         }
-        if (edtPassword.getText().toString().length() > 0) {
+        if (edtPassword.getText().toString().length() > 5) {
             passwordValid = true;
         } else {
-            edtPassword.setError("Invalid password!");
+            edtPassword.setError("At least 6 characters long.");
         }
         if (Patterns.PHONE.matcher(edtPhone.getText().toString().trim()).matches() && edtPhone.getText().toString().trim().length() == 10){
             phoneValid = true;
         } else {
-            edtPhone.setError("Invalid phone number!");
+            edtPhone.setError("Invalid phone number.");
         }
         if (edtFirstName.getText().toString().trim().length() > 0){
             firstNameValid = true;
         } else {
-            edtFirstName.setError("Invalid first name!");
+            edtFirstName.setError("Invalid first name.");
         }
         if (edtLastName.getText().toString().trim().length() > 0){
             lastNameValid = true;
         } else {
-            edtLastName.setError("Invalid last name!");
+            edtLastName.setError("Invalid last name.");
         }
         /*
         if (editHeartRate.getText().toString().length() > 0) {
