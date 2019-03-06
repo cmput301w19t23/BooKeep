@@ -5,11 +5,22 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 /**
@@ -38,6 +49,12 @@ public class BookDetailsFragment extends Fragment {
     private TextView bookStatus;
     private TextView bookDescription;
     private TextView bookOwner;
+    private FireBaseController fireBaseController = new FireBaseController(getActivity());
+
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference databaseReference = database.getReference();
+    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
     //public BookDetailsActivity activity;
 
@@ -72,6 +89,7 @@ public class BookDetailsFragment extends Fragment {
         if (getArguments() != null) {
             mBook = (Book) getArguments().getSerializable(ARG_PARAM1);
             mUser = (User) getArguments().getSerializable(ARG_PARAM2);
+
         }
     }
 
@@ -79,7 +97,7 @@ public class BookDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-         View view = inflater.inflate(R.layout.fragment_book_details, container, false);
+         final View view = inflater.inflate(R.layout.fragment_book_details, container, false);
         //activity = (BookDetailsActivity) getActivity();
         //b = BookDetailsActivity.book;
         bookTitle = (TextView) view.findViewById(R.id.book_title);
@@ -90,7 +108,7 @@ public class BookDetailsFragment extends Fragment {
         bookOwner = view.findViewById(R.id.book_owner);
 
         bookAuthors.setText(mBook.getAuthors());
-        bookISBN.setText(mBook.getISBN());
+        //bookISBN.setText(mBook.getISBN());
         bookStatus.setText(mBook.getStatus().toString());
         bookDescription.setText(mBook.getDescription());
         bookOwner.setText(mUser.getEmail());
@@ -107,6 +125,46 @@ public class BookDetailsFragment extends Fragment {
 
 
         bookTitle.setText(mBook.getTitle());
+        //mBook = fireBaseController.onBookChanged()
+        databaseReference.child("books").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                mBook = dataSnapshot.getValue(Book.class);
+                bookTitle = (TextView) view.findViewById(R.id.book_title);
+                bookAuthors = (TextView) view.findViewById(R.id.book_authors);
+                bookISBN = (TextView) view.findViewById(R.id.book_isbn);
+                bookStatus = view.findViewById(R.id.book_status);
+                bookDescription = view.findViewById(R.id.book_description);
+                bookOwner = view.findViewById(R.id.book_owner);
+
+                bookAuthors.setText(mBook.getAuthors());
+//                bookISBN.setText(mBook.getISBN());
+                bookStatus.setText(mBook.getStatus().toString());
+                bookDescription.setText(mBook.getDescription());
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         return view;
 
     }

@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class Book implements Serializable {
 
-    private ArrayList<String> authors;
+    private String authors;
     private String title;
     private String description;
     private Integer ISBN;
@@ -52,14 +52,16 @@ public class Book implements Serializable {
     }
 
     public String getAuthors() {
+        /*
         String authorsString = null;
         for(String author: authors){
             authorsString = authorsString+author;
         }
-        return authorsString;
+        return authorsString;*/
+        return authors;
     }
 
-    public void setAuthor(ArrayList<String> authors) {
+    public void setAuthor(String authors){//ArrayList<String> authors) {
         this.authors = authors;
     }
 
@@ -119,6 +121,16 @@ public class Book implements Serializable {
 
     public void setCurrentBorrower(String currentBorrowerId) {
         this.currentBorrowerId = currentBorrowerId;
+    }
+
+    public void clearRequesters (){
+        this.requesterIds.clear();
+    }
+
+    public void removeRequester(String reqId){
+
+        this.requesterIds.remove(reqId);
+
     }
 
 

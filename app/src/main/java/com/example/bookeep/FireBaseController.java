@@ -30,12 +30,12 @@ public class FireBaseController {
     private Context context;
 
     public FireBaseController(Context context) {
-        this.context = context;
+        //this.context = context;
         firebaseAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference();
         firebaseUser = firebaseAuth.getCurrentUser();
-        //this.context = context;
+        this.context = context;
     }
 
     public void createNewUser(final String email, String password, final String firstName, final String lastName, final PhoneNumber phoneNumber){
@@ -51,10 +51,33 @@ public class FireBaseController {
 
                     User user = new User(email, firstName,lastName, firebaseUser.getUid());
                     user.setPhoneNumber(phoneNumber);
-
+                    user.setUserName("nafee");
                     databaseReference.child("users").child(user.getUserId()).setValue(user);
-
+                    //Toast.makeText(context, "Fail", Toast.LENGTH_SHORT);
+/*
                     Intent intent = new Intent(context, LoginActivity.class);
+                    context.startActivity(intent);*/
+                    //
+
+                    Intent intent = new Intent(context, BookDetailsActivity.class);
+                    intent.putExtra("User", user);
+
+                    Book book = new Book();
+                    book.setTitle("Harry Potter and the Deathly Hallows");
+                    //ArrayList<String> authors = new ArrayList<>();
+                    //authors.add("J. K. Rowling");
+
+                    book.setAuthor("J.K.Rowling");
+                    book.setStatus(BookStatus.AVAILABLE);
+                    book.setOwner(firebaseUser.getUid());
+                    //book.setBookId("book1");
+                    book.setDescription("The magnificent final book in J. K. Rowling's seven-part saga comes to readers July 21, 2007. You'll find out July 21!");
+                    //ok.setISBN(9780545010221);
+                    book.addRequest("1iECbuI1luQliWJypEPhKBERSH42");
+                    book.addRequest("1j7ynA45YuhOtEFiaFENvG1HOSF2");
+                    book.addRequest("6AiwcVImzdfqpC8xDh1C48ialNG2");
+                    databaseReference.child("books").child(book.getBookId()).setValue(book);
+                    intent.putExtra("Book ID", book.getBookId());
                     context.startActivity(intent);
 
                 } else {
@@ -122,13 +145,16 @@ public class FireBaseController {
 
     public User getCurrentUser(){
 
-        final User[] user = new User[1];
+        //final User[] user = new User[1];
+        final ArrayList<User> users = new ArrayList<User>();
+        //final User user;
         if(isUserLoggedIn()){
 
-            databaseReference.child("user").child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            databaseReference.child("users").child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    user[0] = dataSnapshot.getValue(User.class);
+                    users.add(dataSnapshot.getValue(User.class));
+                    //user = dataSnapshot.getValue(User.class);
                 }
 
                 @Override
@@ -138,8 +164,7 @@ public class FireBaseController {
             });
 
         }
-
-        return user[0];
+        return users.get(0);
 
     }
 
@@ -214,15 +239,19 @@ public class FireBaseController {
             //for(String bookId: bookIds)
 
     }
-
+/*
     public Book getBookByBookId(String bookId){
 
-        final Book[] book = new Book[1];
+        //final Book[] book = new Book[1];
+        //final ArrayList<Book> books = new ArrayList<Book>();
+        Book book;
         databaseReference.child("books").child(bookId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                book[0] = dataSnapshot.getValue(Book.class);
-                //return book;
+                //book[0] = dataSnapshot.getValue(Book.class);
+                //books.add(dataSnapshot.getValue(Book.class));
+                book = dataSnapshot.getValue(Book.class);
+                return book;
             }
 
             @Override
@@ -232,10 +261,54 @@ public class FireBaseController {
         });
 
 
-        return book[0];
+        //return book[0];
+        return books.get(0);
 
     }
 
+    public void addRequestToBookByBookId(String bookId){
+
+        if(isUserLoggedIn()) {
+
+            Book book = getBookByBookId(bookId);
+            book.addRequest(firebaseUser.getUid());
+            if(book.getStatus().equals(BookStatus.AVAILABLE)) {
+                book.setStatus(BookStatus.REQUESTED);
+                databaseReference.child("books").child(bookId).setValue(book);
+            } else if (book.getStatus().equals(BookStatus.REQUESTED)){
+
+                databaseReference.child("books").child(bookId).setValue(book);
+
+            } else {
+                Toast.makeText(context, "Sorry book is not available for borrowing", Toast.LENGTH_SHORT);
+            }
+
+        }
+
+    }
+
+    public DatabaseReference getDatabaseReference(){
+        return this.databaseReference;
+    }
+/*
+    public Book onBookChanged(String bookId){
+
+        final Book[] book = new Book[1];
+        databaseReference.child("books").child(bookId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                book[0] = dataSnapshot.getValue(Book.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return book[0];
+
+    }
+*/
 
 
 

@@ -4,6 +4,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.bookeep.Fragments.standFragment.OnListFragmentInteractionListener;
@@ -56,7 +58,6 @@ public class MystandRecyclerViewAdapter extends RecyclerView.Adapter<MystandRecy
     public int getItemCount() {
         return mValues.size();
     }
-
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;
@@ -75,4 +76,5 @@ public class MystandRecyclerViewAdapter extends RecyclerView.Adapter<MystandRecy
             return super.toString() + " '" + mContentView.getText() + "'";
         }
     }
+
 }
