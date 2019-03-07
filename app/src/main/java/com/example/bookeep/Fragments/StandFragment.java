@@ -3,6 +3,7 @@ package com.example.bookeep.Fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -15,6 +16,14 @@ import android.view.ViewGroup;
 import com.example.bookeep.AddEditBookActivity;
 import com.example.bookeep.Book;
 import com.example.bookeep.R;
+import com.example.bookeep.User;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 import java.util.ArrayList;
@@ -28,6 +37,15 @@ import static android.app.Activity.RESULT_OK;
  * interface.
  */
 public class StandFragment extends Fragment {
+
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+
+    private String currentUserID;
+    private User currentUser;
+
     ArrayList<Book> BookList;
     MyStandRecyclerViewAdapter adapter;
 
@@ -64,7 +82,9 @@ public class StandFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Create a dummy book list
         //BookList = MyStandRecyclerViewAdapter.createBookList(6);
+        // Create an empty book list
         BookList = new ArrayList<>();
+        //Retrieve the user's actual bookList
 
         View view = inflater.inflate(R.layout.fragment_stand_list, container, false);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.stand_recycler_view);
@@ -94,8 +114,9 @@ public class StandFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 23) {
             if (resultCode == RESULT_OK) {
-                Book book = (Book) data.getSerializableExtra("key");
-                BookList.add(book);
+                /**TODO: get the user book list from firebase
+                 *
+                 */
             }
         }
     }
@@ -130,5 +151,26 @@ public class StandFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(Book item);
+    }
+
+
+    public ArrayList<Book> getBookList() {
+        final ArrayList<Book> bookList = new ArrayList<Book>();
+        currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        ValueEventListener bookListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                ArrayList<String> bookIds = user.getBorrowedIds();
+                for (int i = 0; i < bookIds.size(); i++){
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        };
+        return bookList;
     }
 }
