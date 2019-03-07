@@ -53,6 +53,7 @@ public class AddEditBookActivity extends AppCompatActivity {
     private Button scanBook;
     private Button saveBook;
     private JSONObject jsonObject;
+    private String bookLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,54 +188,51 @@ public class AddEditBookActivity extends AppCompatActivity {
 
     public void setTextBoxes(String ISBN) {
         GoogleApiRequest googleApiRequest = new GoogleApiRequest();
+        if (isNetworkAvailable()) {
 
-        try {
-            jsonObject = (JSONObject) googleApiRequest.execute(ISBN).get();
-            //txtView.setText(obj.toString());
+            try {
+                jsonObject = (JSONObject) googleApiRequest.execute(ISBN).get();
+                //txtView.setText(obj.toString());
 
-            JSONArray jsonArray = (JSONArray) jsonObject.getJSONArray("items");
-            JSONObject item1 = jsonArray.getJSONObject(0);
-            JSONObject volumeInfo = item1.getJSONObject("volumeInfo");
+                JSONArray jsonArray = (JSONArray) jsonObject.getJSONArray("items");
+                JSONObject item1 = jsonArray.getJSONObject(0);
+                JSONObject volumeInfo = item1.getJSONObject("volumeInfo");
 
-            String title = volumeInfo.getString("title");
-            bookTitle.setText(title);
-            bookTitle.setError(null);
+                String title = volumeInfo.getString("title");
+                bookTitle.setText(title);
+                bookTitle.setError(null);
 
-            String authors = volumeInfo.getJSONArray("authors").getString(0);
-            bookAuthors.setText(authors);
-            bookAuthors.setError(null);
+                String authors = volumeInfo.getJSONArray("authors").getString(0);
+                bookAuthors.setText(authors);
+                bookAuthors.setError(null);
 
-            //String isbn = volumeInfo.getString()
-            JSONArray industryIdentifiers = (JSONArray) volumeInfo.getJSONArray("industryIdentifiers");
-            JSONObject isbn13 = industryIdentifiers.getJSONObject(1);
-            String isbn13String = isbn13.getString("identifier");
-            isbn.setText(isbn13String);
-            isbn.setError(null);
+                //String isbn = volumeInfo.getString()
+                JSONArray industryIdentifiers = (JSONArray) volumeInfo.getJSONArray("industryIdentifiers");
+                JSONObject isbn13 = industryIdentifiers.getJSONObject(1);
+                String isbn13String = isbn13.getString("identifier");
+                isbn.setText(isbn13String);
+                isbn.setError(null);
 
-            String description = volumeInfo.getString("description");
-            bookDescription.setText(description);
+                String description = volumeInfo.getString("description");
+                bookDescription.setText(description);
 
-            JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
-            String imageURL = imageLinks.getString("thumbnail");
+                JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
+                bookLink = imageLinks.getString("thumbnail");
 
-            //Drawable bookImage = (Drawable) loadImageFromWebOperations(imageURL);
-            DownloadImageTask downloadImageTask = new DownloadImageTask();
-            Bitmap bookImageBitMap = downloadImageTask.execute(imageURL).get();
-            bookImage.setImageBitmap(bookImageBitMap);
+                setPicture(bookLink);
 
 
+                bookStatus.setText(BookStatus.AVAILABLE.toString());
 
 
-            bookStatus.setText(BookStatus.AVAILABLE.toString());
-
-
-            //txtView.setText(author);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
+                //txtView.setText(author);
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -247,13 +245,8 @@ public class AddEditBookActivity extends AppCompatActivity {
             if (data != null) {
                 super.onActivityResult(requestCode, resultCode, data);
                 Uri selectedImage = data.getData();
-                try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                    bitmap = Bitmap.createScaledBitmap(bitmap, 147, 150, true);
-                    bookImage.setImageBitmap(bitmap);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                bookLink = selectedImage.getPath();
+                setPicture(bookLink);
             }
         } else {
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
@@ -315,6 +308,54 @@ public class AddEditBookActivity extends AppCompatActivity {
         }
 
     }
+
+    public void setPicture(String ImageLink) {
+        if (ImageLink.startsWith("http")) {
+            if (isNetworkAvailable()) {
+                DownloadImageTask downloadImageTask = new DownloadImageTask();
+                Bitmap bookImageBitMap = null;
+                try {
+                    bookImageBitMap = downloadImageTask.execute(ImageLink).get();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                bookImage.setImageBitmap(bookImageBitMap);
+            }
+        } else if (ImageLink != null){
+            try {
+                Uri selectedImage = Uri.parse(ImageLink);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                bitmap = Bitmap.createScaledBitmap(bitmap, 147, 150, true);
+                bookImage.setImageBitmap(bitmap);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+
+        savedInstanceState.putString("Picture", bookLink);
+        savedInstanceState.putString("Status", bookStatus.getText().toString());
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        bookLink = savedInstanceState.getString("Picture");
+        bookStatus.setText(savedInstanceState.getString("Status"));
+        if (bookLink != null) {
+            setPicture(bookLink);
+        }
+
+    }
+
 
 }
 

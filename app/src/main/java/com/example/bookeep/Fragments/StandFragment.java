@@ -3,6 +3,7 @@ package com.example.bookeep.Fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -56,6 +57,15 @@ public class StandFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        BookList = new ArrayList<>();
+
+        if (savedInstanceState != null) {
+            int count = 0;
+            while (savedInstanceState.getSerializable("Book"+count) != null) {
+                BookList.add((Book)savedInstanceState.getSerializable("Book"+count));
+                count++;
+            }
+        }
         super.onCreate(savedInstanceState);
     }
 
@@ -65,6 +75,14 @@ public class StandFragment extends Fragment {
         // Create a dummy book list
         //BookList = MyStandRecyclerViewAdapter.createBookList(6);
         BookList = new ArrayList<>();
+
+        if (savedInstanceState != null) {
+            int count = 0;
+            while (savedInstanceState.getSerializable("Book"+count) != null) {
+                BookList.add((Book)savedInstanceState.getSerializable("Book"+count));
+                count++;
+            }
+        }
 
         View view = inflater.inflate(R.layout.fragment_stand_list, container, false);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.stand_recycler_view);
@@ -130,5 +148,15 @@ public class StandFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(Book item);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        int count = 0;
+        for (Book book : BookList) {
+            outState.putSerializable("Book"+count, book);
+            count++;
+        }
     }
 }
