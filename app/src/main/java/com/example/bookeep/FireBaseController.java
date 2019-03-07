@@ -120,28 +120,28 @@ public class FireBaseController {
 
     }
 
-    public User getCurrentUser(){
-
-        final User[] user = new User[1];
-        if(isUserLoggedIn()){
-
-            databaseReference.child("user").child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    user[0] = dataSnapshot.getValue(User.class);
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-
-        }
-
-        return user[0];
-
-    }
+//    public User getCurrentUser(){
+//
+//        final User[] user = new User[1];
+//        if(isUserLoggedIn()){
+//
+//            databaseReference.child("user").child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                    user[0] = dataSnapshot.getValue(User.class);
+//                }
+//
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                }
+//            });
+//
+//        }
+//
+//        return user[0];
+//
+//    }
 
     public String getCurrentUserId(){
         return firebaseUser.getUid();
@@ -175,66 +175,66 @@ public class FireBaseController {
 
     }
 
-    public ArrayList<Book> getBooksOwnedByUser(){
+//    public ArrayList<Book> getBooksOwnedByUser(){
+//
+//        //final ArrayList<String>[] bookIds = new ArrayList<String>[1];
+//        final ArrayList<Book> owned = new ArrayList<Book>();
+//        databaseReference.child("users").child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+//
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//
+//                User user = dataSnapshot.getValue(User.class);
+//                ArrayList<String> bookIds = user.getBorrowedIds();
+//
+//                for (int i = 0; i < bookIds.size(); i++){
+//                    databaseReference.child("books").child(bookIds.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                            owned.add(dataSnapshot.getValue(Book.class));
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                        }
+//                    });
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+//        return owned;
+//
+//            //ArrayList<Book> owned = new ArrayList<Book>();
+//            //for(String bookId: bookIds)
+//
+//    }
 
-        //final ArrayList<String>[] bookIds = new ArrayList<String>[1];
-        final ArrayList<Book> owned = new ArrayList<Book>();
-        databaseReference.child("users").child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                User user = dataSnapshot.getValue(User.class);
-                ArrayList<String> bookIds = user.getBorrowedIds();
-
-                for (int i = 0; i < bookIds.size(); i++){
-                    databaseReference.child("books").child(bookIds.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            owned.add(dataSnapshot.getValue(Book.class));
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        return owned;
-
-            //ArrayList<Book> owned = new ArrayList<Book>();
-            //for(String bookId: bookIds)
-
-    }
-
-    public Book getBookByBookId(String bookId){
-
-        final Book[] book = new Book[1];
-        databaseReference.child("books").child(bookId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                book[0] = dataSnapshot.getValue(Book.class);
-                //return book;
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-
-        return book[0];
-
-    }
+//    public Book getBookByBookId(String bookId){
+//
+//        final Book[] book = new Book[1];
+//        databaseReference.child("books").child(bookId).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                book[0] = dataSnapshot.getValue(Book.class);
+//                //return book;
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+//
+//
+//        return book[0];
+//
+//    }
 
 
 
