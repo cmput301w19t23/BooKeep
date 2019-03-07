@@ -171,6 +171,13 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                                 if (book.getStatus().equals(BookStatus.AVAILABLE)) {
 
                                     //fireBaseController.addRequestToBookByBookId(book.getBookId());
+                                    if(book.getStatus().equals(BookStatus.AVAILABLE) || book.getStatus().equals(BookStatus.REQUESTED)) {
+
+                                        book.addRequest(currentUserId);
+                                        book.setStatus(BookStatus.REQUESTED);
+                                        databaseReference.child("books").child(book.getBookId()).setValue(book);
+
+                                    }
 
                                 }
                             }
@@ -284,6 +291,15 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    @Override
+    public void onBookUpdate(Book book) {
+        this.book = book;
+        CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbarLayout.setTitle(book.getTitle());
+        toolbar.setTitle(book.getTitle());
     }
 
     //@Override

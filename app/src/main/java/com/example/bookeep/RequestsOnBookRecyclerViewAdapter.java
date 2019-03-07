@@ -164,9 +164,9 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
         if(mValues.get(position) != null ){
 
             mValues.remove(position);
-            notifyItemRemoved(position);
-            notifyItemRangeChanged(position, mValues.size());
-
+            //notifyItemRemoved(position);
+            //notifyItemRangeChanged(position, mValues.size());
+            notifyDataSetChanged();
         }
     }
 }

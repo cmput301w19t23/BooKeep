@@ -3,6 +3,8 @@ package com.example.bookeep;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 //import com.example.bookeep.dummy.DummyContent.DummyItem;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,7 +45,69 @@ public class RequestsOnBookFragment extends Fragment {
     private String bookId;
     private FireBaseController fireBaseController = new FireBaseController(getActivity());
     private ArrayList<User> requesters = new ArrayList<User>();
+    private boolean isResumed;
     private RequestsOnBookRecyclerViewAdapter adapter;
+    private ChildEventListener updateListener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+        }
+
+        @Override
+        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            Book changedBook = dataSnapshot.getValue(Book.class);
+            if (changedBook.getBookId().equals(mBook.getBookId())){
+                if(changedBook != null) {
+                    if(isResumed) {
+                        mBook = changedBook;
+                        if (mListener != null) {
+                            mListener.onBookUpdate(mBook);
+                        }
+
+                        ArrayList<String> newRequesterIds = changedBook.getRequesterIds();
+                        requesters.clear();
+                        adapter.notifyDataSetChanged();
+                        for (String requesterId : newRequesterIds) {
+                            databaseReference.child("users").child(requesterId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                    requesters.add(dataSnapshot.getValue(User.class));
+                                    adapter.notifyDataSetChanged();
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+                    }
+                    //android.support.v7.widget.Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+                    //CollapsingToolbarLayout toolbarLayout = getActivity().findViewById(R.id.toolbar_layout);
+                    //toolbar.setTitle(mBook.getTitle());
+                    //toolbarLayout.setTitle(mBook.getTitle());
+                }
+
+
+            }
+        }
+
+        @Override
+        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+        }
+    };
 
 
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -98,34 +163,6 @@ public class RequestsOnBookFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(context, 1));
-        databaseReference.child("books").child(bookId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                mBook = dataSnapshot.getValue(Book.class);
-                ArrayList<String> requesterIds = mBook.getRequesterIds();
-                for(String requesterId: requesterIds){
-                    databaseReference.child("users").child(requesterId).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                            requesters.add(dataSnapshot.getValue(User.class));
-                            adapter.notifyDataSetChanged();
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
             //recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             //recyclerView.setAdapter(new RequestsOnBookRecyclerViewAdapter(requesters, mListener));
 
@@ -153,6 +190,55 @@ public class RequestsOnBookFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onPause() {
+        databaseReference.removeEventListener(updateListener);
+        isResumed = false;
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+
+        databaseReference.child("books").child(bookId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mBook = dataSnapshot.getValue(Book.class);
+                mListener.onBookUpdate(mBook);
+                ArrayList<String> requesterIds = mBook.getRequesterIds();
+                for(String requesterId: requesterIds){
+                    databaseReference.child("users").child(requesterId).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            requesters.add(dataSnapshot.getValue(User.class));
+                            adapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+
+                databaseReference.child("books").addChildEventListener(updateListener);
+
+            }
+
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+        });
+
+        isResumed = true;
+        super.onResume();
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -166,5 +252,7 @@ public class RequestsOnBookFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onListFragmentInteraction(User item);
+
+        public void onBookUpdate(Book book);
     }
 }

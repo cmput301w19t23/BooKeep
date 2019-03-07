@@ -63,7 +63,7 @@ public class FireBaseController {
                     intent.putExtra("User", user);
 
                     Book book = new Book();
-                    book.setTitle("Harry Potter and the Deathly Hallows");
+                    book.setTitle("88Harry Potter and the Deathly Hallows");
                     //ArrayList<String> authors = new ArrayList<>();
                     //authors.add("J. K. Rowling");
 
@@ -77,6 +77,11 @@ public class FireBaseController {
                     book.addRequest("1j7ynA45YuhOtEFiaFENvG1HOSF2");
                     book.addRequest("6AiwcVImzdfqpC8xDh1C48ialNG2");
                     databaseReference.child("books").child(book.getBookId()).setValue(book);
+
+                    User newReq = new User("nak123", "nak@gmail.com", "N", "K", "nak123");
+                    databaseReference.child("users").child("nak123").setValue(newReq);
+
+
                     intent.putExtra("Book ID", book.getBookId());
                     context.startActivity(intent);
 
