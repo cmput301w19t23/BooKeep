@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -13,6 +12,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +25,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -32,8 +39,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -41,6 +46,14 @@ import java.util.concurrent.ExecutionException;
  * authors: Nafee Khan, Kyle Fujishige
  * */
 public class AddEditBookActivity extends AppCompatActivity {
+
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+
+    private String currentUserID;
+    private User currentUser;
 
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 0;
 
@@ -131,21 +144,26 @@ public class AddEditBookActivity extends AppCompatActivity {
 
 
         if (pass) {
-            Book book = new Book(/*input user ID here*/);
+
+            //Get the user object
+            currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+
+
+            final Book book = new Book(isbn.getText().toString().trim(), currentUserID);
 
             ArrayList<String> Authors = new ArrayList<>();
             Authors.add(bookAuthors.getText().toString().trim());
             book.setAuthor(Authors);
-            book.setISBN(isbn.getText().toString().trim());
             book.setTitle(bookTitle.getText().toString().trim());
             BitmapDrawable drawable = (BitmapDrawable) bookImage.getDrawable();
             //book.setBookImage(drawable.getBitmap());
             book.setStatus(BookStatus.AVAILABLE);
+            final String bookID = book.getBookId();
+            databaseReference.child("books").child(book.getBookId()).setValue(book);
+            databaseReference.child("users").child(currentUserID).child("ownedIds").push().setValue(bookID);
 
-
-            Intent intent = new Intent();
-            intent.putExtra("key", book);
-            setResult(RESULT_OK, intent);
             finish();
 
 

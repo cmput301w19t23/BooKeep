@@ -51,7 +51,6 @@ public class FireBaseController {
 
                     User user = new User(email, firstName,lastName, firebaseUser.getUid());
                     user.setPhoneNumber(phoneNumber);
-
                     databaseReference.child("users").child(user.getUserId()).setValue(user);
 
                     Intent intent = new Intent(context, LoginActivity.class);
@@ -66,6 +65,7 @@ public class FireBaseController {
         });
 
     }
+
 
     public void signIn(String email, String password){
 
@@ -118,6 +118,33 @@ public class FireBaseController {
 
         firebaseAuth.signOut();
 
+    }
+
+    public User getCurrentUser(){
+
+        final User[] user = new User[1];
+        if(isUserLoggedIn()){
+
+            databaseReference.child("user").child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    user[0] = dataSnapshot.getValue(User.class);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        }
+
+        return user[0];
+
+    }
+
+    public String getCurrentUserId(){
+        return firebaseUser.getUid();
     }
 
     public void launchMainActivity(){
@@ -185,6 +212,27 @@ public class FireBaseController {
 
             //ArrayList<Book> owned = new ArrayList<Book>();
             //for(String bookId: bookIds)
+
+    }
+
+    public Book getBookByBookId(String bookId){
+
+        final Book[] book = new Book[1];
+        databaseReference.child("books").child(bookId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                book[0] = dataSnapshot.getValue(Book.class);
+                //return book;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+        return book[0];
 
     }
 
