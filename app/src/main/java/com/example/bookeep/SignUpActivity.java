@@ -1,5 +1,6 @@
 package com.example.bookeep;
 
+import android.nfc.Tag;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -30,11 +32,6 @@ public class SignUpActivity extends AppCompatActivity{
     private EditText edtUserName;
     private Button btnSignUp;
     private FireBaseController fireBaseController = new FireBaseController(this);
-    private FirebaseAuth firebaseAuth;
-    private FirebaseDatabase database;
-    private DatabaseReference databaseReference;
-    private FirebaseUser firebaseUser;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +46,9 @@ public class SignUpActivity extends AppCompatActivity{
         edtPassword = (EditText) findViewById(R.id.signup_password);
         edtPhone = (EditText) findViewById(R.id.phone);
         btnSignUp = (Button) findViewById(R.id.create_user);
+
+
+
 
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,48 +102,7 @@ public class SignUpActivity extends AppCompatActivity{
         if (edtLastName.getText().toString().length() > 0){
             lastNameValid = true;
         }
-        if (edtUserName.getText().toString().length() > 5) { //Need to test for uniqueness
-            firebaseAuth = FirebaseAuth.getInstance();
-            database = FirebaseDatabase.getInstance();
-            databaseReference = database.getReference();
-            firebaseUser = firebaseAuth.getCurrentUser();
-            final ArrayList<String> usernames= new ArrayList<String>();
-            databaseReference.child("users/userName").addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    String user = dataSnapshot.getValue(String.class);
-                    usernames.add(user);
-                }
-
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-            try {
-                Thread.sleep(1000);
-            } catch(InterruptedException ex){
-                Thread.currentThread().interrupt();
-            }
-
-            userNameValid = !(usernames.contains(edtUserName.getText().toString()));
-
-        }
+        userNameValid = edtUserName.getText().toString().length() > 4;
         /*
         if (editHeartRate.getText().toString().length() > 0) {
             heartValid = true;

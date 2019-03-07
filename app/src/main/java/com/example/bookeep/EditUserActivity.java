@@ -7,6 +7,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class EditUserActivity extends AppCompatActivity {
     private EditText userName;
@@ -17,6 +23,8 @@ public class EditUserActivity extends AppCompatActivity {
     private EditText phoneNumber;
     private Button updateButton;
     private User user;
+    private FirebaseDatabase database;
+    private DatabaseReference myRef;
 
     //need to add get text from edit user to prefill the edit texts
     //need to change user info in firebase
@@ -34,6 +42,11 @@ public class EditUserActivity extends AppCompatActivity {
         userName = findViewById(R.id.EditUserName);
         userPicture = findViewById(R.id.UserPhoto);
         updateButton = findViewById(R.id.SaveProfile);
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser =firebaseAuth.getCurrentUser();
+        final String userId = firebaseUser.getUid();
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("users").child(userId);
 
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,8 +57,11 @@ public class EditUserActivity extends AppCompatActivity {
                     String lastNameString = lastName.getText().toString();
                     String firstNameString = firstName.getText().toString();
                     String userNameString = userName.getText().toString();
-
-
+                    String phoneString = phoneNumber.getText().toString();
+                    user = new User(userNameString,emailString, firstNameString, lastNameString, userId);
+                    user.setPhoneNumber(new PhoneNumber(phoneString));
+                    myRef.setValue(user);
+                    finish();
                 }
             }
         });
@@ -78,6 +94,7 @@ public class EditUserActivity extends AppCompatActivity {
         if (lastName.getText().toString().length() > 0) {
             lastNameValid = true;
         }
+        usernameValid = userName.getText().toString().length() > 4;
 
         return (emailValid && usernameValid && phoneValid && firstNameValid && lastNameValid);
     }
