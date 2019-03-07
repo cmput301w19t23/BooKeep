@@ -35,7 +35,7 @@ public class FireBaseController {
         database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference();
         firebaseUser = firebaseAuth.getCurrentUser();
-        //this.context = context;
+   
     }
 
     public void createNewUser(final String email, String password, final String firstName, final String lastName, final PhoneNumber phoneNumber){
