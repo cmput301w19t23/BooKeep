@@ -92,7 +92,7 @@ public class BookDetailsFragment extends Fragment {
                         //toolbar.setTitle(mBook.getTitle());
                         //toolbarLayout.setTitle(mBook.getTitle());
 
-                        bookAuthors.setText(mBook.getAuthors());
+                        bookAuthors.setText(mBook.getAuthursString());
 //                bookISBN.setText(mBook.getISBN());
                         bookStatus.setText(mBook.getStatus().toString());
                         bookDescription.setText(mBook.getDescription());
@@ -175,7 +175,7 @@ public class BookDetailsFragment extends Fragment {
                 mBook = dataSnapshot.getValue(Book.class);
                 mListener.onBookUpdate(mBook);
 
-                bookAuthors.setText(mBook.getAuthors());
+                bookAuthors.setText(mBook.getAuthursString());
                 //bookISBN.setText(mBook.getISBN());
                 bookStatus.setText(mBook.getStatus().toString());
                 bookDescription.setText(mBook.getDescription());

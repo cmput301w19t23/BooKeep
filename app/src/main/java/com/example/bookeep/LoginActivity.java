@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
+//import com.google.gson.Gson;
 
 public class LoginActivity extends AppCompatActivity {
 

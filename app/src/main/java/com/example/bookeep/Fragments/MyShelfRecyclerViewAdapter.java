@@ -6,23 +6,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.bookeep.Fragments.shelfFragment.OnListFragmentInteractionListener;
-import com.example.bookeep.Fragments.dummy.DummyContent.DummyItem;
+import com.example.bookeep.Book;
+import com.example.bookeep.Fragments.ShelfFragment.OnListFragmentInteractionListener;
 import com.example.bookeep.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class MyshelfRecyclerViewAdapter extends RecyclerView.Adapter<MyshelfRecyclerViewAdapter.ViewHolder> {
+public class MyShelfRecyclerViewAdapter extends RecyclerView.Adapter<MyShelfRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<Book> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyshelfRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public MyShelfRecyclerViewAdapter(List<Book> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -37,8 +38,8 @@ public class MyshelfRecyclerViewAdapter extends RecyclerView.Adapter<MyshelfRecy
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mIdView.setText(mValues.get(position).getTitle());
+        holder.mContentView.setText(mValues.get(position).getAuthors().toString());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,18 +62,34 @@ public class MyshelfRecyclerViewAdapter extends RecyclerView.Adapter<MyshelfRecy
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        public DummyItem mItem;
+        public Book mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mIdView = (TextView) view.findViewById(R.id.book_title);
+            mContentView = (TextView) view.findViewById(R.id.book_author);
         }
 
         @Override
         public String toString() {
             return super.toString() + " '" + mContentView.getText() + "'";
         }
+    }
+
+
+    // Method to make dummy book list
+    public static ArrayList<Book> createBookList(int COUNT) {
+        ArrayList<Book> BookList = new ArrayList<Book>();
+        Book newBook = new Book();
+        newBook.setTitle("Neuromancer");
+        ArrayList<String> authors = new ArrayList<String>();
+        authors.add("William Gibson");
+        newBook.setAuthor(authors);
+        for (int i = 1; i <= COUNT; i++) {
+            BookList.add(newBook);
+        }
+
+        return BookList;
     }
 }

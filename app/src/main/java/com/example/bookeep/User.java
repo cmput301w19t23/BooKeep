@@ -34,6 +34,8 @@ public class User implements Serializable {
         this.firstname = firstname;
         this.lastname = lastname;
         this.userId = UUID.randomUUID().toString();
+        this.borrowedIds = new ArrayList<String>();
+        this.ownedIds = new ArrayList<String>();
 
     }
 
@@ -43,6 +45,8 @@ public class User implements Serializable {
         this.firstname = firstname;
         this.lastname = lastname;
         this.userId = userId;
+        this.borrowedIds = new ArrayList<String>();
+        this.ownedIds = new ArrayList<String>();
 
     }
 

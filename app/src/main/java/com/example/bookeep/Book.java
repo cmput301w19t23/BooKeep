@@ -1,25 +1,32 @@
 package com.example.bookeep;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+
 import com.example.bookeep.BookStatus;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class Book implements Serializable {
 
-    private String authors;
+    //private String authors;
+    private ArrayList<String> authors;
     private String title;
     private String description;
-    private Integer ISBN;
+    private String ISBN;
     private String bookId;
     private String ownerId;
     private BookStatus status;
     private String currentBorrowerId;
     private ArrayList<String> requesterIds = new ArrayList<String>();
-    private String imageURL;
+    private Bitmap bookImage;
 
-    public Book(Integer ISBN, String ownerId){
+    public Book(String ISBN, String ownerId){
+        super();
         this.ISBN = ISBN;
         this.ownerId = ownerId;
         this.bookId = UUID.randomUUID().toString();
@@ -27,16 +34,17 @@ public class Book implements Serializable {
     }
 
     public Book(){
+        super();
         this.bookId = UUID.randomUUID().toString();
         this.status = BookStatus.AVAILABLE;
     }
 
-    public String getImageURL() {
-        return imageURL;
+    public Bitmap getBookImage() {
+        return bookImage;
     }
 
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
+    public void setBookImage(Bitmap bookImage) {
+        this.bookImage = bookImage;
     }
 
     public ArrayList<String> getRequesterIds(){
@@ -51,17 +59,24 @@ public class Book implements Serializable {
 
     }
 
-    public String getAuthors() {
+    //public String getAuthors() {
         /*
         String authorsString = null;
         for(String author: authors){
             authorsString = authorsString+author;
         }
         return authorsString;*/
+      //  return authors;
+    //}
+    public ArrayList<String> getAuthors() {
         return authors;
     }
 
-    public void setAuthor(String authors){//ArrayList<String> authors) {
+    //public void setAuthor(String authors){//ArrayList<String> authors) {
+        //this.authors = authors;
+    //}
+
+    public void setAuthor(ArrayList<String> authors) {
         this.authors = authors;
     }
 
@@ -81,11 +96,11 @@ public class Book implements Serializable {
         this.description = description;
     }
 
-    public Integer getISBN() {
+    public String getISBN() {
         return ISBN;
     }
 
-    public void setISBN(Integer ISBN) {
+    public void setISBN(String ISBN) {
         this.ISBN = ISBN;
     }
 
@@ -131,6 +146,16 @@ public class Book implements Serializable {
 
         this.requesterIds.remove(reqId);
 
+    }
+
+    public String getAuthursString(){
+        String authorsString = "";
+        for(String author: this.authors){
+
+            authorsString = authorsString + author;
+
+        }
+        return authorsString;
     }
 
 

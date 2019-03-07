@@ -51,39 +51,40 @@ public class FireBaseController {
 
                     User user = new User(email, firstName,lastName, firebaseUser.getUid());
                     user.setPhoneNumber(phoneNumber);
-                    user.setUserName("nafee");
+
+                    //user.setUserName("nafee");
                     databaseReference.child("users").child(user.getUserId()).setValue(user);
-                    //Toast.makeText(context, "Fail", Toast.LENGTH_SHORT);
-/*
+                    Toast.makeText(context, "Fail", Toast.LENGTH_SHORT);
+
                     Intent intent = new Intent(context, LoginActivity.class);
-                    context.startActivity(intent);*/
+                    context.startActivity(intent);
                     //
 
-                    Intent intent = new Intent(context, BookDetailsActivity.class);
-                    intent.putExtra("User", user);
+                    //Intent intent = new Intent(context, BookDetailsActivity.class);
+                    //intent.putExtra("User", user);
 
-                    Book book = new Book();
-                    book.setTitle("88Harry Potter and the Deathly Hallows");
+                    //Book book = new Book();
+                    //book.setTitle("88Harry Potter and the Deathly Hallows");
                     //ArrayList<String> authors = new ArrayList<>();
                     //authors.add("J. K. Rowling");
 
-                    book.setAuthor("J.K.Rowling");
-                    book.setStatus(BookStatus.AVAILABLE);
-                    book.setOwner(firebaseUser.getUid());
+                    //book.setAuthor("J.K.Rowling");
+                    //book.setStatus(BookStatus.AVAILABLE);
+                    //book.setOwner(firebaseUser.getUid());
                     //book.setBookId("book1");
-                    book.setDescription("The magnificent final book in J. K. Rowling's seven-part saga comes to readers July 21, 2007. You'll find out July 21!");
+                    //book.setDescription("The magnificent final book in J. K. Rowling's seven-part saga comes to readers July 21, 2007. You'll find out July 21!");
                     //ok.setISBN(9780545010221);
-                    book.addRequest("1iECbuI1luQliWJypEPhKBERSH42");
-                    book.addRequest("1j7ynA45YuhOtEFiaFENvG1HOSF2");
-                    book.addRequest("6AiwcVImzdfqpC8xDh1C48ialNG2");
-                    databaseReference.child("books").child(book.getBookId()).setValue(book);
+                    //book.addRequest("1iECbuI1luQliWJypEPhKBERSH42");
+                    //book.addRequest("1j7ynA45YuhOtEFiaFENvG1HOSF2");
+                    //book.addRequest("6AiwcVImzdfqpC8xDh1C48ialNG2");
+                    //databaseReference.child("books").child(book.getBookId()).setValue(book);
 
-                    User newReq = new User("nak123", "nak@gmail.com", "N", "K", "nak123");
-                    databaseReference.child("users").child("nak123").setValue(newReq);
+                    //User newReq = new User("nak123", "nak@gmail.com", "N", "K", "nak123");
+                    //databaseReference.child("users").child("nak123").setValue(newReq);
 
 
-                    intent.putExtra("Book ID", book.getBookId());
-                    context.startActivity(intent);
+                    //intent.putExtra("Book ID", book.getBookId());
+                    //context.startActivity(intent);
 
                 } else {
                     Toast.makeText(context, "Failed to add new user", Toast.LENGTH_SHORT);
@@ -94,6 +95,7 @@ public class FireBaseController {
         });
 
     }
+
 
     public void signIn(String email, String password){
 
@@ -148,30 +150,7 @@ public class FireBaseController {
 
     }
 
-    public User getCurrentUser(){
 
-        //final User[] user = new User[1];
-        final ArrayList<User> users = new ArrayList<User>();
-        //final User user;
-        if(isUserLoggedIn()){
-
-            databaseReference.child("users").child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    users.add(dataSnapshot.getValue(User.class));
-                    //user = dataSnapshot.getValue(User.class);
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-
-        }
-        return users.get(0);
-
-    }
 
     public String getCurrentUserId(){
         return firebaseUser.getUid();
@@ -202,46 +181,6 @@ public class FireBaseController {
         } else {
             Toast.makeText(context, "sign in first", Toast.LENGTH_SHORT);
         }
-
-    }
-
-    public ArrayList<Book> getBooksOwnedByUser(){
-
-        //final ArrayList<String>[] bookIds = new ArrayList<String>[1];
-        final ArrayList<Book> owned = new ArrayList<Book>();
-        databaseReference.child("users").child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                User user = dataSnapshot.getValue(User.class);
-                ArrayList<String> bookIds = user.getBorrowedIds();
-
-                for (int i = 0; i < bookIds.size(); i++){
-                    databaseReference.child("books").child(bookIds.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            owned.add(dataSnapshot.getValue(Book.class));
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        return owned;
-
-            //ArrayList<Book> owned = new ArrayList<Book>();
-            //for(String bookId: bookIds)
 
     }
 /*
