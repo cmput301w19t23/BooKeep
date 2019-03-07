@@ -114,6 +114,7 @@ public class StandFragment extends Fragment {
             if (resultCode == RESULT_OK) {
                 Book book = (Book) data.getSerializableExtra("key");
                 BookList.add(book);
+                adapter.notifyDataSetChanged();
             }
         }
     }

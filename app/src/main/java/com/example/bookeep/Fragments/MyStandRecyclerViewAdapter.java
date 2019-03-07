@@ -1,21 +1,36 @@
 package com.example.bookeep.Fragments;
 
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.example.bookeep.AddEditBookActivity;
 import com.example.bookeep.Book;
 import com.example.bookeep.Fragments.StandFragment.OnListFragmentInteractionListener;
+import com.example.bookeep.MainActivity;
 import com.example.bookeep.R;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static com.example.bookeep.BookStatus.AVAILABLE;
 
@@ -63,8 +78,65 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
             }
         });
 
+        holder.imageView.setImageBitmap(setPicture(holder.mItem.getBookImage(), holder));
 
     }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+
+        //ImageView bmImage;
+        //public DownloadImageTask(ImageView bmImage) {
+        // AddEditBookActivity.this.bookImage = bmImage;
+        //}
+
+        protected Bitmap doInBackground(String... urls) {
+
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+
+            return mIcon11;
+
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            //bmImage.setImageBitmap(result);
+        }
+
+    }
+
+    public Bitmap setPicture(String ImageLink, ViewHolder holder) {
+        if (ImageLink.startsWith("http")) {
+            DownloadImageTask downloadImageTask = new DownloadImageTask();
+            Bitmap bookImageBitMap = null;
+            try {
+                bookImageBitMap = downloadImageTask.execute(ImageLink).get();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return bookImageBitMap;
+        } else if (ImageLink != null){
+            try {
+                Uri selectedImage = Uri.parse(ImageLink);
+                Bitmap bitmap;
+                bitmap = MediaStore.Images.Media.getBitmap(holder.imageView.getContext().getContentResolver(), selectedImage);
+                return bitmap;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
 
     @Override
     public int getItemCount() {
@@ -80,6 +152,7 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
         public final TextView mContentView;
         public Book mItem;
         public final ImageButton overflow;
+        public final ImageView imageView;
 
         public ViewHolder(View view) {
             super(view);
@@ -87,6 +160,7 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
             mIdView = (TextView) view.findViewById(R.id.book_title);
             mContentView = (TextView) view.findViewById(R.id.book_author);
             overflow = (ImageButton) view.findViewById(R.id.overflow_menu);
+            imageView = view.findViewById(R.id.imageView4);
         }
 
         @Override

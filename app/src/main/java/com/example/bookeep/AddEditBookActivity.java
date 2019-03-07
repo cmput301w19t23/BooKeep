@@ -43,6 +43,8 @@ import java.util.concurrent.ExecutionException;
 public class AddEditBookActivity extends AppCompatActivity {
 
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 0;
+    public static final int MY_PERMISSIONS_REQUEST_READ = 1;
+
 
     private ImageView bookImage;
     private EditText bookTitle;
@@ -54,6 +56,7 @@ public class AddEditBookActivity extends AppCompatActivity {
     private Button saveBook;
     private JSONObject jsonObject;
     private String bookLink;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,8 +142,7 @@ public class AddEditBookActivity extends AppCompatActivity {
             book.setAuthor(Authors);
             book.setISBN(isbn.getText().toString().trim());
             book.setTitle(bookTitle.getText().toString().trim());
-            BitmapDrawable drawable = (BitmapDrawable) bookImage.getDrawable();
-            //book.setBookImage(drawable.getBitmap());
+            book.setBookImage(bookLink);
             book.setStatus(BookStatus.AVAILABLE);
 
 
@@ -160,7 +162,19 @@ public class AddEditBookActivity extends AppCompatActivity {
     public void ImageUpload(View view) {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
-        startActivityForResult(intent, 69);
+        if (ContextCompat.checkSelfPermission(AddEditBookActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            // Permission has already been granted
+            startActivityForResult(intent, 69);
+        } else {
+            // Permission is NOT granted
+            // Prompt the user for permission
+            ActivityCompat.requestPermissions(
+                    AddEditBookActivity.this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_READ
+            );
+        }
     }
 
 
@@ -178,6 +192,15 @@ public class AddEditBookActivity extends AppCompatActivity {
                     new IntentIntegrator(AddEditBookActivity.this).initiateScan();
                 } else {
                     // permission denied. Go back?
+                }
+                return;
+            }
+
+            case MY_PERMISSIONS_REQUEST_READ: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission was granted.
+                    startActivityForResult(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI), 69);
                 }
                 return;
             }
@@ -219,7 +242,7 @@ public class AddEditBookActivity extends AppCompatActivity {
                 JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
                 bookLink = imageLinks.getString("thumbnail");
 
-                setPicture(bookLink);
+                bookImage.setImageBitmap(setPicture(bookLink));
 
 
                 bookStatus.setText(BookStatus.AVAILABLE.toString());
@@ -245,8 +268,8 @@ public class AddEditBookActivity extends AppCompatActivity {
             if (data != null) {
                 super.onActivityResult(requestCode, resultCode, data);
                 Uri selectedImage = data.getData();
-                bookLink = selectedImage.getPath();
-                setPicture(bookLink);
+                bookLink = selectedImage.toString();
+                bookImage.setImageBitmap(setPicture(bookLink));
             }
         } else {
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
@@ -309,7 +332,7 @@ public class AddEditBookActivity extends AppCompatActivity {
 
     }
 
-    public void setPicture(String ImageLink) {
+    public Bitmap setPicture(String ImageLink) {
         if (ImageLink.startsWith("http")) {
             if (isNetworkAvailable()) {
                 DownloadImageTask downloadImageTask = new DownloadImageTask();
@@ -321,18 +344,19 @@ public class AddEditBookActivity extends AppCompatActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                bookImage.setImageBitmap(bookImageBitMap);
+                return bookImageBitMap;
             }
         } else if (ImageLink != null){
             try {
                 Uri selectedImage = Uri.parse(ImageLink);
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                bitmap = Bitmap.createScaledBitmap(bitmap, 147, 150, true);
-                bookImage.setImageBitmap(bitmap);
+                //bitmap = Bitmap.createScaledBitmap(bitmap, 189, 325, true);
+                return bitmap;
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        return null;
     }
 
     @Override
@@ -351,7 +375,7 @@ public class AddEditBookActivity extends AppCompatActivity {
         bookLink = savedInstanceState.getString("Picture");
         bookStatus.setText(savedInstanceState.getString("Status"));
         if (bookLink != null) {
-            setPicture(bookLink);
+            bookImage.setImageBitmap(setPicture(bookLink));
         }
 
     }
