@@ -27,6 +27,7 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
 
     private final List<Book> mValues;
     private final OnListFragmentInteractionListener mListener;
+    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
     public MyStandRecyclerViewAdapter(List<Book> items, OnListFragmentInteractionListener listener) {
         mValues = items;
@@ -160,6 +161,7 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
             mValues.remove(position);
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, mValues.size());
+            databaseReference.child("books").child("bookId").removeValue();
         }
     }
 }
