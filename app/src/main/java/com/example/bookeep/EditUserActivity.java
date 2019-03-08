@@ -1,6 +1,7 @@
 package com.example.bookeep;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Patterns;
 import android.view.View;
@@ -11,8 +12,14 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class EditUserActivity extends AppCompatActivity {
     private EditText userName;
@@ -25,16 +32,22 @@ public class EditUserActivity extends AppCompatActivity {
     private User user;
     private FirebaseDatabase database;
     private DatabaseReference myRef;
+    private ArrayList<String> users;
+    private ArrayList<String> emails;
+    private String userId;
+
 
     //need to add get text from edit user to prefill the edit texts
     //need to change user info in firebase
     //also need to add on click listener to actually get here
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_user);
 
+        users = new ArrayList<>();
+        emails = new ArrayList<>();
         phoneNumber = findViewById(R.id.EditPhoneNumber);
         email = findViewById(R.id.EditEmail);
         lastName = findViewById(R.id.EditLastName);
@@ -43,8 +56,32 @@ public class EditUserActivity extends AppCompatActivity {
         userPicture = findViewById(R.id.UserPhoto);
         updateButton = findViewById(R.id.SaveProfile);
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser firebaseUser =firebaseAuth.getCurrentUser();
-        final String userId = firebaseUser.getUid();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        userId = firebaseUser.getUid();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        database = FirebaseDatabase.getInstance();
+        DatabaseReference userNameRef = database.getReference("users");
+        Query query = userNameRef.orderByChild("UserName");
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren() ){
+                    User userFromDatabase = data.getValue(User.class);
+                    users.add(userFromDatabase.getUserName());
+                    emails.add(userFromDatabase.getEmail());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("users").child(userId);
 
@@ -52,25 +89,32 @@ public class EditUserActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (validation()){
-                    PhoneNumber phone = new PhoneNumber(phoneNumber.getText().toString());
-                    String emailString = email.getText().toString();
-                    String lastNameString = lastName.getText().toString();
-                    String firstNameString = firstName.getText().toString();
-                    String userNameString = userName.getText().toString();
-                    String phoneString = phoneNumber.getText().toString();
-                    user = new User(userNameString,emailString, firstNameString, lastNameString, userId);
-                    user.setPhoneNumber(new PhoneNumber(phoneString));
-                    myRef.setValue(user);
-                    finish();
+                    updateUser();
                 }
             }
         });
     }
 
+    private void updateUser(){
+        String emailString = email.getText().toString();
+        String lastNameString = lastName.getText().toString();
+        String firstNameString = firstName.getText().toString();
+        String userNameString = userName.getText().toString();
+        String phoneString = phoneNumber.getText().toString();
+        user = new User(userNameString, emailString, firstNameString, lastNameString, userId);
+        user.setPhoneNumber(new PhoneNumber(phoneString));
+        user.setEmail(emailString);
+        user.setLastname(lastNameString);
+        user.setFirstname(firstNameString);
+        user.setUserName(userNameString);
+        myRef.setValue(user);
+        finish();
+    }
+
     private boolean validation() {
 
         boolean emailValid = false;
-        boolean usernameValid = false;
+        boolean usernameValid;
         boolean phoneValid = false;
         boolean firstNameValid = false;
         boolean lastNameValid = false;
@@ -80,7 +124,7 @@ public class EditUserActivity extends AppCompatActivity {
         //boolean timeValid = false;
 
         if (Patterns.EMAIL_ADDRESS.matcher(email.getText().toString()).matches()) {
-            emailValid = true;
+            emailValid = !emails.contains(email.getText().toString());
         }
         //need to set check for username availability
         usernameValid = true;
@@ -94,7 +138,7 @@ public class EditUserActivity extends AppCompatActivity {
         if (lastName.getText().toString().length() > 0) {
             lastNameValid = true;
         }
-        usernameValid = userName.getText().toString().length() > 4;
+        usernameValid = (userName.getText().toString().length() > 4 && !users.contains(userName.getText().toString()));
 
         return (emailValid && usernameValid && phoneValid && firstNameValid && lastNameValid);
     }
