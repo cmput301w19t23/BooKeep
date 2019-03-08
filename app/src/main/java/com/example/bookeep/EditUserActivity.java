@@ -55,17 +55,24 @@ public class EditUserActivity extends AppCompatActivity {
         userName = findViewById(R.id.EditUserName);
         userPicture = findViewById(R.id.UserPhoto);
         updateButton = findViewById(R.id.SaveProfile);
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        userId = firebaseUser.getUid();
+
+
     }
 
     @Override
     public void onResume(){
         super.onResume();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+
+
+        userId = firebaseUser.getUid();
         database = FirebaseDatabase.getInstance();
         DatabaseReference userNameRef = database.getReference("users");
-        Query query = userNameRef.orderByChild("UserName");
+        Query query = userNameRef.orderByChild("userName");
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("users").child(userId);
+
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -82,8 +89,26 @@ public class EditUserActivity extends AppCompatActivity {
             }
         });
 
-        database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("users").child(userId);
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User currentUser = dataSnapshot.getValue(User.class);
+                if (currentUser != null) {
+                    userName.setText(currentUser.getUserName());
+                    firstName.setText(currentUser.getFirstname());
+                    lastName.setText(currentUser.getFirstname());
+                    email.setText(currentUser.getEmail());
+                    phoneNumber.setText(currentUser.getPhoneNumber().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
 
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
