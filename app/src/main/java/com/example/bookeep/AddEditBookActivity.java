@@ -66,6 +66,7 @@ public class AddEditBookActivity extends AppCompatActivity {
     private Button scanBook;
     private Button saveBook;
     private JSONObject jsonObject;
+    private String bookLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -233,12 +234,8 @@ public class AddEditBookActivity extends AppCompatActivity {
             bookDescription.setText(description);
 
             JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
-            String imageURL = imageLinks.getString("thumbnail");
-
-            //Drawable bookImage = (Drawable) loadImageFromWebOperations(imageURL);
-            DownloadImageTask downloadImageTask = new DownloadImageTask();
-            Bitmap bookImageBitMap = downloadImageTask.execute(imageURL).get();
-            bookImage.setImageBitmap(bookImageBitMap);
+            bookLink = imageLinks.getString("thumbnail");
+            bookImage.setImageBitmap(setPicture(bookLink));
 
 
 
@@ -265,13 +262,8 @@ public class AddEditBookActivity extends AppCompatActivity {
             if (data != null) {
                 super.onActivityResult(requestCode, resultCode, data);
                 Uri selectedImage = data.getData();
-                try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                    bitmap = Bitmap.createScaledBitmap(bitmap, 147, 150, true);
-                    bookImage.setImageBitmap(bitmap);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                bookLink = selectedImage.toString();
+                bookImage.setImageBitmap(setPicture(bookLink));
             }
         } else {
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
@@ -332,7 +324,53 @@ public class AddEditBookActivity extends AppCompatActivity {
             //bmImage.setImageBitmap(result);
         }
 
+
     }
 
+    public Bitmap setPicture(String ImageLink) {
+        if (ImageLink.startsWith("http")) {
+            if (isNetworkAvailable()) {
+                DownloadImageTask downloadImageTask = new DownloadImageTask();
+                Bitmap bookImageBitMap = null;
+                try {
+                    bookImageBitMap = downloadImageTask.execute(ImageLink).get();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return bookImageBitMap;
+            }
+        } else if (ImageLink != null){
+            try {
+                Uri selectedImage = Uri.parse(ImageLink);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                return bitmap;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+
+        savedInstanceState.putString("Picture", bookLink);
+        savedInstanceState.putString("Status", bookStatus.getText().toString());
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        bookLink = savedInstanceState.getString("Picture");
+        bookStatus.setText(savedInstanceState.getString("Status"));
+        if (bookLink != null) {
+            bookImage.setImageBitmap(setPicture(bookLink));
+        }
+    }
 }
 
