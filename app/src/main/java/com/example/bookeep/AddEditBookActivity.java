@@ -10,8 +10,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
+import android.renderscript.Sampler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -54,6 +56,7 @@ public class AddEditBookActivity extends AppCompatActivity {
 
     private String currentUserID;
     private User currentUser;
+    private Book book;
 
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 0;
 
@@ -147,12 +150,11 @@ public class AddEditBookActivity extends AppCompatActivity {
 
             //Get the user object
             currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
 
 
-            final Book book = new Book(isbn.getText().toString().trim(), currentUserID);
-
+            book = new Book(isbn.getText().toString().trim(), currentUserID);
             ArrayList<String> Authors = new ArrayList<>();
             Authors.add(bookAuthors.getText().toString().trim());
             book.setAuthor(Authors);
@@ -160,10 +162,23 @@ public class AddEditBookActivity extends AppCompatActivity {
             BitmapDrawable drawable = (BitmapDrawable) bookImage.getDrawable();
             //book.setBookImage(drawable.getBitmap());
             book.setStatus(BookStatus.AVAILABLE);
-            final String bookID = book.getBookId();
             databaseReference.child("books").child(book.getBookId()).setValue(book);
-            databaseReference.child("users").child(currentUserID).child("ownedIds").push().setValue(bookID);
 
+            databaseReference.child("users").child(currentUserID).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String bookID = book.getBookId();
+                        currentUser = dataSnapshot.getValue(User.class);
+                        currentUser.addToOwned(bookID);
+                        databaseReference.child("users").child(currentUserID).setValue(currentUser);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
             finish();
 
 
@@ -171,8 +186,6 @@ public class AddEditBookActivity extends AppCompatActivity {
             //and save the book in users list of owned books. Return back to
             //activity/fragment that called this.
         }
-
-    }
 
     public void ImageUpload(View view) {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -335,4 +348,8 @@ public class AddEditBookActivity extends AppCompatActivity {
     }
 
 }
+
+
+
+
 

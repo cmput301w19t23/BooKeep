@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -19,14 +20,17 @@ import com.example.bookeep.R;
 import com.example.bookeep.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -38,6 +42,8 @@ import static android.app.Activity.RESULT_OK;
  */
 public class StandFragment extends Fragment {
 
+    // EXPERIMENT
+    private Boolean isResumed;
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -48,6 +54,40 @@ public class StandFragment extends Fragment {
 
     ArrayList<Book> BookList;
     MyStandRecyclerViewAdapter adapter;
+
+    private ChildEventListener updateListener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+        }
+
+        @Override
+        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            Book changedBook = dataSnapshot.getValue(Book.class);
+            if (changedBook.getOwner().equals(firebaseUser.getUid())){
+                if(changedBook != null) {
+                    if (isResumed) {
+                        BookList = getBookList();
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            }
+        }
+
+
+        @Override
+        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {}
+
+        @Override
+        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {}
+    };
+
+
+
+
+
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -83,9 +123,9 @@ public class StandFragment extends Fragment {
         // Create a dummy book list
         //BookList = MyStandRecyclerViewAdapter.createBookList(6);
         // Create an empty book list
-        BookList = new ArrayList<>();
-        //Retrieve the user's actual bookList
+        BookList = getBookList();
 
+        //Inflate the view and create recyclerView
         View view = inflater.inflate(R.layout.fragment_stand_list, container, false);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.stand_recycler_view);
 
@@ -107,6 +147,15 @@ public class StandFragment extends Fragment {
             }
         });
         return view;
+    }
+
+
+    @Override
+    public void onResume() {
+        isResumed = true;
+
+
+        super.onResume();
     }
 
     @Override
@@ -155,22 +204,36 @@ public class StandFragment extends Fragment {
 
 
     public ArrayList<Book> getBookList() {
-        final ArrayList<Book> bookList = new ArrayList<Book>();
         currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        ValueEventListener bookListener = new ValueEventListener() {
+        BookList = new ArrayList<>();
+        databaseReference.child("users").child(currentUserID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                ArrayList<String> bookIds = user.getBorrowedIds();
-                for (int i = 0; i < bookIds.size(); i++){
 
+                User currentUser = dataSnapshot.getValue(User.class);
+                ArrayList<String> ownedIds = currentUser.getOwnedIds();
+                for(int i = 0; i < ownedIds.size(); i++){
+                    databaseReference.child("books").child(ownedIds.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Book book = dataSnapshot.getValue(Book.class);
+                            BookList.add(book);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
-        };
-        return bookList;
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        return BookList;
     }
 }

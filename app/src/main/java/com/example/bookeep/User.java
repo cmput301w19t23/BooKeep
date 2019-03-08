@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 
+
 public class User implements Serializable {
 
     private String firstname;
@@ -19,24 +20,20 @@ public class User implements Serializable {
 
 
     public User(String email, String firstname, String lastname){
-
+        super();
         this.email = email;
         this.firstname = firstname;
         this.lastname = lastname;
         this.userId = UUID.randomUUID().toString();
-        this.borrowedIds = new ArrayList<String>();
-        this.ownedIds = new ArrayList<String>();
 
     }
 
     public User(String email, String firstname, String lastname, String userId){
-
+        super();
         this.email = email;
         this.firstname = firstname;
         this.lastname = lastname;
         this.userId = userId;
-        this.borrowedIds = new ArrayList<String>();
-        this.ownedIds = new ArrayList<String>();
 
     }
 
@@ -77,15 +74,15 @@ public class User implements Serializable {
     }
 
     public ArrayList<String> getBorrowedIds() {
-        return borrowedIds;
+        return this.borrowedIds;
     }
 
     public void addToBorrowed(String bookId){
         this.borrowedIds.add(bookId);
     }
 
-    public ArrayList<String> getOwnedId() {
-        return ownedIds;
+    public ArrayList<String> getOwnedIds() {
+        return this.ownedIds;
     }
 
     public void addToOwned(String bookId){

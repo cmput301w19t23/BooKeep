@@ -35,11 +35,11 @@ public class LoginActivity extends AppCompatActivity {
         btnSignIn = (Button) findViewById(R.id.btn_sign_in);
         btnSignUp = (Button) findViewById(R.id.btn_sign_up);
 
-        if( fireBaseController.isUserLoggedIn()){
-
-            fireBaseController.launchMainActivity();
-
-        }
+//        if( fireBaseController.isUserLoggedIn()){
+//
+//            fireBaseController.launchMainActivity();
+//
+//        }
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
