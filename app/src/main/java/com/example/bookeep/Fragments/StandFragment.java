@@ -74,6 +74,15 @@ public class StandFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        BookList = new ArrayList<>();
+
+        if (savedInstanceState != null) {
+            int count = 0;
+            while (savedInstanceState.getSerializable("Book"+count) != null) {
+                BookList.add((Book)savedInstanceState.getSerializable("Book"+count));
+                count++;
+            }
+        }
         super.onCreate(savedInstanceState);
     }
 
@@ -85,6 +94,14 @@ public class StandFragment extends Fragment {
         // Create an empty book list
         BookList = new ArrayList<>();
         //Retrieve the user's actual bookList
+
+        if (savedInstanceState != null) {
+            int count = 0;
+            while (savedInstanceState.getSerializable("Book"+count) != null) {
+                BookList.add((Book)savedInstanceState.getSerializable("Book"+count));
+                count++;
+            }
+        }
 
         View view = inflater.inflate(R.layout.fragment_stand_list, container, false);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.stand_recycler_view);
@@ -114,9 +131,15 @@ public class StandFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 23) {
             if (resultCode == RESULT_OK) {
+<<<<<<< HEAD
                 /**TODO: get the user book list from firebase
                  *
                  */
+=======
+                Book book = (Book) data.getSerializableExtra("key");
+                BookList.add(book);
+                adapter.notifyDataSetChanged();
+>>>>>>> 5a0c22e8c3dcc69960f05983d69d5e7bbc9e3d67
             }
         }
     }
@@ -153,6 +176,7 @@ public class StandFragment extends Fragment {
         void onListFragmentInteraction(Book item);
     }
 
+<<<<<<< HEAD
 
     public ArrayList<Book> getBookList() {
         final ArrayList<Book> bookList = new ArrayList<Book>();
@@ -172,5 +196,15 @@ public class StandFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {}
         };
         return bookList;
+=======
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        int count = 0;
+        for (Book book : BookList) {
+            outState.putSerializable("Book"+count, book);
+            count++;
+        }
+>>>>>>> 5a0c22e8c3dcc69960f05983d69d5e7bbc9e3d67
     }
 }

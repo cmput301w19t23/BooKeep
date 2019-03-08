@@ -2,7 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.bookeep">
 
+<<<<<<< HEAD
     <uses-permission android:name="android.permission.CAMERA" />
+=======
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- other permissions go here -->
+>>>>>>> 5a0c22e8c3dcc69960f05983d69d5e7bbc9e3d67
 
     <application
         android:allowBackup="true"

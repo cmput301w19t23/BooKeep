@@ -22,7 +22,7 @@ public class Book implements Serializable {
     private BookStatus status;
     private String currentBorrowerId;
     private ArrayList<String> requesterIds = new ArrayList<String>();
-    private Bitmap bookImage;
+    private String bookImage;
 
     public Book(String ISBN, String ownerId){
         super();
@@ -38,11 +38,11 @@ public class Book implements Serializable {
         this.status = BookStatus.AVAILABLE;
     }
 
-    public Bitmap getBookImage() {
+    public String getBookImage() {
         return bookImage;
     }
 
-    public void setBookImage(Bitmap bookImage) {
+    public void setBookImage(String bookImage) {
         this.bookImage = bookImage;
     }
 
