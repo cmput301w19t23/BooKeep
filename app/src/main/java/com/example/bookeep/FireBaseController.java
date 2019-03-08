@@ -55,36 +55,37 @@ public class FireBaseController {
                     //user.setUserName("nafee");
                     databaseReference.child("users").child(user.getUserId()).setValue(user);
                     Toast.makeText(context, "Fail", Toast.LENGTH_SHORT);
-
+/*ACTUAL
                     Intent intent = new Intent(context, LoginActivity.class);
                     context.startActivity(intent);
                     //
+*/
+                    Intent intent = new Intent(context, BookDetailsActivity.class);
+                    intent.putExtra("User", user);
 
-                    //Intent intent = new Intent(context, BookDetailsActivity.class);
-                    //intent.putExtra("User", user);
-
-                    //Book book = new Book();
-                    //book.setTitle("88Harry Potter and the Deathly Hallows");
-                    //ArrayList<String> authors = new ArrayList<>();
+                    Book book = new Book();
+                    book.setTitle("LLLHarry Potter and the Deathly Hallows");
+                    ArrayList<String> authors = new ArrayList<>();
                     //authors.add("J. K. Rowling");
+                    //ArrayList<String> authorsString = new ArrayList<String>();
+                    authors.add("J.K.Rowling");
+                    book.setAuthor(authors);
+                    book.setStatus(BookStatus.AVAILABLE);
+                    book.setOwner(firebaseUser.getUid());
+                    book.setBookId("book1");
+                    book.setDescription("The magnificent final book in J. K. Rowling's seven-part saga comes to readers July 21, 2007. You'll find out July 21!");
+                    //book.setISBN(9780545010221);
+                    book.addRequest("6AiwcVImzdfqpC8xDh1C48ialNG2");
+                    book.addRequest("9MW1ipPRRwakV5v38Svfx2WoLVa2");
+                    book.addRequest("BCmTz5KaYKffteOqu4QJz6f3EIA3");
+                    databaseReference.child("books").child(book.getBookId()).setValue(book);
 
-                    //book.setAuthor("J.K.Rowling");
-                    //book.setStatus(BookStatus.AVAILABLE);
-                    //book.setOwner(firebaseUser.getUid());
-                    //book.setBookId("book1");
-                    //book.setDescription("The magnificent final book in J. K. Rowling's seven-part saga comes to readers July 21, 2007. You'll find out July 21!");
-                    //ok.setISBN(9780545010221);
-                    //book.addRequest("1iECbuI1luQliWJypEPhKBERSH42");
-                    //book.addRequest("1j7ynA45YuhOtEFiaFENvG1HOSF2");
-                    //book.addRequest("6AiwcVImzdfqpC8xDh1C48ialNG2");
-                    //databaseReference.child("books").child(book.getBookId()).setValue(book);
-
-                    //User newReq = new User("nak123", "nak@gmail.com", "N", "K", "nak123");
-                    //databaseReference.child("users").child("nak123").setValue(newReq);
+                    User newReq = new User("nak123", "nak@gmail.com", "N", "K", "nak123");
+                    databaseReference.child("users").child("nak123").setValue(newReq);
 
 
-                    //intent.putExtra("Book ID", book.getBookId());
-                    //context.startActivity(intent);
+                    intent.putExtra("Book ID", book.getBookId());
+                    context.startActivity(intent);
 
                 } else {
                     Toast.makeText(context, "Failed to add new user", Toast.LENGTH_SHORT);

@@ -92,7 +92,7 @@ public class BookDetailsFragment extends Fragment {
                         //toolbar.setTitle(mBook.getTitle());
                         //toolbarLayout.setTitle(mBook.getTitle());
 
-                        bookAuthors.setText(mBook.getAuthursString());
+                        bookAuthors.setText(mBook.getAuthorsString());
 //                bookISBN.setText(mBook.getISBN());
                         bookStatus.setText(mBook.getStatus().toString());
                         bookDescription.setText(mBook.getDescription());
@@ -169,13 +169,14 @@ public class BookDetailsFragment extends Fragment {
         bookStatus = view.findViewById(R.id.book_status);
         bookDescription = view.findViewById(R.id.book_description);
         bookOwner = view.findViewById(R.id.book_owner);
+        //isResumed = true;
         databaseReference.child("books").child(mBook.getBookId()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mBook = dataSnapshot.getValue(Book.class);
                 mListener.onBookUpdate(mBook);
 
-                bookAuthors.setText(mBook.getAuthursString());
+                bookAuthors.setText(mBook.getAuthorsString());
                 //bookISBN.setText(mBook.getISBN());
                 bookStatus.setText(mBook.getStatus().toString());
                 bookDescription.setText(mBook.getDescription());
@@ -200,6 +201,9 @@ public class BookDetailsFragment extends Fragment {
 
             }
         });
+
+        databaseReference.child("books").addChildEventListener(updateListener);
+        //isResumed = true;
         //mBook = fireBaseController.onBookChanged()
 
         return view;
@@ -238,8 +242,6 @@ public class BookDetailsFragment extends Fragment {
     public void onResume() {
 
         //super.onResume();
-
-        databaseReference.child("books").addChildEventListener(updateListener);
         isResumed = true;
         super.onResume();
 

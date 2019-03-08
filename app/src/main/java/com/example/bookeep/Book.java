@@ -148,7 +148,7 @@ public class Book implements Serializable {
 
     }
 
-    public String getAuthursString(){
+    public String getAuthorsString(){
         String authorsString = "";
         for(String author: this.authors){
 

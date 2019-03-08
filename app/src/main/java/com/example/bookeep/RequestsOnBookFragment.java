@@ -59,7 +59,9 @@ public class RequestsOnBookFragment extends Fragment {
             if (changedBook.getBookId().equals(mBook.getBookId())){
                 if(changedBook != null) {
                     if(isResumed) {
+
                         mBook = changedBook;
+
                         if (mListener != null) {
                             mListener.onBookUpdate(mBook);
                         }
@@ -150,6 +152,7 @@ public class RequestsOnBookFragment extends Fragment {
         // Set the adapter
         //if (view instanceof RecyclerView) {
         Context context = view.getContext();
+        //isResumed = true;
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.requests_recycler_view);
         /*
         if (mColumnCount <= 1) {
@@ -167,6 +170,45 @@ public class RequestsOnBookFragment extends Fragment {
             //recyclerView.setAdapter(new RequestsOnBookRecyclerViewAdapter(requesters, mListener));
 
             //context = view.getContext();
+        databaseReference.child("books").child(bookId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                mBook = dataSnapshot.getValue(Book.class);
+                mListener.onBookUpdate(mBook);
+                ArrayList<String> requesterIds = mBook.getRequesterIds();
+                requesters.clear();
+                adapter.notifyDataSetChanged();
+                for(String requesterId: requesterIds){
+                    databaseReference.child("users").child(requesterId).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            requesters.add(dataSnapshot.getValue(User.class));
+                            adapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+
+                databaseReference.child("books").addChildEventListener(updateListener);
+
+            }
+
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+        });
+
+        //isResumed = true;
 
         //}
         return view;
@@ -199,41 +241,6 @@ public class RequestsOnBookFragment extends Fragment {
 
     @Override
     public void onResume() {
-
-        databaseReference.child("books").child(bookId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                mBook = dataSnapshot.getValue(Book.class);
-                mListener.onBookUpdate(mBook);
-                ArrayList<String> requesterIds = mBook.getRequesterIds();
-                for(String requesterId: requesterIds){
-                    databaseReference.child("users").child(requesterId).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                            requesters.add(dataSnapshot.getValue(User.class));
-                            adapter.notifyDataSetChanged();
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                }
-
-                databaseReference.child("books").addChildEventListener(updateListener);
-
-            }
-
-
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-
-        });
 
         isResumed = true;
         super.onResume();
