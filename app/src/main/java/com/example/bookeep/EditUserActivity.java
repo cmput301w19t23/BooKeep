@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
@@ -35,6 +36,8 @@ public class EditUserActivity extends AppCompatActivity {
     private ArrayList<String> users;
     private ArrayList<String> emails;
     private String userId;
+    private ArrayList<String> currentUsername;
+    private ArrayList<String> currentEmail;
 
 
     //need to add get text from edit user to prefill the edit texts
@@ -64,6 +67,8 @@ public class EditUserActivity extends AppCompatActivity {
         super.onResume();
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        currentEmail = new ArrayList<>();
+        currentUsername = new ArrayList<>();
 
 
         userId = firebaseUser.getUid();
@@ -77,9 +82,15 @@ public class EditUserActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren() ){
-                    User userFromDatabase = data.getValue(User.class);
-                    users.add(userFromDatabase.getUserName());
-                    emails.add(userFromDatabase.getEmail());
+                    if (data != null) {
+                        try {
+                            User userFromDatabase = data.getValue(User.class);
+                            users.add(userFromDatabase.getUserName());
+                            emails.add(userFromDatabase.getEmail());
+                        } catch (DatabaseException exc) {
+
+                        }
+                    }
                 }
             }
 
@@ -96,9 +107,11 @@ public class EditUserActivity extends AppCompatActivity {
                 User currentUser = dataSnapshot.getValue(User.class);
                 if (currentUser != null) {
                     userName.setText(currentUser.getUserName());
+                    currentUsername.add(currentUser.getUserName());
                     firstName.setText(currentUser.getFirstname());
                     lastName.setText(currentUser.getFirstname());
                     email.setText(currentUser.getEmail());
+                    currentEmail.add(currentUser.getEmail());
                     phoneNumber.setText(currentUser.getPhoneNumber().toString());
                 }
             }
@@ -149,7 +162,8 @@ public class EditUserActivity extends AppCompatActivity {
         //boolean timeValid = false;
 
         if (Patterns.EMAIL_ADDRESS.matcher(email.getText().toString()).matches()) {
-            emailValid = !emails.contains(email.getText().toString());
+            emailValid = (!emails.contains(email.getText().toString())
+                          || currentEmail.contains(email.getText().toString()));
         }
         //need to set check for username availability
         usernameValid = true;
@@ -163,7 +177,9 @@ public class EditUserActivity extends AppCompatActivity {
         if (lastName.getText().toString().length() > 0) {
             lastNameValid = true;
         }
-        usernameValid = (userName.getText().toString().length() > 4 && !users.contains(userName.getText().toString()));
+        usernameValid = (userName.getText().toString().length() > 4 //tests to make sure username is unique (or old username) and longer than 4 characters long
+                     && (!users.contains(userName.getText().toString())
+                     || currentUsername.contains(userName.getText().toString())));
 
         return (emailValid && usernameValid && phoneValid && firstNameValid && lastNameValid);
     }
