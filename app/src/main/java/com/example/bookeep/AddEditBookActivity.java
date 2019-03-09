@@ -51,11 +51,10 @@ public class AddEditBookActivity extends AppCompatActivity {
 
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+    DatabaseReference databaseReference;
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
     private String currentUserID;
-    private User currentUser;
     private Book book;
 
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 0;
@@ -74,6 +73,9 @@ public class AddEditBookActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_book);
+
+        // Initialize DB reference
+        databaseReference = FirebaseDatabase.getInstance().getReference();
 
         Intent intent = getIntent();
         setResult(RESULT_CANCELED, intent);
@@ -138,7 +140,7 @@ public class AddEditBookActivity extends AppCompatActivity {
         if (isbn.getText().toString().trim().isEmpty()) {
             isbn.setError("Missing isbn!");
             pass = Boolean.FALSE;
-        }  else if (isbn.getText().toString().trim().length() == 10) {
+        } else if (isbn.getText().toString().trim().length() == 10) {
             setTextBoxes(isbn.getText().toString());
         } else if (isbn.getText().toString().trim().length() != 13) {
             isbn.setError("Invalid isbn!");
@@ -150,9 +152,6 @@ public class AddEditBookActivity extends AppCompatActivity {
 
             //Get the user object
             currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-
 
             book = new Book(isbn.getText().toString().trim(), currentUserID);
             ArrayList<String> Authors = new ArrayList<>();
@@ -162,30 +161,14 @@ public class AddEditBookActivity extends AppCompatActivity {
             BitmapDrawable drawable = (BitmapDrawable) bookImage.getDrawable();
             //book.setBookImage(drawable.getBitmap());
             book.setStatus(BookStatus.AVAILABLE);
+
+            // Add book to "books
             databaseReference.child("books").child(book.getBookId()).setValue(book);
-
-            databaseReference.child("users").child(currentUserID).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        String bookID = book.getBookId();
-                        currentUser = dataSnapshot.getValue(User.class);
-                        currentUser.addToOwned(bookID);
-                        databaseReference.child("users").child(currentUserID).setValue(currentUser);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-            }
+            // Add book to "user-books" sorted by userID
+            databaseReference.child("user-books").child(currentUserID).push().setValue(book);
             finish();
-
-
-            //book gets saved here. Create book object, save the user ID in book
-            //and save the book in users list of owned books. Return back to
-            //activity/fragment that called this.
         }
+    }
 
     public void ImageUpload(View view) {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
