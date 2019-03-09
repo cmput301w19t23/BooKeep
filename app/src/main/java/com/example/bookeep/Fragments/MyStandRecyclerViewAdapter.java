@@ -26,6 +26,7 @@ import com.example.bookeep.BookDetailsActivity;
 import com.example.bookeep.Fragments.StandFragment.OnListFragmentInteractionListener;
 import com.example.bookeep.MainActivity;
 import com.example.bookeep.R;
+import com.example.bookeep.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -33,6 +34,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -53,6 +55,7 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+    String currentUserId = firebaseUser.getUid();
     private ChildEventListener mChildEventListener;
 
     public MyStandRecyclerViewAdapter(List<Book> items, OnListFragmentInteractionListener listener) {
@@ -168,7 +171,7 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
             int id = menuItem.getItemId();
 
             if (id == R.id.delete_book) {
-                //removeBook(position);
+                removeBook(position);
                 
 
             } else if (id == R.id.edit_book) {
@@ -183,11 +186,34 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
     /**
      * @param position
      */
-    public void removeBook(int position) {
+    public void removeBook(final int position) {
         if (mValues.get(position).getStatus() == AVAILABLE) {
+
+            databaseReference.child("books").child(mValues.get(position).getBookId()).removeValue();
+            databaseReference.child("user-books").child(currentUserId).child(mValues.get(position).getBookId()).removeValue();
+            databaseReference.child("users").child(currentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    User currUser = dataSnapshot.getValue(User.class);
+                    currUser.removeFromOwned(mValues.get(position).getBookId());
+                    databaseReference.child("users").child(currentUserId).setValue(currUser);
+                    mValues.remove(position);
+                    notifyItemRemoved(position);
+                    notifyItemRangeChanged(position, mValues.size());
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+                
+            });
+            /*
             mValues.remove(position);
             notifyItemRemoved(position);
-            notifyItemRangeChanged(position, mValues.size());
+            notifyItemRangeChanged(position, mValues.size());*/
         }
     }
 

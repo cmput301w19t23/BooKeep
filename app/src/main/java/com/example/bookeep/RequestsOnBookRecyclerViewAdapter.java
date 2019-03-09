@@ -35,6 +35,7 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference databaseReference = database.getReference();
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+    String currenUserId = firebaseUser.getUid();
     private String mBookId;
     private Book mBook;
 
@@ -54,6 +55,7 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
+        //mItem is the requester.
         holder.mItem = mValues.get(position);
 
         //holder.mIdView.setText(mValues.get(position).id);
@@ -61,19 +63,48 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
         holder.txtRequesterName.setText(mValues.get(position).getFirstname() + " " + mValues.get(position).getLastname() );
         holder.txtRequesterUsername.setText("@" + mValues.get(position).getUserName());
         holder.btnAcceptRequest.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 databaseReference.child("books").child(mBookId).addListenerForSingleValueEvent(new ValueEventListener() {
 
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                         mBook = dataSnapshot.getValue(Book.class);
-                        //mBook.addRequest(mValues.get(position).getUserId());
+                        mBook.setCurrentBorrower(holder.mItem.getUserId());
                         mBook.setStatus(BookStatus.ACCEPTED);
+                        mBook.clearRequesters();
+                        databaseReference.child("books").child(mBookId).setValue(mBook);
+                        databaseReference.child("user-books").child(currenUserId).child(mBookId).setValue(mBook);
+                        databaseReference.child("user-borrowed").child(holder.mItem.getUserId()).child(mBookId).setValue(mBook);
+                        databaseReference.child("users").child(holder.mItem.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                User confirmedRequester = dataSnapshot.getValue(User.class);
+                                confirmedRequester.addToBorrowed(mBookId);
+                                databaseReference.child("users").child(confirmedRequester.getUserId()).setValue(confirmedRequester);
+                                mValues.clear();
+                                notifyItemRangeRemoved(0,mValues.size());
+
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+
+
+                        //mBook.addRequest(mValues.get(position).getUserId());
+                        /*mBook.setStatus(BookStatus.ACCEPTED);
                         mBook.clearRequesters();
                         mValues.clear();
                         databaseReference.child("books").child(mBookId).setValue(mBook);
-                        notifyItemRangeRemoved(0,mValues.size());
+                        notifyItemRangeRemoved(0,mValues.size());*/
 
 
                     }
@@ -94,7 +125,11 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
 
                         mBook = dataSnapshot.getValue(Book.class);
                         mBook.removeRequester(mValues.get(position).getUserId());
+                        if(mBook.getRequesterIds().size() == 0){
+                            mBook.setStatus(BookStatus.AVAILABLE);
+                        }
                         databaseReference.child("books").child(mBookId).setValue(mBook);
+                        databaseReference.child("user-books").child(currenUserId).child(mBookId).setValue(mBook);
                         removeRequester(position);
 
                     }

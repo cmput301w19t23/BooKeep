@@ -100,6 +100,17 @@ public class User implements Serializable {
         this.borrowedIds.add(bookId);
     }
 
+    public void removeFromOwned(String bookId){
+
+        for(int i = 0; i < ownedIds.size(); i++){
+            if(ownedIds.get(i).equals(bookId)){
+
+                ownedIds.remove(i);
+            }
+        }
+
+    }
+
     public ArrayList<String> getOwnedIds() {
         return this.ownedIds;
     }
