@@ -30,12 +30,16 @@ public class FireBaseController {
     private Context context;
 
     public FireBaseController(Context context) {
-        this.context = context;
+        //this.context = context;
         firebaseAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference();
         firebaseUser = firebaseAuth.getCurrentUser();
+//<<<<<<< HEAD
    
+//=======
+        this.context = context;
+//>>>>>>> firebase
     }
 
     public void createNewUser(final String email, String password, final String firstName, final String lastName, final PhoneNumber phoneNumber){
@@ -51,10 +55,42 @@ public class FireBaseController {
 
                     User user = new User(email, firstName,lastName, firebaseUser.getUid());
                     user.setPhoneNumber(phoneNumber);
+
+                    //user.setUserName("nafee");
                     databaseReference.child("users").child(user.getUserId()).setValue(user);
+                    Toast.makeText(context, "Fail", Toast.LENGTH_SHORT);
 
                     Intent intent = new Intent(context, LoginActivity.class);
                     context.startActivity(intent);
+
+
+                    /*
+                    Intent intent = new Intent(context, BookDetailsActivity.class);
+                    intent.putExtra("User", user);
+
+                    Book book = new Book();
+                    book.setTitle("Harry Potter and the Deathly Hallows");
+                    ArrayList<String> authors = new ArrayList<>();
+                    //authors.add("J. K. Rowling");
+                    //ArrayList<String> authorsString = new ArrayList<String>();
+                    authors.add("J.K.Rowling");
+                    book.setAuthor(authors);
+                    book.setStatus(BookStatus.AVAILABLE);
+                    book.setOwner("123");//firebaseUser.getUid());
+                    book.setBookId("book1");
+                    book.setDescription("The magnificent final book in J. K. Rowling's seven-part saga comes to readers July 21, 2007. You'll find out July 21!");
+                    //book.setISBN(9780545010221);
+                    book.addRequest("6AiwcVImzdfqpC8xDh1C48ialNG2");
+                    book.addRequest("9MW1ipPRRwakV5v38Svfx2WoLVa2");
+                    book.addRequest("BCmTz5KaYKffteOqu4QJz6f3EIA3");
+                    databaseReference.child("books").child(book.getBookId()).setValue(book);
+
+                    User newReq = new User("nak123", "nak@gmail.com", "N", "K", "nak123");
+                    databaseReference.child("users").child("nak123").setValue(newReq);
+
+
+                    intent.putExtra("Book ID", book.getBookId());
+                    context.startActivity(intent);*/
 
                 } else {
                     Toast.makeText(context, "Failed to add new user", Toast.LENGTH_SHORT);
@@ -120,28 +156,7 @@ public class FireBaseController {
 
     }
 
-//    public User getCurrentUser(){
-//
-//        final User[] user = new User[1];
-//        if(isUserLoggedIn()){
-//
-//            databaseReference.child("user").child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                    user[0] = dataSnapshot.getValue(User.class);
-//                }
-//
-//                @Override
-//                public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                }
-//            });
-//
-//        }
-//
-//        return user[0];
-//
-//    }
+
 
     public String getCurrentUserId(){
         return firebaseUser.getUid();
@@ -174,68 +189,76 @@ public class FireBaseController {
         }
 
     }
+/*
+    public Book getBookByBookId(String bookId){
 
-//    public ArrayList<Book> getBooksOwnedByUser(){
-//
-//        //final ArrayList<String>[] bookIds = new ArrayList<String>[1];
-//        final ArrayList<Book> owned = new ArrayList<Book>();
-//        databaseReference.child("users").child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-//
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//
-//                User user = dataSnapshot.getValue(User.class);
-//                ArrayList<String> bookIds = user.getBorrowedIds();
-//
-//                for (int i = 0; i < bookIds.size(); i++){
-//                    databaseReference.child("books").child(bookIds.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                            owned.add(dataSnapshot.getValue(Book.class));
-//                        }
-//
-//                        @Override
-//                        public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                        }
-//                    });
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-//        return owned;
-//
-//            //ArrayList<Book> owned = new ArrayList<Book>();
-//            //for(String bookId: bookIds)
-//
-//    }
+        //final Book[] book = new Book[1];
+        //final ArrayList<Book> books = new ArrayList<Book>();
+        Book book;
+        databaseReference.child("books").child(bookId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                //book[0] = dataSnapshot.getValue(Book.class);
+                //books.add(dataSnapshot.getValue(Book.class));
+                book = dataSnapshot.getValue(Book.class);
+                return book;
+            }
 
-//    public Book getBookByBookId(String bookId){
-//
-//        final Book[] book = new Book[1];
-//        databaseReference.child("books").child(bookId).addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                book[0] = dataSnapshot.getValue(Book.class);
-//                //return book;
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-//
-//
-//        return book[0];
-//
-//    }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
+            }
+        });
+
+
+        //return book[0];
+        return books.get(0);
+
+    }
+
+    public void addRequestToBookByBookId(String bookId){
+
+        if(isUserLoggedIn()) {
+
+            Book book = getBookByBookId(bookId);
+            book.addRequest(firebaseUser.getUid());
+            if(book.getStatus().equals(BookStatus.AVAILABLE)) {
+                book.setStatus(BookStatus.REQUESTED);
+                databaseReference.child("books").child(bookId).setValue(book);
+            } else if (book.getStatus().equals(BookStatus.REQUESTED)){
+
+                databaseReference.child("books").child(bookId).setValue(book);
+
+            } else {
+                Toast.makeText(context, "Sorry book is not available for borrowing", Toast.LENGTH_SHORT);
+            }
+
+        }
+
+    }
+
+    public DatabaseReference getDatabaseReference(){
+        return this.databaseReference;
+    }
+/*
+    public Book onBookChanged(String bookId){
+
+        final Book[] book = new Book[1];
+        databaseReference.child("books").child(bookId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                book[0] = dataSnapshot.getValue(Book.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return book[0];
+
+    }
+*/
 
 
 
