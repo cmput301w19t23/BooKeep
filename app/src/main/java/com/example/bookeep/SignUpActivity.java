@@ -1,5 +1,6 @@
 package com.example.bookeep;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -43,6 +44,9 @@ public class SignUpActivity extends AppCompatActivity {
                             edtFirstName.getText().toString(),
                             edtLastName.getText().toString(),
                             phoneNumber);
+
+                    //Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                    //startActivity(intent);
 
                 }
 

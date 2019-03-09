@@ -80,6 +80,8 @@ public class AddEditBookActivity extends AppCompatActivity {
     private Button scanBook;
     private Button saveBook;
     private JSONObject jsonObject;
+    private User currentUser;
+    private String imageURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,11 +179,33 @@ public class AddEditBookActivity extends AppCompatActivity {
             BitmapDrawable drawable = (BitmapDrawable) bookImage.getDrawable();
             //book.setBookImage(drawable.getBitmap());
             book.setStatus(BookStatus.AVAILABLE);
+            book.setBookImageURL(imageURL);
 
             // Add book to "books
             databaseReference.child("books").child(book.getBookId()).setValue(book);
             // Add book to "user-books" sorted by userID
             databaseReference.child("user-books").child(currentUserID).push().setValue(book);
+
+            databaseReference.child("users").child(currentUserID).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    currentUser = dataSnapshot.getValue(User.class);
+                    currentUser.addToOwned(book.getBookId());
+                    databaseReference.child("users").child(currentUserID).setValue(currentUser);
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+
+
+                }
+            });
+            Intent intent = new Intent(AddEditBookActivity.this, BookDetailsActivity.class);
+            intent.putExtra("Book ID", book.getBookId());
+            startActivity(intent);
             finish();
         }
     }
@@ -190,6 +214,7 @@ public class AddEditBookActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
         startActivityForResult(intent, 69);
+
     }
 
 
@@ -245,7 +270,7 @@ public class AddEditBookActivity extends AppCompatActivity {
             bookDescription.setText(description);
 
             JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
-            String imageURL = imageLinks.getString("thumbnail");
+            imageURL = imageLinks.getString("thumbnail");
 
             //Drawable bookImage = (Drawable) loadImageFromWebOperations(imageURL);
             DownloadImageTask downloadImageTask = new DownloadImageTask();

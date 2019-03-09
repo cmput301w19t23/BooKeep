@@ -55,11 +55,12 @@ public class FireBaseController {
                     //user.setUserName("nafee");
                     databaseReference.child("users").child(user.getUserId()).setValue(user);
                     Toast.makeText(context, "Fail", Toast.LENGTH_SHORT);
-/*ACTUAL
+
                     Intent intent = new Intent(context, LoginActivity.class);
                     context.startActivity(intent);
-                    //
-*/
+
+
+                    /*
                     Intent intent = new Intent(context, BookDetailsActivity.class);
                     intent.putExtra("User", user);
 
@@ -85,7 +86,7 @@ public class FireBaseController {
 
 
                     intent.putExtra("Book ID", book.getBookId());
-                    context.startActivity(intent);
+                    context.startActivity(intent);*/
 
                 } else {
                     Toast.makeText(context, "Failed to add new user", Toast.LENGTH_SHORT);

@@ -117,105 +117,105 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                 toolbar.setTitle(book.getTitle());
                 toolbarLayout.setTitle(book.getTitle());
                 currentUserId = firebaseUser.getUid();
-            databaseReference.child("users").child(currentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    //if(dataSnapshot.getValue(User.class).getUserId().equals(currentUserId)) {
-                    currentUser = dataSnapshot.getValue(User.class);
-                    bookImage = (ImageView) findViewById(R.id.book_image);
-                    DownloadImageTask downloadImageTask = new DownloadImageTask();
-                    try {
-                        Bitmap bitmap = downloadImageTask.execute("http://books.google.com/books/content?id=H8sdBgAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api").get();
-                        bookImage.setImageBitmap(bitmap);
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                databaseReference.child("users").child(currentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        //if(dataSnapshot.getValue(User.class).getUserId().equals(currentUserId)) {
+                        currentUser = dataSnapshot.getValue(User.class);
+                        bookImage = (ImageView) findViewById(R.id.book_image);
+                        DownloadImageTask downloadImageTask = new DownloadImageTask();
+                        try {
+                            Bitmap bitmap = downloadImageTask.execute(book.getBookImageURL()).get();//"http://books.google.com/books/content?id=H8sdBgAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api").get();
+                            bookImage.setImageBitmap(bitmap);
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 
-                    // Below: code for if user IS book owner:
-                    if (currentUserId.equals(book.getOwner())) {
-                        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-                        //edit book button for owner
-                        fab.setImageResource(R.drawable.pencil);
-                        fab.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                        // Below: code for if user IS book owner:
+                        if (currentUserId.equals(book.getOwner())) {
+                            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+                            //edit book button for owner
+                            fab.setImageResource(R.drawable.pencil);
+                            fab.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
 
-                                Intent intent = new Intent(BookDetailsActivity.this, AddEditBookActivity.class);
-                                intent.putExtra("Book to edit", book);
-                                startActivity(intent);
+                                    Intent intent = new Intent(BookDetailsActivity.this, AddEditBookActivity.class);
+                                    intent.putExtra("Book to edit", book);
+                                    startActivity(intent);
 
-                            }
-                        });
+                                }
+                            });
 
-                    } else {
+                        } else {
 
-                        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-                        //fab.setEnabled(false);
-                        //fab.setVisibility(View.GONE);
-                        // add request button for borrower
-                        fab.setImageResource(R.drawable.ic_add);
-                        fab.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                if (book.getStatus().equals(BookStatus.AVAILABLE)) {
+                            final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+                            //fab.setEnabled(false);
+                            //fab.setVisibility(View.GONE);
+                            // add request button for borrower
+                            fab.setImageResource(R.drawable.ic_add);
+                            fab.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if (book.getStatus().equals(BookStatus.AVAILABLE)) {
 
-                                    //fireBaseController.addRequestToBookByBookId(book.getBookId());
-                                    if(book.getStatus().equals(BookStatus.AVAILABLE) || book.getStatus().equals(BookStatus.REQUESTED)) {
+                                        //fireBaseController.addRequestToBookByBookId(book.getBookId());
+                                        if(book.getStatus().equals(BookStatus.AVAILABLE) || book.getStatus().equals(BookStatus.REQUESTED)) {
 
-                                        databaseReference.child("books").child(book.getBookId()).addListenerForSingleValueEvent(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            databaseReference.child("books").child(book.getBookId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                                                book = dataSnapshot.getValue(Book.class);
-                                                book.addRequest(currentUserId);
-                                                book.setStatus(BookStatus.REQUESTED);
-                                                databaseReference.child("books").child(book.getBookId()).setValue(book);
-                                                fab.setEnabled(false);
-                                                fab.setVisibility(View.GONE);
+                                                    book = dataSnapshot.getValue(Book.class);
+                                                    book.addRequest(currentUserId);
+                                                    book.setStatus(BookStatus.REQUESTED);
+                                                    databaseReference.child("books").child(book.getBookId()).setValue(book);
+                                                    fab.setEnabled(false);
+                                                    fab.setVisibility(View.GONE);
 
-                                            }
+                                                }
 
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                            }
+                                                }
 
-                                        });
+                                            });
+
+                                        }
 
                                     }
 
                                 }
 
-                            }
+                            });
 
-                        });
+                        }
+
+
+                        BookDetailsFragment fragment = null;
+                        //Class fragmentClass = null;
+                        //fragmentClass = BookDetailsFragment.class;
+                        try {
+                            fragment = (BookDetailsFragment) BookDetailsFragment.newInstance(book, currentUser);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        FragmentManager fragmentManager = getSupportFragmentManager();
+                        fragmentManager.beginTransaction().replace(R.id.book_details_fragment_container, fragment).commit();
+                        //}
 
                     }
 
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                    BookDetailsFragment fragment = null;
-                    //Class fragmentClass = null;
-                    //fragmentClass = BookDetailsFragment.class;
-                    try {
-                        fragment = (BookDetailsFragment) BookDetailsFragment.newInstance(book, currentUser);
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
-
-                    FragmentManager fragmentManager = getSupportFragmentManager();
-                    fragmentManager.beginTransaction().replace(R.id.book_details_fragment_container, fragment).commit();
-                    //}
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
+                });
 
             }
 
@@ -323,6 +323,15 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
         Intent intent = new Intent(BookDetailsActivity.this, UserProfileActivity.class);
         intent.putExtra("User", item);
         startActivity(intent);
+
+    }
+
+    @Override
+    public void onBackPressed(){
+
+        Intent intent = new Intent(BookDetailsActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
 
     }
 /*

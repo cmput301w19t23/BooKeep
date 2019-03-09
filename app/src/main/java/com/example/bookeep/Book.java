@@ -23,7 +23,17 @@ public class Book implements Serializable {
     private BookStatus status;
     private String currentBorrowerId;
     private ArrayList<String> requesterIds = new ArrayList<String>();
-    private Bitmap bookImage;
+    //private Bitmap bookImage;
+
+    public String getBookImageURL() {
+        return bookImageURL;
+    }
+
+    public void setBookImageURL(String bookImageURL) {
+        this.bookImageURL = bookImageURL;
+    }
+
+    private String bookImageURL;
 
     public Book(String ISBN, String ownerId){
         super();
@@ -39,13 +49,13 @@ public class Book implements Serializable {
         this.status = BookStatus.AVAILABLE;
     }
 
-    public Bitmap getBookImage() {
-        return bookImage;
-    }
+    //public Bitmap getBookImage() {
+      //  return bookImage;
+    //}
 
-    public void setBookImage(Bitmap bookImage) {
-        this.bookImage = bookImage;
-    }
+    //public void setBookImage(Bitmap bookImage) {
+        //this.bookImage = bookImage;
+    //}
 
     public ArrayList<String> getRequesterIds(){
         return this.requesterIds;

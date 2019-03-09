@@ -186,6 +186,7 @@ public class RequestsOnBookFragment extends Fragment {
 
                             requesters.add(dataSnapshot.getValue(User.class));
                             adapter.notifyDataSetChanged();
+
                         }
 
                         @Override

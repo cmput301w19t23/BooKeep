@@ -24,7 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, FirebaseAuth.AuthStateListener {
+        implements NavigationView.OnNavigationItemSelectedListener, FirebaseAuth.AuthStateListener, StandFragment.OnListFragmentInteractionListener, ShelfFragment.OnListFragmentInteractionListener{
     private FireBaseController fireBaseController = new FireBaseController(this);
     public Integer ADD_REQUEST = 0;
     public Integer EDIT_REQUEST = 1;
@@ -196,6 +196,15 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         }
 
+
+    }
+
+    @Override
+    public void onListFragmentInteraction(Book item) {
+
+        Intent intent = new Intent(MainActivity.this, BookDetailsActivity.class);
+        intent.putExtra("Book ID", item.getBookId());
+        startActivity(intent);
 
     }
 }
