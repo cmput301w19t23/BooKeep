@@ -136,17 +136,7 @@ public class StandFragment extends Fragment {
             }
         });
 
-
-        //Created and updates the booklist
-        databaseReference.child("user-books").child(currentUserID).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                databaseReference.child("user-books").child(currentUserID).addChildEventListener(updateListener);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
-        });
+        databaseReference.child("user-books").child(currentUserID).addChildEventListener(updateListener);
 
         return view;
     }
