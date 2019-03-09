@@ -262,17 +262,14 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
             } else if (id == R.id.action_requesters) {
                 //return true;
                 fragment = RequestsOnBookFragment.newInstance(book);
-
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.book_details_fragment_container, fragment).commit();
             }
             else if (id == R.id.action_book_details) {
                 fragment = BookDetailsFragment.newInstance(book, currentUser);
-                //return true;
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.book_details_fragment_container, fragment).commit();
             }
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.book_details_fragment_container, fragment).commit();
-
-            //return true;
-
         } else {//noinspection SimplifiableIfStatement
             if (id == R.id.action_edit) {
                 return true;
@@ -281,8 +278,6 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
             } else if (id == R.id.action_book_details) {
                 return true;
             }
-
-            //return true;
         }
 
         return super.onOptionsItemSelected(item);
