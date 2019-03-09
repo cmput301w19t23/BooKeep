@@ -56,7 +56,6 @@ public class StandFragment extends Fragment {
     MyStandRecyclerViewAdapter adapter;
 
 
-    /*
     private ChildEventListener updateListener = new ChildEventListener() {
         @Override
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -71,6 +70,20 @@ public class StandFragment extends Fragment {
         @Override
         public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
+            Book changedBook = dataSnapshot.getValue(Book.class);
+
+            for(int i = 0; i < BookList.size(); i++){
+
+                if(BookList.get(i).getBookId().equals(changedBook.getBookId())){
+
+                    BookList.remove(i);
+                    BookList.add(changedBook);
+                    adapter.notifyDataSetChanged();
+
+                }
+
+            }
+
         }
 
         @Override
@@ -81,7 +94,9 @@ public class StandFragment extends Fragment {
 
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {}
-    };*/
+    };
+
+    /*OLD DTSRUCTURE
     private ChildEventListener updateListener = new ChildEventListener() {
 
         @Override
@@ -144,7 +159,7 @@ public class StandFragment extends Fragment {
         public void onCancelled(@NonNull DatabaseError databaseError) {
 
         }
-    };
+    };*/
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
@@ -209,8 +224,9 @@ public class StandFragment extends Fragment {
 
 
         //Created and updates the booklist
-        /*
+
         databaseReference.child("user-books").child(currentUserID).addListenerForSingleValueEvent(new ValueEventListener() {
+
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 databaseReference.child("user-books").child(currentUserID).addChildEventListener(updateListener);
@@ -218,9 +234,10 @@ public class StandFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {}
-        });*/
 
+        });
 
+/*OLD STRUCTURE
         databaseReference.child("users").child(currentUserID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -256,7 +273,7 @@ public class StandFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        });*/
 
         return view;
     }

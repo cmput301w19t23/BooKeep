@@ -325,7 +325,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
         startActivity(intent);
 
     }
-
+/*
     @Override
     public void onBackPressed(){
 
@@ -334,6 +334,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
         finish();
 
     }
+    */
 /*
     public Book getBook() {
         return this.book;

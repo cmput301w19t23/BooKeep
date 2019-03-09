@@ -48,10 +48,11 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
     private ChildEventListener mChildEventListener;
 
-
     public MyStandRecyclerViewAdapter(List<Book> items, OnListFragmentInteractionListener listener) {
+
         mValues = items;
         mListener = listener;
+
     }
 
 
@@ -156,7 +157,10 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
             int id = menuItem.getItemId();
 
             if (id == R.id.delete_book) {
-                removeBook(position);
+
+                //removeBook(position);
+                
+
             }
             return false;
         }
