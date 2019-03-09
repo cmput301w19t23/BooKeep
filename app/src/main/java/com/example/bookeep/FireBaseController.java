@@ -64,14 +64,14 @@ public class FireBaseController {
                     intent.putExtra("User", user);
 
                     Book book = new Book();
-                    book.setTitle("LLLHarry Potter and the Deathly Hallows");
+                    book.setTitle("Harry Potter and the Deathly Hallows");
                     ArrayList<String> authors = new ArrayList<>();
                     //authors.add("J. K. Rowling");
                     //ArrayList<String> authorsString = new ArrayList<String>();
                     authors.add("J.K.Rowling");
                     book.setAuthor(authors);
                     book.setStatus(BookStatus.AVAILABLE);
-                    book.setOwner(firebaseUser.getUid());
+                    book.setOwner("123");//firebaseUser.getUid());
                     book.setBookId("book1");
                     book.setDescription("The magnificent final book in J. K. Rowling's seven-part saga comes to readers July 21, 2007. You'll find out July 21!");
                     //book.setISBN(9780545010221);

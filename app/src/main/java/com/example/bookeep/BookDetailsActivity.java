@@ -152,7 +152,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
 
                     } else {
 
-                        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+                        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
                         //fab.setEnabled(false);
                         //fab.setVisibility(View.GONE);
                         // add request button for borrower
@@ -165,16 +165,33 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                                     //fireBaseController.addRequestToBookByBookId(book.getBookId());
                                     if(book.getStatus().equals(BookStatus.AVAILABLE) || book.getStatus().equals(BookStatus.REQUESTED)) {
 
-                                        book.addRequest(currentUserId);
-                                        book.setStatus(BookStatus.REQUESTED);
-                                        databaseReference.child("books").child(book.getBookId()).setValue(book);
+                                        databaseReference.child("books").child(book.getBookId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                                book = dataSnapshot.getValue(Book.class);
+                                                book.addRequest(currentUserId);
+                                                book.setStatus(BookStatus.REQUESTED);
+                                                databaseReference.child("books").child(book.getBookId()).setValue(book);
+                                                fab.setEnabled(false);
+                                                fab.setVisibility(View.GONE);
+
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+
+                                        });
 
                                     }
 
                                 }
-                            }
-                        });
 
+                            }
+
+                        });
 
                     }
 
@@ -206,6 +223,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
+
         });
 
 
@@ -338,7 +356,9 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
         }
 
         protected void onPostExecute(Bitmap result) {
+
             //bmImage.setImageBitmap(result);
+
         }
 
     }

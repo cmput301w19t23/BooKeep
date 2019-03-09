@@ -44,7 +44,7 @@ public class TestActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = "hjgfkbvc@ualberta.ca";
+                String email = "nnnnnn@ualberta.ca";
                 String password = "123456";
                 String first= "Nafee";
                 String last = "Khan";
