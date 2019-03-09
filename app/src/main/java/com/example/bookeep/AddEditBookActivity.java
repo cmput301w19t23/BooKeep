@@ -109,6 +109,7 @@ public class AddEditBookActivity extends AppCompatActivity {
         bookDescription = (EditText) findViewById(R.id.editBookDescription);
         scanBook = (Button) findViewById(R.id.btnScanBook);
         saveBook = (Button) findViewById(R.id.btnSaveBook);
+        bookStatus.setText(BookStatus.AVAILABLE.toString());
 
         Bundle bundle = intent.getExtras();
 
@@ -279,7 +280,6 @@ public class AddEditBookActivity extends AppCompatActivity {
                 BitmapDrawable drawable = (BitmapDrawable) bookImage.getDrawable();
                 book.setDescription(bookDescription.getText().toString().trim());
                 //book.setBookImage(drawable.getBitmap());
-                book.setStatus(BookStatus.AVAILABLE);
                 book.setBookImageURL(imageURL);
 
 /*
@@ -357,56 +357,64 @@ public class AddEditBookActivity extends AppCompatActivity {
 
     public void setTextBoxes(String ISBN) {
         GoogleApiRequest googleApiRequest = new GoogleApiRequest();
+        if (isNetworkAvailable()) {
 
-        try {
-            jsonObject = (JSONObject) googleApiRequest.execute(ISBN).get();
-            //txtView.setText(obj.toString());
+            try {
+                jsonObject = (JSONObject) googleApiRequest.execute(ISBN).get();
+                //txtView.setText(obj.toString());
 
-            JSONArray jsonArray = (JSONArray) jsonObject.getJSONArray("items");
-            JSONObject item1 = jsonArray.getJSONObject(0);
-            JSONObject volumeInfo = item1.getJSONObject("volumeInfo");
+                JSONArray jsonArray = (JSONArray) jsonObject.getJSONArray("items");
+                JSONObject item1 = jsonArray.getJSONObject(0);
+                JSONObject volumeInfo = item1.getJSONObject("volumeInfo");
 
-            String title = volumeInfo.getString("title");
-            bookTitle.setText(title);
-            bookTitle.setError(null);
+                if (bookTitle.getText().toString().trim().isEmpty()) {
+                    String title = volumeInfo.getString("title");
+                    bookTitle.setText(title);
+                    bookTitle.setError(null);
+                }
 
-            String authors = volumeInfo.getJSONArray("authors").getString(0);
-            bookAuthors.setText(authors);
-            bookAuthors.setError(null);
+                if (bookAuthors.getText().toString().trim().isEmpty()) {
+                    String authors = volumeInfo.getJSONArray("authors").getString(0);
+                    bookAuthors.setText(authors);
+                    bookAuthors.setError(null);
+                }
 
-            //String isbn = volumeInfo.getString()
-            JSONArray industryIdentifiers = (JSONArray) volumeInfo.getJSONArray("industryIdentifiers");
-            JSONObject isbn13 = industryIdentifiers.getJSONObject(1);
-            String isbn13String = isbn13.getString("identifier");
-            isbn.setText(isbn13String);
-            isbn.setError(null);
+                //String isbn = volumeInfo.getString()
+                JSONArray industryIdentifiers = (JSONArray) volumeInfo.getJSONArray("industryIdentifiers");
+                JSONObject isbn13 = industryIdentifiers.getJSONObject(1);
+                String isbn13String = isbn13.getString("identifier");
+                isbn.setText(isbn13String);
+                isbn.setError(null);
 
-            String description = volumeInfo.getString("description");
-            bookDescription.setText(description);
+                if (bookDescription.getText().toString().trim().isEmpty()) {
+                    String description = volumeInfo.getString("description");
+                    bookDescription.setText(description);
+                }
 
-            JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
+                JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
 //<<<<<<< HEAD
-            //bookLink = imageLinks.getString("thumbnail");
-            //bookImage.setImageBitmap(setPicture(bookLink));
+                //bookLink = imageLinks.getString("thumbnail");
+                //bookImage.setImageBitmap(setPicture(bookLink));
 //=======
-            imageURL = imageLinks.getString("thumbnail");
+                imageURL = imageLinks.getString("thumbnail");
 
-            //Drawable bookImage = (Drawable) loadImageFromWebOperations(imageURL);
-            DownloadImageTask downloadImageTask = new DownloadImageTask();
-            Bitmap bookImageBitMap = downloadImageTask.execute(imageURL).get();
-            bookImage.setImageBitmap(bookImageBitMap);
+                //Drawable bookImage = (Drawable) loadImageFromWebOperations(imageURL);
+                DownloadImageTask downloadImageTask = new DownloadImageTask();
+                Bitmap bookImageBitMap = downloadImageTask.execute(imageURL).get();
+                bookImage.setImageBitmap(bookImageBitMap);
 //>>>>>>> firebase
 
-            bookStatus.setText(BookStatus.AVAILABLE.toString());
 
 
-            //txtView.setText(author);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
+
+                //txtView.setText(author);
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 

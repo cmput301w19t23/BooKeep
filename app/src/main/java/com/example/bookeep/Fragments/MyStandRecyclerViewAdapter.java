@@ -1,5 +1,8 @@
 package com.example.bookeep.Fragments;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -13,11 +16,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.example.bookeep.AddEditBookActivity;
 import com.example.bookeep.Book;
+import com.example.bookeep.BookDetailsActivity;
 import com.example.bookeep.Fragments.StandFragment.OnListFragmentInteractionListener;
+import com.example.bookeep.MainActivity;
 import com.example.bookeep.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -71,7 +78,7 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
         DownloadImageTask downloadImageTask = new DownloadImageTask();
         try {
             Bitmap bookImage = downloadImageTask.execute(mValues.get(position).getBookImageURL()).get();
-            holder.overflow.setImageBitmap(bookImage);
+            holder.imageView.setImageBitmap(bookImage);
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -111,6 +118,7 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
         public final TextView mContentView;
         public Book mItem;
         public final ImageButton overflow;
+        public final ImageView imageView;
 
         public ViewHolder(View view) {
             super(view);
@@ -118,6 +126,7 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
             mIdView = (TextView) view.findViewById(R.id.book_title);
             mContentView = (TextView) view.findViewById(R.id.book_author);
             overflow = (ImageButton) view.findViewById(R.id.overflow_menu);
+            imageView = view.findViewById(R.id.imageView4);
         }
 
         @Override
@@ -137,7 +146,7 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
         PopupMenu popup = new PopupMenu(view.getContext(), view);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.stand_card_overflow, popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenuItemClickListener(position));
+        popup.setOnMenuItemClickListener(new PopupMenuItemClickListener(position, view));
         popup.show();
     }
 
@@ -147,9 +156,11 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
     class PopupMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
 
         private int position;
+        private View view;
 
-        public PopupMenuItemClickListener(int position) {
+        public PopupMenuItemClickListener(int position, View view) {
             this.position = position;
+            this.view = view;
         }
 
         @Override
@@ -157,10 +168,13 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
             int id = menuItem.getItemId();
 
             if (id == R.id.delete_book) {
-
                 //removeBook(position);
                 
 
+            } else if (id == R.id.edit_book) {
+                Intent intent = new Intent(view.getContext(), AddEditBookActivity.class);
+                intent.putExtra("Book to edit", mValues.get(position));
+                view.getContext().startActivity(intent);
             }
             return false;
         }
