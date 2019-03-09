@@ -99,7 +99,7 @@ public class ShelfFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         currentUserID = firebaseUser.getUid();
-        BookList = MyShelfRecyclerViewAdapter.createBookList(6);
+        BookList = new ArrayList<Book>();
 
         View view = inflater.inflate(R.layout.fragment_shelf_list, container, false);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.shelf_recycler_view);
