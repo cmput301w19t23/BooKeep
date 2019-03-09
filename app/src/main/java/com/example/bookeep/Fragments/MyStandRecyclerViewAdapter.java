@@ -1,5 +1,7 @@
 package com.example.bookeep.Fragments;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -13,6 +15,13 @@ import android.widget.TextView;
 import com.example.bookeep.Book;
 import com.example.bookeep.Fragments.StandFragment.OnListFragmentInteractionListener;
 import com.example.bookeep.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +36,12 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
 
     private final List<Book> mValues;
     private final OnListFragmentInteractionListener mListener;
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+    private ChildEventListener mChildEventListener;
+
 
     public MyStandRecyclerViewAdapter(List<Book> items, OnListFragmentInteractionListener listener) {
         mValues = items;
@@ -95,26 +110,6 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
         }
     }
 
-
-    /**
-     * TODO: Get rid of this once firebase is fully integrated
-     * @param COUNT
-     * @return A dummy book list
-     */
-    public static ArrayList<Book> createBookList(int COUNT) {
-        ArrayList<Book> BookList = new ArrayList<Book>();
-        Book newBook = new Book();
-        newBook.setTitle("Foundation");
-        ArrayList<String> authors = new ArrayList<String>();
-        authors.add("Isaac Asimov");
-        newBook.setAuthor(authors);
-        for (int i = 1; i <= COUNT; i++) {
-            BookList.add(newBook);
-        }
-
-        return BookList;
-    }
-
     /**
      * Method to show the popup menu when the overflow button is pressed
      * @param view
@@ -152,7 +147,7 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
     }
 
     /**
-     * 
+     *
      * @param position
      */
     public void removeBook(int position) {

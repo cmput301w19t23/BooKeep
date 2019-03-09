@@ -10,8 +10,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
+import android.renderscript.Sampler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -49,11 +51,11 @@ public class AddEditBookActivity extends AppCompatActivity {
 
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+    DatabaseReference databaseReference;
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
     private String currentUserID;
-    private User currentUser;
+    private Book book;
 
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 0;
 
@@ -72,6 +74,9 @@ public class AddEditBookActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_book);
+
+        // Initialize DB reference
+        databaseReference = FirebaseDatabase.getInstance().getReference();
 
         Intent intent = getIntent();
         setResult(RESULT_CANCELED, intent);
@@ -136,7 +141,7 @@ public class AddEditBookActivity extends AppCompatActivity {
         if (isbn.getText().toString().trim().isEmpty()) {
             isbn.setError("Missing isbn!");
             pass = Boolean.FALSE;
-        }  else if (isbn.getText().toString().trim().length() == 10) {
+        } else if (isbn.getText().toString().trim().length() == 10) {
             setTextBoxes(isbn.getText().toString());
         } else if (isbn.getText().toString().trim().length() != 13) {
             isbn.setError("Invalid isbn!");
@@ -148,12 +153,8 @@ public class AddEditBookActivity extends AppCompatActivity {
 
             //Get the user object
             currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-
-
-            final Book book = new Book(isbn.getText().toString().trim(), currentUserID);
-
+            book = new Book(isbn.getText().toString().trim(), currentUserID);
             ArrayList<String> Authors = new ArrayList<>();
             Authors.add(bookAuthors.getText().toString().trim());
             book.setAuthor(Authors);
@@ -161,18 +162,13 @@ public class AddEditBookActivity extends AppCompatActivity {
             BitmapDrawable drawable = (BitmapDrawable) bookImage.getDrawable();
             //book.setBookImage(drawable.getBitmap());
             book.setStatus(BookStatus.AVAILABLE);
-            final String bookID = book.getBookId();
+
+            // Add book to "books
             databaseReference.child("books").child(book.getBookId()).setValue(book);
-            databaseReference.child("users").child(currentUserID).child("ownedIds").push().setValue(bookID);
-
+            // Add book to "user-books" sorted by userID
+            databaseReference.child("user-books").child(currentUserID).push().setValue(book);
             finish();
-
-
-            //book gets saved here. Create book object, save the user ID in book
-            //and save the book in users list of owned books. Return back to
-            //activity/fragment that called this.
         }
-
     }
 
     public void ImageUpload(View view) {
@@ -373,4 +369,8 @@ public class AddEditBookActivity extends AppCompatActivity {
         }
     }
 }
+
+
+
+
 
