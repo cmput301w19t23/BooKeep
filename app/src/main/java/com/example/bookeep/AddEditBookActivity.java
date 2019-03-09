@@ -1,5 +1,14 @@
 package com.example.bookeep;
 
+
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +26,7 @@ import android.renderscript.Sampler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +36,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -49,6 +60,7 @@ import java.util.concurrent.ExecutionException;
  * */
 public class AddEditBookActivity extends AppCompatActivity {
 
+
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference databaseReference;
@@ -68,10 +80,18 @@ public class AddEditBookActivity extends AppCompatActivity {
     private Button scanBook;
     private Button saveBook;
     private JSONObject jsonObject;
-    private String bookLink;
+
+    //private String bookLink;
+
+    private User currentUser;
+    private String imageURL;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        //super.onCreate(savedInstanceState);
+        //setContentView(R.layout.activity_book_details);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_book);
 
@@ -90,14 +110,58 @@ public class AddEditBookActivity extends AppCompatActivity {
         scanBook = (Button) findViewById(R.id.btnScanBook);
         saveBook = (Button) findViewById(R.id.btnSaveBook);
 
+        Bundle bundle = intent.getExtras();
+
+        if(bundle != null){
+
+            book = (Book) intent.getSerializableExtra("Book to edit");
+
+            databaseReference.child("books").child(book.getBookId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    book = dataSnapshot.getValue(Book.class);
+                    bookTitle.setText(book.getTitle());
+                    bookAuthors.setText(book.getAuthorsString());
+                    isbn.setText(book.getISBN());
+                    bookStatus.setText(book.getStatus().toString());
+                    bookDescription.setText(book.getDescription());
+                    DownloadImageTask downloadImageTask = new DownloadImageTask();
+
+                    try {
+
+                        Bitmap bitmap = downloadImageTask.execute(book.getBookImageURL()).get();
+                        bookImage.setImageBitmap(bitmap);
+
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+
+            });
+
+        }
+
         scanBook.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
+
                 if (ContextCompat.checkSelfPermission(AddEditBookActivity.this, Manifest.permission.CAMERA)
                         == PackageManager.PERMISSION_GRANTED) {
                     // Permission has already been granted
                     new IntentIntegrator(AddEditBookActivity.this).initiateScan();
+
                 } else {
+
                     // Permission is NOT granted
                     // Prompt the user for permission
                     ActivityCompat.requestPermissions(
@@ -105,40 +169,55 @@ public class AddEditBookActivity extends AppCompatActivity {
                             new String[]{Manifest.permission.CAMERA},
                             MY_PERMISSIONS_REQUEST_CAMERA
                     );
+
                 }
+
             }
+
         });
 
         isbn.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+
                 if (!hasFocus) {
+
                     if (isbn.getText().toString().trim().length() == 13 ||
                             isbn.getText().toString().trim().length() == 10) {
+
                         setTextBoxes(isbn.getText().toString());
+
                     }
+
                 }
+
             }
+
         });
 
     }
 
     public void saveButtonPressed(View view) {
+
         Boolean pass = Boolean.TRUE;
 
         if (bookTitle.getText().toString().isEmpty()) {
+
             bookTitle.setError("Missing title!");
             pass = Boolean.FALSE;
-        }
 
+        }
 
         if (bookAuthors.getText().toString().isEmpty()) {
+
             bookAuthors.setError("Missing authors!");
             pass = Boolean.FALSE;
+
         }
 
-
         if (isbn.getText().toString().trim().isEmpty()) {
+
             isbn.setError("Missing isbn!");
             pass = Boolean.FALSE;
         } else if (isbn.getText().toString().trim().length() == 10) {
@@ -148,25 +227,100 @@ public class AddEditBookActivity extends AppCompatActivity {
             pass = Boolean.FALSE;
         }
 
-
         if (pass) {
 
             //Get the user object
             currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            if(book == null) {
 
-            book = new Book(isbn.getText().toString().trim(), currentUserID);
-            ArrayList<String> Authors = new ArrayList<>();
-            Authors.add(bookAuthors.getText().toString().trim());
-            book.setAuthor(Authors);
-            book.setTitle(bookTitle.getText().toString().trim());
-            BitmapDrawable drawable = (BitmapDrawable) bookImage.getDrawable();
-            //book.setBookImage(drawable.getBitmap());
-            book.setStatus(BookStatus.AVAILABLE);
+                book = new Book(isbn.getText().toString().trim(), currentUserID);
+
+                ArrayList<String> Authors = new ArrayList<>();
+                Authors.add(bookAuthors.getText().toString().trim());
+                book.setAuthor(Authors);
+                book.setTitle(bookTitle.getText().toString().trim());
+                book.setDescription(bookDescription.getText().toString().trim());
+                BitmapDrawable drawable = (BitmapDrawable) bookImage.getDrawable();
+                //book.setBookImage(drawable.getBitmap());
+                book.setStatus(BookStatus.AVAILABLE);
+                book.setBookImageURL(imageURL);
+
+                // Add book to "user-books" sorted by userID
+                databaseReference.child("user-books").child(currentUserID).child(book.getBookId()).setValue(book);
+
+                databaseReference.child("users").child(currentUserID).addListenerForSingleValueEvent(new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        currentUser = dataSnapshot.getValue(User.class);
+                        currentUser.addToOwned(book.getBookId());
+                        databaseReference.child("users").child(currentUserID).setValue(currentUser);
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+
+                });
+
+                databaseReference.child("books").child(book.getBookId()).setValue(book);
+
+
+            } else {
+
+                book.setISBN(isbn.getText().toString().trim());
+                ArrayList<String> Authors = new ArrayList<>();
+                Authors.add(bookAuthors.getText().toString().trim());
+                book.setAuthor(Authors);
+                book.setTitle(bookTitle.getText().toString().trim());
+                BitmapDrawable drawable = (BitmapDrawable) bookImage.getDrawable();
+                book.setDescription(bookDescription.getText().toString().trim());
+                //book.setBookImage(drawable.getBitmap());
+                book.setStatus(BookStatus.AVAILABLE);
+                book.setBookImageURL(imageURL);
+
+/*
+                databaseReference.child("user-books").child(currentUserID).child(book.getBookId()).addListenerForSingleValueEvent(new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        for(DataSnapshot bookSnapshot: dataSnapshot.getChildren()){
+
+                            Book existing = bookSnapshot.getValue(Book.class);
+                            if(book.getBookId().equals(existing.getBookId())){
+
+
+
+                            }
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+
+                });
+*/
+
+                databaseReference.child("user-books").child(currentUserID).child(book.getBookId()).setValue(book);
+                databaseReference.child("books").child(book.getBookId()).setValue(book);
+
+            }
+
+
 
             // Add book to "books
-            databaseReference.child("books").child(book.getBookId()).setValue(book);
-            // Add book to "user-books" sorted by userID
-            databaseReference.child("user-books").child(currentUserID).push().setValue(book);
+
+            Intent intent = new Intent(AddEditBookActivity.this, BookDetailsActivity.class);
+            intent.putExtra("Book ID", book.getBookId());
+            startActivity(intent);
             finish();
         }
     }
@@ -175,6 +329,7 @@ public class AddEditBookActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
         startActivityForResult(intent, 69);
+
     }
 
 
@@ -230,11 +385,17 @@ public class AddEditBookActivity extends AppCompatActivity {
             bookDescription.setText(description);
 
             JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
-            bookLink = imageLinks.getString("thumbnail");
-            bookImage.setImageBitmap(setPicture(bookLink));
+//<<<<<<< HEAD
+            //bookLink = imageLinks.getString("thumbnail");
+            //bookImage.setImageBitmap(setPicture(bookLink));
+//=======
+            imageURL = imageLinks.getString("thumbnail");
 
-
-
+            //Drawable bookImage = (Drawable) loadImageFromWebOperations(imageURL);
+            DownloadImageTask downloadImageTask = new DownloadImageTask();
+            Bitmap bookImageBitMap = downloadImageTask.execute(imageURL).get();
+            bookImage.setImageBitmap(bookImageBitMap);
+//>>>>>>> firebase
 
             bookStatus.setText(BookStatus.AVAILABLE.toString());
 
@@ -258,8 +419,15 @@ public class AddEditBookActivity extends AppCompatActivity {
             if (data != null) {
                 super.onActivityResult(requestCode, resultCode, data);
                 Uri selectedImage = data.getData();
-                bookLink = selectedImage.toString();
-                bookImage.setImageBitmap(setPicture(bookLink));
+                //bookLink = selectedImage.toString();
+                //bookImage.setImageBitmap(setPicture(bookLink));
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                    bitmap = Bitmap.createScaledBitmap(bitmap, 147, 150, true);
+                    bookImage.setImageBitmap(bitmap);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         } else {
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
@@ -290,12 +458,12 @@ public class AddEditBookActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 
     }
-
     //taken from https://stackoverflow.com/questions/6407324/how-to-display-image-from-url-on-android
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
         //ImageView bmImage;
         //public DownloadImageTask(ImageView bmImage) {
+
         // AddEditBookActivity.this.bookImage = bmImage;
         //}
 
@@ -322,7 +490,7 @@ public class AddEditBookActivity extends AppCompatActivity {
 
 
     }
-
+/*
     public Bitmap setPicture(String ImageLink) {
         if (ImageLink.startsWith("http")) {
             if (isNetworkAvailable()) {
@@ -347,8 +515,8 @@ public class AddEditBookActivity extends AppCompatActivity {
             }
         }
         return null;
-    }
-
+    }*/
+/*
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
 
@@ -368,6 +536,7 @@ public class AddEditBookActivity extends AppCompatActivity {
             bookImage.setImageBitmap(setPicture(bookLink));
         }
     }
+    */
 }
 
 

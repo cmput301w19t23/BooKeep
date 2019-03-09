@@ -18,6 +18,16 @@ public class User implements Serializable {
     private String userId;
     private String imageURL;
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    private String userName;
+
 
     public User(String email, String firstname, String lastname){
         super();
@@ -35,6 +45,15 @@ public class User implements Serializable {
         this.lastname = lastname;
         this.userId = userId;
 
+    }
+
+    public User(String userName, String email, String firstname, String lastname, String userId){
+
+        this.email = email;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.userId = userId;
+        this.userName = userName;
     }
 
     public User(){

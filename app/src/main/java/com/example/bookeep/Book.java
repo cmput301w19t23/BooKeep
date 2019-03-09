@@ -13,6 +13,7 @@ import java.util.UUID;
 
 public class Book implements Serializable {
 
+    //private String authors;
     private ArrayList<String> authors;
     private String title;
     private String description;
@@ -22,7 +23,17 @@ public class Book implements Serializable {
     private BookStatus status;
     private String currentBorrowerId;
     private ArrayList<String> requesterIds = new ArrayList<String>();
-    private Bitmap bookImage;
+    //private Bitmap bookImage;
+
+    public String getBookImageURL() {
+        return bookImageURL;
+    }
+
+    public void setBookImageURL(String bookImageURL) {
+        this.bookImageURL = bookImageURL;
+    }
+
+    private String bookImageURL;
 
     public Book(String ISBN, String ownerId){
         super();
@@ -38,13 +49,13 @@ public class Book implements Serializable {
         this.status = BookStatus.AVAILABLE;
     }
 
-    public Bitmap getBookImage() {
-        return bookImage;
-    }
+    //public Bitmap getBookImage() {
+      //  return bookImage;
+    //}
 
-    public void setBookImage(Bitmap bookImage) {
-        this.bookImage = bookImage;
-    }
+    //public void setBookImage(Bitmap bookImage) {
+        //this.bookImage = bookImage;
+    //}
 
     public ArrayList<String> getRequesterIds(){
         return this.requesterIds;
@@ -58,9 +69,22 @@ public class Book implements Serializable {
 
     }
 
+    //public String getAuthors() {
+        /*
+        String authorsString = null;
+        for(String author: authors){
+            authorsString = authorsString+author;
+        }
+        return authorsString;*/
+      //  return authors;
+    //}
     public ArrayList<String> getAuthors() {
         return authors;
     }
+
+    //public void setAuthor(String authors){//ArrayList<String> authors) {
+        //this.authors = authors;
+    //}
 
     public void setAuthor(ArrayList<String> authors) {
         this.authors = authors;
@@ -122,6 +146,26 @@ public class Book implements Serializable {
 
     public void setCurrentBorrower(String currentBorrowerId) {
         this.currentBorrowerId = currentBorrowerId;
+    }
+
+    public void clearRequesters (){
+        this.requesterIds.clear();
+    }
+
+    public void removeRequester(String reqId){
+
+        this.requesterIds.remove(reqId);
+
+    }
+
+    public String getAuthorsString(){
+        String authorsString = "";
+        for(String author: this.authors){
+
+            authorsString = authorsString + author;
+
+        }
+        return authorsString;
     }
 
 

@@ -37,12 +37,14 @@ public class LoginActivity extends AppCompatActivity {
         btnSignIn = (Button) findViewById(R.id.btn_sign_in);
         btnSignUp = (Button) findViewById(R.id.btn_sign_up);
 
+
 //        if( fireBaseController.isUserLoggedIn()){
 //
 //            fireBaseController.launchMainActivity();
 //
 //        }
 
+//<<<<<<< HEAD
         edtPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -52,6 +54,8 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
+//=======
+//>>>>>>> firebase
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,8 +1,12 @@
 package com.example.bookeep.Fragments;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,8 +27,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static com.example.bookeep.BookStatus.AVAILABLE;
 
@@ -42,10 +48,11 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
     private ChildEventListener mChildEventListener;
 
-
     public MyStandRecyclerViewAdapter(List<Book> items, OnListFragmentInteractionListener listener) {
+
         mValues = items;
         mListener = listener;
+
     }
 
 
@@ -61,6 +68,15 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).getTitle());
         holder.mContentView.setText(mValues.get(position).getAuthors().toString());
+        DownloadImageTask downloadImageTask = new DownloadImageTask();
+        try {
+            Bitmap bookImage = downloadImageTask.execute(mValues.get(position).getBookImageURL()).get();
+            holder.overflow.setImageBitmap(bookImage);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,6 +128,7 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
 
     /**
      * Method to show the popup menu when the overflow button is pressed
+     *
      * @param view
      * @param position
      */
@@ -124,8 +141,8 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
         popup.show();
     }
 
-    /** Custom click listener to make sure each card has a unique menu
-     *
+    /**
+     * Custom click listener to make sure each card has a unique menu
      */
     class PopupMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
 
@@ -140,14 +157,16 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
             int id = menuItem.getItemId();
 
             if (id == R.id.delete_book) {
-                removeBook(position);
+
+                //removeBook(position);
+                
+
             }
             return false;
         }
     }
 
     /**
-     *
      * @param position
      */
     public void removeBook(int position) {
@@ -156,5 +175,38 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, mValues.size());
         }
+    }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+
+        //ImageView bmImage;
+        //public DownloadImageTask(ImageView bmImage) {
+        // AddEditBookActivity.this.bookImage = bmImage;
+        //}
+
+        protected Bitmap doInBackground(String... urls) {
+
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+
+            return mIcon11;
+
+        }
+
+        protected void onPostExecute(Bitmap result) {
+
+            //bmImage.setImageBitmap(result);
+
+        }
+
+
     }
 }
