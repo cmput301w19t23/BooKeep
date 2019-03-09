@@ -1,5 +1,7 @@
 package com.example.bookeep;
 
+import android.content.ContentValues;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +24,22 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+/**
+ * This activity will display the users information (username, first name, lastname,
+ * email and phone number. The user can edit any of the fields and the changed information
+ * will be updated in the firebase database. The information given will be checked for
+ * correctness, specifically the username and email will be checked for uniqueness.
+ * If any given info is not correct an error will be displayed when the user attempts
+ * to save their changes.
+ * @author Nolan Brost
+ * @see User
+ * @see PhoneNumber
+ * @see SignUpActivity
+ * @see MainActivity
+ * @version 1.0.1
+ */
+//https://firebase.google.com/docs/reference/js/firebase.User#updateEmail
+    //should push updated email to firebase authentication
 public class EditUserActivity extends AppCompatActivity {
     private EditText userName;
     private ImageView userPicture;
@@ -29,6 +47,8 @@ public class EditUserActivity extends AppCompatActivity {
     private EditText lastName;
     private EditText email;
     private EditText phoneNumber;
+    private TextView editUserText;
+    private TextView errorTextView;
     private Button updateButton;
     private User user;
     private FirebaseDatabase database;
@@ -39,10 +59,6 @@ public class EditUserActivity extends AppCompatActivity {
     private ArrayList<String> currentUsername;
     private ArrayList<String> currentEmail;
 
-
-    //need to add get text from edit user to prefill the edit texts
-    //need to change user info in firebase
-    //also need to add on click listener to actually get here
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,6 +74,8 @@ public class EditUserActivity extends AppCompatActivity {
         userName = findViewById(R.id.EditUserName);
         userPicture = findViewById(R.id.UserPhoto);
         updateButton = findViewById(R.id.SaveProfile);
+        errorTextView = findViewById(R.id.ErrorText);
+        editUserText = findViewById(R.id.EditUserInfoView);
 
 
     }
@@ -67,8 +85,12 @@ public class EditUserActivity extends AppCompatActivity {
         super.onResume();
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        currentEmail = new ArrayList<>();
-        currentUsername = new ArrayList<>();
+        currentEmail = new ArrayList<>();                               //will contain all emails to check for uniqueness
+        currentUsername = new ArrayList<>();                            //will contain all users to check for uniqueness
+        errorTextView.setVisibility(View.INVISIBLE);                    //sets error text to invisible
+        errorTextView.setTextColor(Color.RED);                          //sets error texts colour to red
+        editUserText.setTextColor(Color.BLACK);
+        editUserText.setTextSize(22);
 
 
         userId = firebaseUser.getUid();
@@ -78,6 +100,7 @@ public class EditUserActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("users").child(userId);
 
+        //This will query the data base for all users and store their usernames and email in lists to check for uniqueness
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -100,7 +123,7 @@ public class EditUserActivity extends AppCompatActivity {
             }
         });
 
-
+        //this will get the users info from the database to prefill editing fields and to check if username/email haven't changed
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -122,7 +145,7 @@ public class EditUserActivity extends AppCompatActivity {
             }
         });
 
-
+        //will check if enter values are correct and updates the user if so
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,6 +156,10 @@ public class EditUserActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * will push changes to user to the firebase database
+     * @see User
+     */
     private void updateUser(){
         String emailString = email.getText().toString();
         String lastNameString = lastName.getText().toString();
@@ -146,8 +173,13 @@ public class EditUserActivity extends AppCompatActivity {
         user.setFirstname(firstNameString);
         user.setUserName(userNameString);
         myRef.setValue(user);
-        finish();
+        finish();//closes the activity after firebase is updated
     }
+
+    /**
+     * checks all editTexts to make sure they were filled correctly
+     * @return true if entered info is valid, and false otherwise
+     */
 
     private boolean validation() {
 
@@ -156,32 +188,65 @@ public class EditUserActivity extends AppCompatActivity {
         boolean phoneValid = false;
         boolean firstNameValid = false;
         boolean lastNameValid = false;
-
-        //boolean heartValid = false;
-        //boolean dateValid = false;
-        //boolean timeValid = false;
-
+        String errorText;
+        //Checks to make sure entered email is not already used or is the email already associated with the account, and that it is a proper email
+        //Sets emailValid to true or false depending on the test
         if (Patterns.EMAIL_ADDRESS.matcher(email.getText().toString()).matches()) {
             emailValid = (!emails.contains(email.getText().toString())
                           || currentEmail.contains(email.getText().toString()));
         }
-        //need to set check for username availability
-        usernameValid = true;
 
+        //Checks to make sure a proper phone numebr is given and sets phoneValid accordingly
         if (Patterns.PHONE.matcher(phoneNumber.getText().toString()).matches() && phoneNumber.getText().toString().length() == 10) {
             phoneValid = true;
         }
+
+        //Checks to make sure a first name was entered and sets firstNameValid accordingly
         if (firstName.getText().toString().length() > 0) {
             firstNameValid = true;
         }
+
+        //Checks to make sure a last name was entered and sets lastNameValid accordingly
         if (lastName.getText().toString().length() > 0) {
             lastNameValid = true;
         }
-        usernameValid = (userName.getText().toString().length() > 4 //tests to make sure username is unique (or old username) and longer than 4 characters long
+        //tests to make sure username is unique (or old username) and longer than 4 characters long and sets usernameValid accordingly
+        usernameValid = (userName.getText().toString().length() > 4
                      && (!users.contains(userName.getText().toString())
                      || currentUsername.contains(userName.getText().toString())));
 
+        //displays error text if any of the fields where improperly filled.
+        //will only display one at a time
+        if (!usernameValid) {
+            errorText = "Please enter a unique username";
+            displayErrorText(errorText);
+        }else if (!firstNameValid) {
+            errorText = "Please enter your first name";
+            displayErrorText(errorText);
+        } else if (!lastNameValid){
+            errorText = "Please enter your last name";
+            displayErrorText(errorText);
+        } else if (!emailValid){
+            errorText = "Please enter a valid email address";
+            displayErrorText(errorText);
+        } else if (!phoneValid){
+            errorText = "Please enter your phone number";
+            displayErrorText(errorText);
+        } else {
+            errorTextView.setVisibility(View.INVISIBLE);                    // if no errors sets the error text view to be invisible again
+        }
+
+        //returns true if all fields filled correctly, false otherwise
         return (emailValid && usernameValid && phoneValid && firstNameValid && lastNameValid);
+    }
+
+    /**
+     * sets the errorTextView to the string given and visible
+     * @param errorMessage
+     */
+    public void displayErrorText(String errorMessage){
+        errorTextView.setVisibility(View.VISIBLE);
+        errorTextView.setText(errorMessage);
     }
 
 }
