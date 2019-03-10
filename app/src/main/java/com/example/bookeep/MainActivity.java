@@ -208,6 +208,10 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
 
     }
+
+    public void setToolBar(String title) {
+        getSupportActionBar().setTitle(title);
+    }
 }
 
 
