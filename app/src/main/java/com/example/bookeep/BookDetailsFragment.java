@@ -93,7 +93,7 @@ public class BookDetailsFragment extends Fragment {
                         //toolbarLayout.setTitle(mBook.getTitle());
 
                         bookAuthors.setText(mBook.getAuthorsString());
-//                bookISBN.setText(mBook.getISBN());
+//                  bookISBN.setText(mBook.getISBN());
                         bookStatus.setText(mBook.getStatus().toString());
                         bookDescription.setText(mBook.getDescription());
                     }
