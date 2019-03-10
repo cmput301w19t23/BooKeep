@@ -193,7 +193,9 @@ public class RequestsOnBookFragment extends Fragment {
                         public void onCancelled(@NonNull DatabaseError databaseError) {
 
                         }
+
                     });
+
                 }
 
                 databaseReference.child("books").addChildEventListener(updateListener);
@@ -213,31 +215,43 @@ public class RequestsOnBookFragment extends Fragment {
 
         //}
         return view;
+
     }
 
 
     @Override
     public void onAttach(Context context) {
+
         super.onAttach(context);
+
         if (context instanceof OnListFragmentInteractionListener) {
+
             mListener = (OnListFragmentInteractionListener) context;
+
         } else {
+
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
+
         }
+
     }
 
     @Override
     public void onDetach() {
+
         super.onDetach();
         mListener = null;
+
     }
 
     @Override
     public void onPause() {
+
         databaseReference.removeEventListener(updateListener);
         isResumed = false;
         super.onPause();
+
     }
 
     @Override

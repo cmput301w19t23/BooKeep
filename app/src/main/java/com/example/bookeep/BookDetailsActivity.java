@@ -156,6 +156,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                     }
 
                 }
+
                 databaseReference.child("users").child(currentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -468,17 +469,18 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
         startActivity(intent);
 
     }
-/*
+
     @Override
     public void onBackPressed(){
 
         Intent intent = new Intent(BookDetailsActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
 
     }
-    */
-/*
+
+    /*
     public Book getBook() {
         return this.book;
     }*/
