@@ -48,7 +48,7 @@
                 android:textSize="12sp" />
 
             <ImageView
-                android:id="@+id/imageView2"
+                android:id="@+id/book_cover"
                 android:layout_width="189dp"
                 android:layout_height="600dp"
                 android:layout_below="@+id/bookAuthor"
