@@ -18,31 +18,41 @@ import java.util.concurrent.ExecutionException;
 public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecyclerViewAdapter.ViewHolder> {
 
     private final List<Book> mValues;
+    private final SearchFragment.OnListFragmentInteractionListener mListener;
 
-    public SearchRecyclerViewAdapter (List<Book> items) {
+    public SearchRecyclerViewAdapter (List<Book> items,SearchFragment.OnListFragmentInteractionListener listener) {
 
         mValues = items;
-
+        mListener = listener;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup,int i) {
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.activity_search, viewGroup, false);
+                .inflate(R.layout.fragment_search, viewGroup, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder,int i) {
-        viewHolder.mItem = mValues.get(i);
-        viewHolder.mIdView.setText(mValues.get(i).getTitle());
-        viewHolder.mContentView.setText(mValues.get(i).getAuthors().toString());
-        viewHolder.mOwner.setText(mValues.get(i).getOwner());
-        DownloadImageTask downloadImageTask = new DownloadImageTask();
+    public void onBindViewHolder(@NonNull final ViewHolder viewHolder,int i) {
         try {
+            viewHolder.mItem = mValues.get(i);
+            viewHolder.mIdView.setText(viewHolder.mItem.getTitle());
+            viewHolder.mContentView.setText(viewHolder.mItem.getAuthors().toString());
+            DownloadImageTask downloadImageTask = new DownloadImageTask();
             Bitmap bookImage = downloadImageTask.execute(mValues.get(i).getBookImageURL()).get();
             viewHolder.imageView.setImageBitmap(bookImage);
+            viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (null != mListener) {
+                        // Notify the active callbacks interface (the activity, if the
+                        // fragment is attached to one) that an item has been selected.
+                        mListener.onListFragmentInteraction(viewHolder.mItem);
+                    }
+                }
+            });
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -62,15 +72,13 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
         public final TextView mContentView;
         public Book mItem;
         public final ImageView imageView;
-        public final TextView mOwner;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.bookTitle);
             mContentView = (TextView) view.findViewById(R.id.bookAuthor);
-            mOwner = view.findViewById(R.id.bookOwner);
-            imageView = view.findViewById(R.id.book_cover);
+            imageView = view.findViewById(R.id.imageView2);
         }
 
         @Override
