@@ -245,6 +245,7 @@ public class AddEditBookActivity extends AppCompatActivity {
                 //book.setBookImage(drawable.getBitmap());
                 book.setStatus(BookStatus.AVAILABLE);
                 book.setBookImageURL(imageURL);
+                book.setISBN(isbn.getText().toString());
 
                 // Add book to "user-books" sorted by userID
                 databaseReference.child("user-books").child(currentUserID).child(book.getBookId()).setValue(book);
@@ -458,6 +459,7 @@ public class AddEditBookActivity extends AppCompatActivity {
                 super.onActivityResult(requestCode, resultCode, data);
             }
         }
+
     }
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
