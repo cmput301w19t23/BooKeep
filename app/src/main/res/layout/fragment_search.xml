@@ -53,7 +53,7 @@
                 android:layout_height="18dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@+id/imageView2"
+                android:layout_below="@+id/book_cover"
                 android:layout_gravity="bottom|center_horizontal"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
@@ -63,7 +63,7 @@
                 android:textSize="14sp"/>
 
             <ImageView
-                android:id="@+id/imageView2"
+                android:id="@+id/book_cover"
                 android:layout_width="189dp"
                 android:layout_height="375dp"
                 android:layout_below="@+id/bookAuthor"

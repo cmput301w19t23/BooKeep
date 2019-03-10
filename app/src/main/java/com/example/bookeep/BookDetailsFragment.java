@@ -3,16 +3,21 @@ package com.example.bookeep;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
@@ -24,6 +29,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.io.InputStream;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -52,6 +60,7 @@ public class BookDetailsFragment extends Fragment {
     private TextView bookStatus;
     private TextView bookDescription;
     private TextView bookOwner;
+    private ImageView bookCover;
     private FireBaseController fireBaseController = new FireBaseController(getActivity());
     private boolean isResumed;
 
@@ -85,15 +94,24 @@ public class BookDetailsFragment extends Fragment {
                         bookStatus = getView().findViewById(R.id.book_status);
                         bookDescription = getView().findViewById(R.id.book_description);
                         bookOwner = getView().findViewById(R.id.book_owner);
+                        bookCover = getView().findViewById(R.id.book_cover);
 
                         bookTitle.setText(mBook.getTitle());
                         //android.support.v7.widget.Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
                         //CollapsingToolbarLayout toolbarLayout = getActivity().findViewById(R.id.toolbar_layout);
                         //toolbar.setTitle(mBook.getTitle());
                         //toolbarLayout.setTitle(mBook.getTitle());
-
+                        DownloadImageTask downloadImageTask = new DownloadImageTask();
+                        try {
+                            Bitmap bitmap = downloadImageTask.execute(mBook.getBookImageURL()).get();//"http://books.google.com/books/content?id=H8sdBgAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api").get();
+                            bookCover.setImageBitmap(bitmap);
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         bookAuthors.setText(mBook.getAuthorsString());
-//                  bookISBN.setText(mBook.getISBN());
+                        //bookISBN.setText(mBook.getISBN());
                         bookStatus.setText(mBook.getStatus().toString());
                         bookDescription.setText(mBook.getDescription());
                     }
@@ -169,6 +187,7 @@ public class BookDetailsFragment extends Fragment {
         bookStatus = view.findViewById(R.id.book_status);
         bookDescription = view.findViewById(R.id.book_description);
         bookOwner = view.findViewById(R.id.book_owner);
+        bookCover = view.findViewById(R.id.book_cover);
         //isResumed = true;
         databaseReference.child("books").child(mBook.getBookId()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -177,7 +196,7 @@ public class BookDetailsFragment extends Fragment {
                 mListener.onBookUpdate(mBook);
 
                 bookAuthors.setText(mBook.getAuthorsString());
-                //bookISBN.setText(mBook.getISBN());
+                bookISBN.setText(mBook.getISBN());
                 bookStatus.setText(mBook.getStatus().toString());
                 bookDescription.setText(mBook.getDescription());
                 bookOwner.setText(mUser.getEmail());
@@ -192,7 +211,15 @@ public class BookDetailsFragment extends Fragment {
                     }
                 });
 
-
+                DownloadImageTask downloadImageTask = new DownloadImageTask();
+                try {
+                    Bitmap bitmap = downloadImageTask.execute(mBook.getBookImageURL()).get();//"http://books.google.com/books/content?id=H8sdBgAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api").get();
+                    bookCover.setImageBitmap(bitmap);
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 bookTitle.setText(mBook.getTitle());
             }
 
@@ -276,5 +303,36 @@ public class BookDetailsFragment extends Fragment {
 
         public void onBookUpdate(Book book);
     }
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
+        //ImageView bmImage;
+        //public DownloadImageTask(ImageView bmImage) {
+        // AddEditBookActivity.this.bookImage = bmImage;
+        //}
+
+        protected Bitmap doInBackground(String... urls) {
+
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+
+            return mIcon11;
+
+        }
+
+        protected void onPostExecute(Bitmap result) {
+
+            //bmImage.setImageBitmap(result);
+
+        }
+
+
+    }
 }

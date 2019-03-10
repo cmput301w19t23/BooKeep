@@ -70,7 +70,7 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
             mIdView = (TextView) view.findViewById(R.id.bookTitle);
             mContentView = (TextView) view.findViewById(R.id.bookAuthor);
             mOwner = view.findViewById(R.id.bookOwner);
-            imageView = view.findViewById(R.id.imageView2);
+            imageView = view.findViewById(R.id.book_cover);
         }
 
         @Override
