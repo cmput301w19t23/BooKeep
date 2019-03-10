@@ -20,6 +20,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 
 import java.util.ArrayList;
 
@@ -37,52 +38,6 @@ public class SearchFragment extends Fragment {
 
     // TODO: Customize parameters
     private OnListFragmentInteractionListener mListener;
-
-    private ChildEventListener updateListener = new ChildEventListener() {
-        @Override
-        public void onChildAdded(@NonNull DataSnapshot dataSnapshot,@Nullable String s) {
-
-            Book newBook = dataSnapshot.getValue(Book.class);
-            BookList.add(newBook);
-            adapter.notifyDataSetChanged();
-            Log.d("BookListSize1: ", Integer.toString(BookList.size()));
-
-        }
-
-        @Override
-        public void onChildChanged(@NonNull DataSnapshot dataSnapshot,@Nullable String s) {
-
-            Book changedBook = dataSnapshot.getValue(Book.class);
-
-            for(int i = 0; i < BookList.size(); i++){
-
-                if(BookList.get(i).getBookId().equals(changedBook.getBookId())){
-
-                    BookList.remove(i);
-                    BookList.add(changedBook);
-                    adapter.notifyDataSetChanged();
-
-                }
-
-            }
-        }
-
-        @Override
-        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-        }
-
-        @Override
-        public void onChildMoved(@NonNull DataSnapshot dataSnapshot,@Nullable String s) {
-
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-        }
-    };
-
 
     public SearchFragment() {}
 
@@ -107,13 +62,44 @@ public class SearchFragment extends Fragment {
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.search_recycler_view);
 
-        adapter = new SearchRecyclerViewAdapter(BookList);
+        adapter = new SearchRecyclerViewAdapter(BookList, mListener);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
 
         recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
 
-        databaseReference.child(BookStatus.AVAILABLE.toString()).addChildEventListener(updateListener);
+        databaseReference = database.getReference("books/");
+        databaseReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot,@Nullable String s) {
+                Book book = dataSnapshot.getValue(Book.class);
+                if (book.getStatus() == BookStatus.AVAILABLE) {
+                    BookList.add(book);
+                }
+                adapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot,@Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot,@Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         return view;
     }
