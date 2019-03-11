@@ -48,8 +48,9 @@ public class TestActivity extends AppCompatActivity {
                 String password = "123456";
                 String first= "Nafee";
                 String last = "Khan";
+                String userName = "NafeeK";
                 PhoneNumber phoneNumber = new PhoneNumber("587","938","3713");
-                fireBaseController.createNewUser(email,password,first,last,phoneNumber);
+                fireBaseController.createNewUser(userName,email,password,first,last,phoneNumber);
 
             }
         });

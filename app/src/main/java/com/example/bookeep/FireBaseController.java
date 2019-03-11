@@ -42,7 +42,7 @@ public class FireBaseController {
 //>>>>>>> firebase
     }
 
-    public void createNewUser(final String email, String password, final String firstName, final String lastName, final PhoneNumber phoneNumber){
+    public void createNewUser(final String userName, final String email, String password, final String firstName, final String lastName, final PhoneNumber phoneNumber){
         final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
             @Override
@@ -53,7 +53,7 @@ public class FireBaseController {
                     Toast.makeText(context, "New user added to FireBase", Toast.LENGTH_SHORT);
                     firebaseUser = firebaseAuth.getCurrentUser();
 
-                    User user = new User(email, firstName,lastName, firebaseUser.getUid());
+                    User user = new User(userName, email, firstName,lastName, firebaseUser.getUid());
                     user.setPhoneNumber(phoneNumber);
 
                     //user.setUserName("nafee");

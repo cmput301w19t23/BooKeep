@@ -1,8 +1,9 @@
 package com.example.bookeep;
 
-import android.content.Intent;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
 import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.View;
@@ -11,16 +12,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class SignUpActivity extends AppCompatActivity {
+
+
+public class SignUpActivity extends AppCompatActivity{
 
     private EditText edtEmail;
     private EditText edtPassword;
     private EditText edtFirstName;
     private EditText edtLastName;
     private EditText edtPhone;
+    private EditText edtUserName;
     private Button btnSignUp;
     private FireBaseController fireBaseController = new FireBaseController(this);
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +31,7 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+        edtUserName = (EditText) findViewById(R.id.user_name);
         edtFirstName = (EditText) findViewById(R.id.first_name);
         edtLastName = (EditText) findViewById(R.id.last_name);
         edtEmail = (EditText) findViewById(R.id.signup_email);
@@ -45,6 +49,7 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
+
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -52,7 +57,8 @@ public class SignUpActivity extends AppCompatActivity {
                 if(validation()){
 
                     PhoneNumber phoneNumber = makePhoneNumber();
-                    fireBaseController.createNewUser(edtEmail.getText().toString(),
+                    fireBaseController.createNewUser(edtUserName.getText().toString(),
+                            edtEmail.getText().toString(),
                             edtPassword.getText().toString(),
                             edtFirstName.getText().toString(),
                             edtLastName.getText().toString(),
@@ -71,13 +77,14 @@ public class SignUpActivity extends AppCompatActivity {
 
 
     }
-    private boolean validation(){
+    private boolean validation() {
 
         boolean emailValid = false;
         boolean passwordValid = false;
         boolean phoneValid = false;
         boolean firstNameValid = false;
         boolean lastNameValid = false;
+        boolean userNameValid;
 
         //boolean heartValid = false;
         //boolean dateValid = false;
@@ -108,18 +115,10 @@ public class SignUpActivity extends AppCompatActivity {
         } else {
             edtLastName.setError("Invalid last name.");
         }
-        /*
-        if (editHeartRate.getText().toString().length() > 0) {
-            heartValid = true;
-        }
-        if (pickDate.getText().toString().length() > 0) {
-            dateValid = true;
-        }
-        if (pickTime.getText().toString().length() > 0) {
-            timeValid = true;
-        }*/
+        userNameValid = edtUserName.getText().toString().length() > 4;
 
-        return (emailValid && passwordValid && phoneValid && firstNameValid && lastNameValid);
+
+        return (emailValid && passwordValid && phoneValid && firstNameValid && lastNameValid && userNameValid);
     }
 
     private PhoneNumber makePhoneNumber(){
@@ -129,12 +128,11 @@ public class SignUpActivity extends AppCompatActivity {
         String exchangeString = phoneString.substring(3,6);
         String extensionString = phoneString.substring(6,10);
 
-        //Integer area = Integer.valueOf(areaString);
-        //nteger exchange = Integer.valueOf(exchangeString);
-        //Ineger extension = Integer.valueOf(extensionString);
+
 
         PhoneNumber phoneNumber = new PhoneNumber(areaString, exchangeString, extensionString);
         return phoneNumber;
+
 
 
     }
