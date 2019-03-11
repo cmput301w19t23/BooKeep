@@ -187,6 +187,15 @@ public class StandFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        BookList = new ArrayList<>();
+
+        if (savedInstanceState != null) {
+            int count = 0;
+            while (savedInstanceState.getSerializable("Book"+count) != null) {
+                BookList.add((Book)savedInstanceState.getSerializable("Book"+count));
+                count++;
+            }
+        }
         super.onCreate(savedInstanceState);
     }
 
@@ -198,7 +207,18 @@ public class StandFragment extends Fragment {
         currentUserID = firebaseUser.getUid();
         BookList = new ArrayList<>();
 
+<<<<<<< HEAD
         //Inflate the view and create recyclerView
+=======
+        if (savedInstanceState != null) {
+            int count = 0;
+            while (savedInstanceState.getSerializable("Book"+count) != null) {
+                BookList.add((Book)savedInstanceState.getSerializable("Book"+count));
+                count++;
+            }
+        }
+
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
         View view = inflater.inflate(R.layout.fragment_stand_list, container, false);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.stand_recycler_view);
 
@@ -289,9 +309,19 @@ public class StandFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 23) {
             if (resultCode == RESULT_OK) {
+<<<<<<< HEAD
                 /**TODO: Get rid of the entire startActivityForResult chain
+=======
+<<<<<<< HEAD
+                /**TODO: get the user book list from firebase
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
                  *
                  */
+=======
+                Book book = (Book) data.getSerializableExtra("key");
+                BookList.add(book);
+                adapter.notifyDataSetChanged();
+>>>>>>> 5a0c22e8c3dcc69960f05983d69d5e7bbc9e3d67
             }
         }
     }
@@ -327,6 +357,7 @@ public class StandFragment extends Fragment {
         public void onListFragmentInteraction(Book item);
     }
 
+<<<<<<< HEAD
 
 //    public ArrayList<Book> getBookList() {
 //        currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -364,4 +395,22 @@ public class StandFragment extends Fragment {
 //    }
 
 
+<<<<<<< HEAD
+=======
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        };
+        return bookList;
+=======
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        int count = 0;
+        for (Book book : BookList) {
+            outState.putSerializable("Book"+count, book);
+            count++;
+        }
+>>>>>>> 5a0c22e8c3dcc69960f05983d69d5e7bbc9e3d67
+    }
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
 }

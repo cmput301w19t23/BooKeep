@@ -23,6 +23,7 @@ public class Book implements Serializable {
     private BookStatus status;
     private String currentBorrowerId;
     private ArrayList<String> requesterIds = new ArrayList<String>();
+<<<<<<< HEAD
     //private Bitmap bookImage;
 
     public String getBookImageURL() {
@@ -34,6 +35,9 @@ public class Book implements Serializable {
     }
 
     private String bookImageURL;
+=======
+    private String bookImage;
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
 
     public Book(String ISBN, String ownerId){
         super();
@@ -49,6 +53,7 @@ public class Book implements Serializable {
         this.status = BookStatus.AVAILABLE;
     }
 
+<<<<<<< HEAD
     //public Bitmap getBookImage() {
       //  return bookImage;
     //}
@@ -56,6 +61,15 @@ public class Book implements Serializable {
     //public void setBookImage(Bitmap bookImage) {
         //this.bookImage = bookImage;
     //}
+=======
+    public String getBookImage() {
+        return bookImage;
+    }
+
+    public void setBookImage(String bookImage) {
+        this.bookImage = bookImage;
+    }
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
 
     public ArrayList<String> getRequesterIds(){
         return this.requesterIds;

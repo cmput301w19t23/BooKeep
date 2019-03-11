@@ -2,8 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.bookeep">
 
+<<<<<<< HEAD
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
+=======
+<<<<<<< HEAD
+    <uses-permission android:name="android.permission.CAMERA" />
+=======
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- other permissions go here -->
+>>>>>>> 5a0c22e8c3dcc69960f05983d69d5e7bbc9e3d67
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
 
     <application
         android:allowBackup="true"
@@ -12,6 +23,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+<<<<<<< HEAD
         <activity android:name=".SearchActivity"></activity>
         <activity
             android:name=".MainActivity"
@@ -31,6 +43,19 @@
         <activity android:name=".TestActivity">
 
         </activity>
+=======
+        <activity android:name=".SearchActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".AddEditBookActivity" />
+        <activity android:name=".TestActivity"></activity>
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"
@@ -41,9 +66,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+<<<<<<< HEAD
         <activity android:name=".UserProfileActivity" />
         <activity android:name=".EditUserActivity"></activity>
 
+=======
+        <activity android:name=".SignUpActivity" />
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
     </application>
 
 </manifest>

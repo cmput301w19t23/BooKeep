@@ -110,6 +110,13 @@
     <string name="edit_book">Edit Details</string>
     <string name="delete_book">Delete Book</string>
 
+<<<<<<< HEAD
 
 
+=======
+    <string name="not_signed_in">Not signed in</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
 </resources>

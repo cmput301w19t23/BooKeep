@@ -1,6 +1,7 @@
 package com.example.bookeep.Fragments;
 
 import android.app.Activity;
+<<<<<<< HEAD
 import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,6 +9,16 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+=======
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.provider.MediaStore;
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +37,7 @@ import com.example.bookeep.BookDetailsActivity;
 import com.example.bookeep.Fragments.StandFragment.OnListFragmentInteractionListener;
 import com.example.bookeep.MainActivity;
 import com.example.bookeep.R;
+<<<<<<< HEAD
 import com.example.bookeep.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -35,6 +47,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+=======
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -104,8 +118,65 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
             }
         });
 
+        holder.imageView.setImageBitmap(setPicture(holder.mItem.getBookImage(), holder));
 
     }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+
+        //ImageView bmImage;
+        //public DownloadImageTask(ImageView bmImage) {
+        // AddEditBookActivity.this.bookImage = bmImage;
+        //}
+
+        protected Bitmap doInBackground(String... urls) {
+
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+
+            return mIcon11;
+
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            //bmImage.setImageBitmap(result);
+        }
+
+    }
+
+    public Bitmap setPicture(String ImageLink, ViewHolder holder) {
+        if (ImageLink.startsWith("http")) {
+            DownloadImageTask downloadImageTask = new DownloadImageTask();
+            Bitmap bookImageBitMap = null;
+            try {
+                bookImageBitMap = downloadImageTask.execute(ImageLink).get();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return bookImageBitMap;
+        } else if (ImageLink != null){
+            try {
+                Uri selectedImage = Uri.parse(ImageLink);
+                Bitmap bitmap;
+                bitmap = MediaStore.Images.Media.getBitmap(holder.imageView.getContext().getContentResolver(), selectedImage);
+                return bitmap;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
 
     @Override
     public int getItemCount() {
@@ -129,7 +200,11 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
             mIdView = (TextView) view.findViewById(R.id.book_title);
             mContentView = (TextView) view.findViewById(R.id.book_author);
             overflow = (ImageButton) view.findViewById(R.id.overflow_menu);
+<<<<<<< HEAD
             imageView = view.findViewById(R.id.book_cover);
+=======
+            imageView = view.findViewById(R.id.imageView4);
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
         }
 
         @Override

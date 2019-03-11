@@ -1,10 +1,13 @@
 package com.example.bookeep;
 
+import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MenuItemCompat;
+import android.view.SearchEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,9 +17,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+<<<<<<< HEAD
 
 
 import android.widget.ImageButton;
+=======
+import android.support.v7.widget.SearchView;
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
 import android.widget.TextView;
 
 import com.example.bookeep.Fragments.ShelfFragment;
@@ -25,10 +32,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity
+<<<<<<< HEAD
         implements NavigationView.OnNavigationItemSelectedListener, FirebaseAuth.AuthStateListener, StandFragment.OnListFragmentInteractionListener, ShelfFragment.OnListFragmentInteractionListener{
     private FireBaseController fireBaseController = new FireBaseController(this);
     public Integer ADD_REQUEST = 0;
     public Integer EDIT_REQUEST = 1;
+=======
+        implements NavigationView.OnNavigationItemSelectedListener, FirebaseAuth.AuthStateListener {
+
+    Fragment fragment = null;
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,17 +55,23 @@ public class MainActivity extends AppCompatActivity
 //            transaction.replace(R.id.fragment_container, fragment).commit();
 //        }
 
-        Fragment fragment = null;
-        Class fragmentClass = null;
-        fragmentClass = StandFragment.class;
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit();
+        Class fragmentClass = StandFragment.class;
+        if (savedInstanceState != null) {
+            fragment = getSupportFragmentManager().getFragment(savedInstanceState, "StandFragment");
+        } else {
+            try {
+                fragment = (Fragment) fragmentClass.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit();
+
+        }
+
+
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -144,6 +163,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+<<<<<<< HEAD
         FireBaseController fireBaseController = new FireBaseController(this);
         //User user = fireBaseController.getCurrentUser();
         //userText.setText(user.getFirstName() + " " + user.getLastName());
@@ -155,6 +175,28 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
+=======
+
+        // Retrieve the SearchView and plug it into SearchManager
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                intent.putExtra("key", s);
+                startActivity(intent);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
         return true;
     }
 
@@ -171,7 +213,13 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         }
 
+
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onSearchRequested() {
+        return super.onSearchRequested();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -215,6 +263,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+<<<<<<< HEAD
     public void onListFragmentInteraction(Book item) {
 
         Intent intent = new Intent(MainActivity.this, BookDetailsActivity.class);
@@ -225,6 +274,12 @@ public class MainActivity extends AppCompatActivity
 
     public void setToolBar(String title) {
         getSupportActionBar().setTitle(title);
+=======
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        //getSupportFragmentManager().putFragment(outState, "Stand Fragment", fragment);
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
     }
 }
 

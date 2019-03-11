@@ -2,6 +2,7 @@ package com.example.bookeep;
 
 import android.app.SearchManager;
 import android.content.Intent;
+<<<<<<< HEAD
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
@@ -24,11 +25,19 @@ public class SearchActivity extends AppCompatActivity implements SearchFragment.
     DatabaseReference databaseReference;
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
     Fragment fragment;
+=======
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.widget.TextView;
+
+public class SearchActivity extends AppCompatActivity {
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+<<<<<<< HEAD
 
         fragment = SearchFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -91,3 +100,12 @@ public class SearchActivity extends AppCompatActivity implements SearchFragment.
 
     }
 }
+=======
+        Intent intent = getIntent();
+        TextView textView = findViewById(R.id.textView);
+        textView.setText(intent.getStringExtra("key"));
+    }
+}
+
+
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b

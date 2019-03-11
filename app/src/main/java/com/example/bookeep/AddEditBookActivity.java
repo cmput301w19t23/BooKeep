@@ -70,6 +70,8 @@ public class AddEditBookActivity extends AppCompatActivity {
     private Book book;
 
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 0;
+    public static final int MY_PERMISSIONS_REQUEST_READ = 1;
+
 
     private ImageView bookImage;
     private EditText bookTitle;
@@ -80,12 +82,20 @@ public class AddEditBookActivity extends AppCompatActivity {
     private Button scanBook;
     private Button saveBook;
     private JSONObject jsonObject;
+<<<<<<< HEAD
 
     //private String bookLink;
 
     private User currentUser;
     private String imageURL;
 
+=======
+    private String bookLink;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5a0c22e8c3dcc69960f05983d69d5e7bbc9e3d67
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -250,7 +260,19 @@ public class AddEditBookActivity extends AppCompatActivity {
                 // Add book to "user-books" sorted by userID
                 databaseReference.child("user-books").child(currentUserID).child(book.getBookId()).setValue(book);
 
+<<<<<<< HEAD
                 databaseReference.child("users").child(currentUserID).addListenerForSingleValueEvent(new ValueEventListener() {
+=======
+            ArrayList<String> Authors = new ArrayList<>();
+            Authors.add(bookAuthors.getText().toString().trim());
+            book.setAuthor(Authors);
+            book.setTitle(bookTitle.getText().toString().trim());
+            book.setBookImage(bookLink);
+            book.setStatus(BookStatus.AVAILABLE);
+            final String bookID = book.getBookId();
+            databaseReference.child("books").child(book.getBookId()).setValue(book);
+            databaseReference.child("users").child(currentUserID).child("ownedIds").push().setValue(bookID);
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
 
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -322,8 +344,24 @@ public class AddEditBookActivity extends AppCompatActivity {
     public void ImageUpload(View view) {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
+<<<<<<< HEAD
         startActivityForResult(intent, 69);
 
+=======
+        if (ContextCompat.checkSelfPermission(AddEditBookActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            // Permission has already been granted
+            startActivityForResult(intent, 69);
+        } else {
+            // Permission is NOT granted
+            // Prompt the user for permission
+            ActivityCompat.requestPermissions(
+                    AddEditBookActivity.this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_READ
+            );
+        }
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
     }
 
 
@@ -345,6 +383,15 @@ public class AddEditBookActivity extends AppCompatActivity {
                 return;
             }
 
+            case MY_PERMISSIONS_REQUEST_READ: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission was granted.
+                    startActivityForResult(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI), 69);
+                }
+                return;
+            }
+
             // Make more cases to check for other permissions.
         }
     }
@@ -361,6 +408,7 @@ public class AddEditBookActivity extends AppCompatActivity {
                 JSONObject item1 = jsonArray.getJSONObject(0);
                 JSONObject volumeInfo = item1.getJSONObject("volumeInfo");
 
+<<<<<<< HEAD
                 //if (bookTitle.getText().toString().trim().isEmpty()) {
                 String title = volumeInfo.getString("title");
                 bookTitle.setText(title);
@@ -373,6 +421,21 @@ public class AddEditBookActivity extends AppCompatActivity {
                 bookAuthors.setError(null);
                 //}
 
+=======
+                String title = volumeInfo.getString("title");
+                bookTitle.setText(title);
+                bookTitle.setError(null);
+
+                String authors = volumeInfo.getJSONArray("authors").getString(0);
+                bookAuthors.setText(authors);
+                bookAuthors.setError(null);
+
+<<<<<<< HEAD
+            JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
+            bookLink = imageLinks.getString("thumbnail");
+            bookImage.setImageBitmap(setPicture(bookLink));
+=======
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
                 //String isbn = volumeInfo.getString()
                 JSONArray industryIdentifiers = (JSONArray) volumeInfo.getJSONArray("industryIdentifiers");
                 JSONObject isbn13 = industryIdentifiers.getJSONObject(1);
@@ -380,6 +443,7 @@ public class AddEditBookActivity extends AppCompatActivity {
                 isbn.setText(isbn13String);
                 isbn.setError(null);
 
+<<<<<<< HEAD
                 //if (bookDescription.getText().toString().trim().isEmpty()) {
                 String description = volumeInfo.getString("description");
                 bookDescription.setText(description);
@@ -399,6 +463,19 @@ public class AddEditBookActivity extends AppCompatActivity {
 //>>>>>>> firebase
 
 
+=======
+                String description = volumeInfo.getString("description");
+                bookDescription.setText(description);
+>>>>>>> 5a0c22e8c3dcc69960f05983d69d5e7bbc9e3d67
+
+                JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
+                bookLink = imageLinks.getString("thumbnail");
+
+                bookImage.setImageBitmap(setPicture(bookLink));
+
+
+                bookStatus.setText(BookStatus.AVAILABLE.toString());
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
 
 
                 //txtView.setText(author);
@@ -512,6 +589,10 @@ public class AddEditBookActivity extends AppCompatActivity {
             try {
                 Uri selectedImage = Uri.parse(ImageLink);
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+<<<<<<< HEAD
+=======
+                //bitmap = Bitmap.createScaledBitmap(bitmap, 189, 325, true);
+>>>>>>> 5a0c22e8c3dcc69960f05983d69d5e7bbc9e3d67
                 return bitmap;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -538,8 +619,18 @@ public class AddEditBookActivity extends AppCompatActivity {
         if (bookLink != null) {
             bookImage.setImageBitmap(setPicture(bookLink));
         }
+<<<<<<< HEAD
     }
+=======
+
+    }
+<<<<<<< HEAD
     */
+=======
+
+
+>>>>>>> 5a0c22e8c3dcc69960f05983d69d5e7bbc9e3d67
+>>>>>>> dcf62b6bdd616f778725010a7ad51ce21a18ae0b
 }
 
 
