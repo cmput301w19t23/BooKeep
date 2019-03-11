@@ -1,6 +1,7 @@
 package com.example.bookeep;
 
 
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -12,6 +13,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 
 public class SignUpActivity extends AppCompatActivity{
@@ -24,6 +36,9 @@ public class SignUpActivity extends AppCompatActivity{
     private EditText edtUserName;
     private Button btnSignUp;
     private FireBaseController fireBaseController = new FireBaseController(this);
+    private FirebaseDatabase database;
+    private ArrayList<String> users;
+    private ArrayList<String> emails;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +88,34 @@ public class SignUpActivity extends AppCompatActivity{
 
         });
 
+        database = FirebaseDatabase.getInstance();
+        DatabaseReference userNameRef = database.getReference("users");
+        Query query = userNameRef.orderByChild("userName");
+        users = new ArrayList<>();
+        emails = new ArrayList<>();
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren() ){
+                    if (data != null) {
+                        try {
+                            User userFromDatabase = data.getValue(User.class);
+                            users.add(userFromDatabase.getUserName());
+                            emails.add(userFromDatabase.getEmail());
+                        } catch (DatabaseException exc) {
+
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
 
 
 
@@ -93,12 +136,19 @@ public class SignUpActivity extends AppCompatActivity{
         if (Patterns.EMAIL_ADDRESS.matcher(edtEmail.getText().toString().trim()).matches()) {
             emailValid = true;
         } else {
-            edtEmail.setError("Invalid email.");
+            edtEmail.setError("Not a valid email");
+        }
+        if (edtEmail.getText().toString().trim().length() < 1) {
+            edtEmail.setError("Not a valid email");
+        }
+        if (emails.contains(edtEmail.getText().toString())){
+            edtEmail.setError("Email isn't unique");
+            emailValid = false;
         }
         if (edtPassword.getText().toString().length() > 5) {
             passwordValid = true;
         } else {
-            edtPassword.setError("At least 6 characters long.");
+            edtPassword.setError("Password at least 6 characters long.");
         }
         if (Patterns.PHONE.matcher(edtPhone.getText().toString().trim()).matches() && edtPhone.getText().toString().trim().length() == 10){
             phoneValid = true;
@@ -116,6 +166,13 @@ public class SignUpActivity extends AppCompatActivity{
             edtLastName.setError("Invalid last name.");
         }
         userNameValid = edtUserName.getText().toString().length() > 4;
+        if (!userNameValid) {
+            edtUserName.setError("Username at least 5 characters long");
+
+        } if (users.contains(edtUserName.getText().toString().trim())) {
+            userNameValid = false;
+            edtUserName.setError("Username exists already");
+        }
 
 
         return (emailValid && passwordValid && phoneValid && firstNameValid && lastNameValid && userNameValid);
