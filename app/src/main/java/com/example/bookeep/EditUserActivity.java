@@ -224,22 +224,24 @@ public class EditUserActivity extends AppCompatActivity {
         //displays error text if any of the fields where improperly filled.
         //will only display one at a time
         if (!usernameValid) {
-            errorText = "Please enter a unique username";
-            displayErrorText(errorText);
-        }else if (!firstNameValid) {
+            errorText = "Not a unique username";
+            userName.setError(errorText);
+        }
+        if (!firstNameValid) {
             errorText = "Please enter your first name";
-            displayErrorText(errorText);
-        } else if (!lastNameValid){
+            firstName.setError(errorText);
+        }
+        if (!lastNameValid){
             errorText = "Please enter your last name";
-            displayErrorText(errorText);
-        } else if (!emailValid){
-            errorText = "Please enter a valid email address";
-            displayErrorText(errorText);
-        } else if (!phoneValid){
+            lastName.setError(errorText);
+        }
+        if (!emailValid){
+            errorText = "Please enter a unique email address";
+            email.setError(errorText);
+        }
+        if (!phoneValid) {
             errorText = "Please enter your phone number";
-            displayErrorText(errorText);
-        } else {
-            errorTextView.setVisibility(View.INVISIBLE);                    // if no errors sets the error text view to be invisible again
+            phoneNumber.setError(errorText);
         }
 
         //returns true if all fields filled correctly, false otherwise
