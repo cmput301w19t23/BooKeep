@@ -55,7 +55,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
     private Menu menu;
     private Book book;
     private User currentUser;
-    private String currentUserId;//= "nafee1";
+    private String currentUserId;
     private FireBaseController fireBaseController = new FireBaseController(this);
     private ImageView bookImage;
 
