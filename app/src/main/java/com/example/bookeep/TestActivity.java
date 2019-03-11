@@ -1,6 +1,7 @@
 package com.example.bookeep;
 
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -53,6 +54,10 @@ public class TestActivity extends AppCompatActivity {
 
             }
         });
+
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.floatingActionButton);
+        fab.setImageResource(R.drawable.round_done_black_18dp);
+
 
     }
 

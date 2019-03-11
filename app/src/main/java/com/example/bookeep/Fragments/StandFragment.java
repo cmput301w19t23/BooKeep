@@ -214,6 +214,7 @@ public class StandFragment extends Fragment {
         // FAB to add more buttons
         FloatingActionButton addBook = (FloatingActionButton) view.findViewById(R.id.addBook);
         addBook.setOnClickListener(new View.OnClickListener() {
+
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), AddEditBookActivity.class);
                 /** TODO: Get rid of entire startActivityForResult chain
@@ -223,6 +224,7 @@ public class StandFragment extends Fragment {
                 startActivity(intent);
                 //getActivity().finish();
             }
+
         });
 
         databaseReference.child("user-books").child(currentUserID).addChildEventListener(updateListener);

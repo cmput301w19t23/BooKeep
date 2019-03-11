@@ -208,7 +208,7 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
                 }
-                
+
             });
             /*
             mValues.remove(position);

@@ -36,28 +36,33 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder,int i) {
+
+        viewHolder.mItem = mValues.get(i);
+        viewHolder.mIdView.setText(viewHolder.mItem.getTitle());
+        viewHolder.mContentView.setText(viewHolder.mItem.getAuthors().toString());
+        DownloadImageTask downloadImageTask = new DownloadImageTask();
+        //Bitmap bookImage = null;
         try {
-            viewHolder.mItem = mValues.get(i);
-            viewHolder.mIdView.setText(viewHolder.mItem.getTitle());
-            viewHolder.mContentView.setText(viewHolder.mItem.getAuthors().toString());
-            DownloadImageTask downloadImageTask = new DownloadImageTask();
             Bitmap bookImage = downloadImageTask.execute(mValues.get(i).getBookImageURL()).get();
             viewHolder.imageView.setImageBitmap(bookImage);
-            viewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (null != mListener) {
-                        // Notify the active callbacks interface (the activity, if the
-                        // fragment is attached to one) that an item has been selected.
-                        mListener.onListFragmentInteraction(viewHolder.mItem);
-                    }
-                }
-            });
+
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != mListener) {
+                    // Notify the active callbacks interface (the activity, if the
+                    // fragment is attached to one) that an item has been selected.
+                    mListener.onListFragmentInteraction(viewHolder.mItem);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -78,7 +83,7 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.bookTitle);
             mContentView = (TextView) view.findViewById(R.id.bookAuthor);
-            imageView = view.findViewById(R.id.imageView2);
+            imageView = (ImageView) view.findViewById(R.id.book_cover);
         }
 
         @Override
