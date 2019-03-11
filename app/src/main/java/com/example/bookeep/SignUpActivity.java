@@ -25,7 +25,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-
+/**
+ * Activity that allows the user to sign up
+ * @author Nafee Khan, Nolan Brost, Jeff Kirker, Dusan Krstic, Hugh Bagan, Kyle Fujishige
+ * @see User
+ * @see PhoneNumber
+ * @version 1.0.1
+ */
 public class SignUpActivity extends AppCompatActivity{
 
     private EditText edtEmail;
@@ -120,6 +126,11 @@ public class SignUpActivity extends AppCompatActivity{
 
 
     }
+
+    /**
+     * validates that the user entered info is valid
+     * @return true if valid, false if not
+     */
     private boolean validation() {
 
         boolean emailValid = false;
@@ -178,6 +189,10 @@ public class SignUpActivity extends AppCompatActivity{
         return (emailValid && passwordValid && phoneValid && firstNameValid && lastNameValid && userNameValid);
     }
 
+    /**
+     * makes a phone number from the entered phone number string
+     * @return PhoneNumber object
+     */
     private PhoneNumber makePhoneNumber(){
 
         String phoneString = edtPhone.getText().toString();

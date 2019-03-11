@@ -24,6 +24,11 @@ import com.example.bookeep.Fragments.StandFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+/**
+ * Main activity of the app, users can navigate to all use cases from here
+ * @author Nafee Khan, Nolan Brost, Jeff Kirker, Dusan Krstic, Hugh Bagan, Kyle Fujishige
+ * @version 1.0.1
+ */
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FirebaseAuth.AuthStateListener, StandFragment.OnListFragmentInteractionListener, ShelfFragment.OnListFragmentInteractionListener{
     private FireBaseController fireBaseController = new FireBaseController(this);
@@ -36,11 +41,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-//        if (savedInstanceState == null) {
-//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//            Fragment fragment = new StandFragment();
-//            transaction.replace(R.id.fragment_container, fragment).commit();
-//        }
 
         Fragment fragment = null;
         Class fragmentClass = null;
@@ -81,52 +81,11 @@ public class MainActivity extends AppCompatActivity
             TextView email = (TextView) headerView.findViewById(R.id.email);
             email.setText(R.string.not_signed_in);
         }
-
-
-        /*DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        User user = new User("nafee@ualberta.ca", "Nafee", "Khan");
-        Address address = new Address();
-        address.setCity("Edmonton");
-        address.setProvince("Alberta");
-        address.setStreetAddress("10959 102St NW");
-        address.setZipCode("T5H2V1");
-        user.setAddress(address);
-        PhoneNumber phoneNumber = new PhoneNumber(587,938,3713);
-        user.setPhoneNumber(phoneNumber);
-        mDatabase.child("users").child(user.getUserId().toString()).setValue(user);
-        if(isNetworkAvailable()){
-            //GoogleApiRequest.execute("");
-            GoogleApiRequest googleApiRequest = new GoogleApiRequest();
-            try {
-                obj = (JSONObject) googleApiRequest.execute("9780545010221").get();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        try {
-            JSONArray jsonArray = (JSONArray) obj.getJSONArray("items");
-            JSONObject item1 = jsonArray.getJSONObject(0);
-            JSONObject volumeInfo = item1.getJSONObject("volumeInfo");
-            String title = volumeInfo.getString("title");
-            String description = volumeInfo.getString("description");
-            Book book = new Book();
-            book.setTitle(title);
-            book.setDescription(description);
-            //book.setOwner(user);
-            //book.setISBN(9780545010221);
-            book.setOwner(user);
-            mDatabase.child("books").child(book.getBookId().toString()).setValue(book);
-            user.setFirstname("Nafi");
-            mDatabase.child("users").child(user.getUserId().toString()).setValue(user);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
-        //new IntentIntegrator(this).initiateScan();
-
     }
 
+    /**
+     * goes back to log in when back is pressed
+     */
     @Override
     public void onBackPressed() {
 
@@ -140,9 +99,13 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    /**
+     * inflate the menu; this adds items to the action bar if it is present.
+     * @param menu menu to be opened
+     * @return true
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         FireBaseController fireBaseController = new FireBaseController(this);
         //User user = fireBaseController.getCurrentUser();
@@ -158,11 +121,16 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * Handle action bar item clicks here. The action bar will
+     * automatically handle clicks on the Home/Up button, so long
+     * as you specify a parent activity in AndroidManifest.xml.
+     * @param item menu item  selected
+     * @return super.onOptionsItemSelected(item)
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -174,12 +142,17 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Handle navigation view item clicks here.
+     * @param item menu item clicked
+     * @return true
+     */
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         Fragment fragment = null;
         Class fragmentClass = null;
-        // Handle navigation view item clicks here.
+
         int id = item.getItemId();
 
         if (id == R.id.nav_stand) {
@@ -201,12 +174,16 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * //Do what you need to do
+     * @param firebaseAuth firebaseauth
+     */
     @Override
     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         if (firebaseUser != null) {
-            //Do what you need to do
+
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
         }
@@ -214,6 +191,10 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    /**
+     * displays the book
+     * @param item book to be displayed
+     */
     @Override
     public void onListFragmentInteraction(Book item) {
 
@@ -223,53 +204,11 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    /**
+     * sets the tool bar
+     * @param title of tool bar
+     */
     public void setToolBar(String title) {
         getSupportActionBar().setTitle(title);
     }
 }
-
-
-
-    /*
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if(result != null) {
-            if(result.getContents() == null) {
-                Log.d("MainActivity", "Cancelled scan");
-                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
-            } else {
-                Log.d("MainActivity", "Scanned");
-                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
-                txtView = findViewById(R.id.text1);
-                if(isNetworkAvailable()){
-                    //GoogleApiRequest.execute("");
-                    GoogleApiRequest googleApiRequest = new GoogleApiRequest();
-                    try {
-                        obj = (JSONObject) googleApiRequest.execute(result.getContents()).get();
-                        //txtView.setText(obj.toString());
-                        JSONArray jsonArray = (JSONArray) obj.getJSONArray("items");
-                        JSONObject item1 = jsonArray.getJSONObject(0);
-                        JSONObject volumeInfo = item1.getJSONObject("volumeInfo");
-                        String author = volumeInfo.getJSONArray("authors").getString(0);
-                        txtView.setText(author);
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        } else {
-            // This is important, otherwise the result will not be passed to the fragment
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }*/
-//public void onActivityResult

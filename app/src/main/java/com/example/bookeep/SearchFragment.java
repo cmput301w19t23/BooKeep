@@ -25,7 +25,15 @@ import com.google.firebase.database.GenericTypeIndicator;
 
 import java.util.ArrayList;
 
-
+/**
+ * Searches books available
+ * @author Kyle Fujishige, Nafee Khan, Jeff Kirker
+ * @version 1.0.1
+ * @see Book
+ * @see User
+ * @see SearchKeyWordsFragment
+ * @see SearchActivity
+ */
 public class SearchFragment extends Fragment {
 
     private boolean isResumed;
@@ -42,6 +50,10 @@ public class SearchFragment extends Fragment {
 
     public SearchFragment() {}
 
+    /**
+     * creates a new fragment
+     * @return returns a new search fragment
+     */
     public static SearchFragment newInstance () {
         SearchFragment fragment = new SearchFragment();
         return fragment;
@@ -53,6 +65,13 @@ public class SearchFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * creates the view for the fragment
+     * @param inflater layoutinflator
+     * @param container viewgroup
+     * @param savedInstanceState bundle
+     * @return view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container,
                              Bundle savedInstanceState) {

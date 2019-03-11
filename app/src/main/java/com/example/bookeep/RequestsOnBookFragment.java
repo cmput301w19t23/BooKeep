@@ -32,6 +32,8 @@ import java.util.List;
  * <p/>
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
+ * @author Nafee Khan, Jeff Kirker
+ * @version 1.0.1
  */
 public class RequestsOnBookFragment extends Fragment {
 

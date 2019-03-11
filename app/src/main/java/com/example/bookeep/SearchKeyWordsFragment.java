@@ -22,6 +22,15 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
+/**
+ * Searches books available
+ * @author Kyle Fujishige, Nafee Khan, Jeff Kirker
+ * @version 1.0.1
+ * @see Book
+ * @see User
+ * @see SearchFragment
+ * @see SearchActivity
+ */
 public class SearchKeyWordsFragment extends Fragment {
     private boolean isResumed;
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();

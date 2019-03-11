@@ -18,9 +18,11 @@ import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 
+/**
+ * gets info from an isbn
+ * taken from https://stackoverflow.com/questions/14571478/using-google-books-api-in-android
+ */
 class GoogleApiRequest extends AsyncTask<String, Object, JSONObject> {
-
-    //taken from https://stackoverflow.com/questions/14571478/using-google-books-api-in-android
 
     @Override
     protected JSONObject doInBackground(String... isbns) {

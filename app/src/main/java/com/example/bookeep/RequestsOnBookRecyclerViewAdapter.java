@@ -26,6 +26,8 @@ import java.util.List;
  * {@link RecyclerView.Adapter} that can display a  makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
+ * @author Nafee Khan, Jeff Kirker
+ * @version 1.0.1
  */
 public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<RequestsOnBookRecyclerViewAdapter.ViewHolder> {
 
@@ -154,6 +156,10 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
         });
     }
 
+    /**
+     * gets the number of items
+     * @return int of number of items
+     */
     @Override
     public int getItemCount() {
         return mValues.size();
@@ -194,6 +200,10 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
 
     }
 
+    /**
+     * removes requester from the books requesters
+     * @param position int position of requester to be removec
+     */
     public void removeRequester(int position){
 
         if(mValues.get(position) != null ){

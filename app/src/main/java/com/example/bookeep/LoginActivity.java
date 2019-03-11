@@ -11,12 +11,19 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 //import com.google.gson.Gson;
 
+/**
+ * Log in page that allows users to log in or sign up
+ * @author Nafee Khan, Jeff Kirker
+ * @see User
+ * @version 1.0.1
+ */
 public class LoginActivity extends AppCompatActivity {
 
     private EditText edtEmail;
@@ -37,14 +44,6 @@ public class LoginActivity extends AppCompatActivity {
         btnSignIn = (Button) findViewById(R.id.btn_sign_in);
         btnSignUp = (Button) findViewById(R.id.btn_sign_up);
 
-
-//        if( fireBaseController.isUserLoggedIn()){
-//
-//            fireBaseController.launchMainActivity();
-//
-//        }
-
-//<<<<<<< HEAD
         edtPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -54,8 +53,6 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
-//=======
-//>>>>>>> firebase
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,6 +63,8 @@ public class LoginActivity extends AppCompatActivity {
                     fireBaseController.signIn(edtEmail.getText().toString(), edtPassword.getText().toString());
 
 
+                } else {
+                    Toast.makeText(LoginActivity.this, "Incorrect Email or Password", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -84,6 +83,11 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
+
+    /**
+     * validates users log in info is correct
+     * @return boolean of whether log in info is right
+     */
     private boolean validation(){
         boolean emailValid = false;
         boolean passwordValid = false;

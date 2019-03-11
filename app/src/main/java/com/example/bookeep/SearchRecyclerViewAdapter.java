@@ -15,6 +15,16 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Searches books available
+ * @author Kyle Fujishige, Nafee Khan, Jeff Kirker
+ * @version 1.0.1
+ * @see Book
+ * @see User
+ * @see SearchKeyWordsFragment
+ * @see SearchActivity
+ * @see SearchFragment
+ */
 public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecyclerViewAdapter.ViewHolder> {
 
     private final List<Book> mValues;

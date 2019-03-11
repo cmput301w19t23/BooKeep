@@ -56,7 +56,13 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 /**
- * authors: Nafee Khan, Kyle Fujishige
+ * This activity will allow the user to add books to the database or edit a book already in it. It
+ * allows the user to manually enter all the fields or to scan the isbn of the book to auto-populate
+ * the required fields.
+ * @author Nafee Khan, Kyle Fujishige
+ * @see Book
+ * @see User
+ * @version 1.0.1
  * */
 public class AddEditBookActivity extends AppCompatActivity {
 
@@ -199,6 +205,11 @@ public class AddEditBookActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * When users presses save button this method is called. Will push the book to the database but
+     * first check to make sure fields are properly filled out.
+     * @param view View
+     */
     public void saveButtonPressed(View view) {
 
         Boolean pass = Boolean.TRUE;
@@ -228,7 +239,7 @@ public class AddEditBookActivity extends AppCompatActivity {
             pass = Boolean.FALSE;
         }
 
-        if (pass) {
+        if (pass) {                                                                     //if all fields are entered properly the book is added to firebase
 
             //Get the user object
             currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -294,6 +305,10 @@ public class AddEditBookActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * uploads the image to firebase
+     * @param view View
+     */
     public void ImageUpload(View view) {
         Intent intent = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
@@ -302,7 +317,15 @@ public class AddEditBookActivity extends AppCompatActivity {
     }
 
 
-    //https://developer.android.com/training/permissions/requesting#java
+
+    /**
+     * asks for camera persmission
+     * see https://developer.android.com/training/permissions/requesting#java
+     *
+     * @param requestCode int
+     * @param permissions Sting[]
+     * @param grantResults int[]
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[],int[] grantResults) {
@@ -323,6 +346,11 @@ public class AddEditBookActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Gets data from isbn to fill the text boxes, uses googleApiRequest to get info with and isbn
+     * and then parses the the returned json object for book details
+     * @param ISBN String
+     */
     public void setTextBoxes(String ISBN) {
         GoogleApiRequest googleApiRequest = new GoogleApiRequest();
         if (isNetworkAvailable()) {
@@ -385,6 +413,14 @@ public class AddEditBookActivity extends AppCompatActivity {
 
     //taken from https://stackoverflow.com/questions/18543668/integrate-zxing-in-android-studio
     //also taken from https://stackoverflow.com/questions/38471963/setimagebitmap-not-displaying?rq=1
+
+    /**
+     * taken from https://stackoverflow.com/questions/18543668/integrate-zxing-in-android-studio
+     * also taken from https://stackoverflow.com/questions/38471963/setimagebitmap-not-displaying?rq=1
+     * @param requestCode int
+     * @param resultCode int
+     * @param data Intent
+     */
     public void onActivityResult(int requestCode,int resultCode,Intent data) {
 
         if (requestCode == 69 && resultCode == RESULT_OK) {
@@ -425,6 +461,10 @@ public class AddEditBookActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Returns true if network available and false otherwise
+     * @return boolean
+     */
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -433,7 +473,11 @@ public class AddEditBookActivity extends AppCompatActivity {
 
     }
 
-    //taken from https://stackoverflow.com/questions/6407324/how-to-display-image-from-url-on-android
+
+    /**
+     * Downloads an image from a url and displays it as the book image
+     * taken from https://stackoverflow.com/questions/6407324/how-to-display-image-from-url-on-android
+     */
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
         //ImageView bmImage;

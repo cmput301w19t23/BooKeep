@@ -17,6 +17,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+/**
+ * Searches books available
+ * @author Kyle Fujishige, Nafee Khan, Jeff Kirker
+ * @version 1.0.1
+ * @see Book
+ * @see User
+ * @see SearchKeyWordsFragment
+ * @see SearchFragment
+ */
 public class SearchActivity extends AppCompatActivity implements SearchFragment.OnListFragmentInteractionListener {
 
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -36,6 +45,11 @@ public class SearchActivity extends AppCompatActivity implements SearchFragment.
 
     }
 
+    /**
+     * creates the options menu
+     * @param menu menu to be displayed
+     * @return boolean
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -72,6 +86,11 @@ public class SearchActivity extends AppCompatActivity implements SearchFragment.
         return true;
     }
 
+    /**
+     * handles menu items being selected
+     * @param item the item selected
+     * @return boolean
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -83,6 +102,10 @@ public class SearchActivity extends AppCompatActivity implements SearchFragment.
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * handles list fragments interactions
+     * @param item book
+     */
     @Override
     public void onListFragmentInteraction(Book item) {
 
