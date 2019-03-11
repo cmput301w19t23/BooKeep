@@ -17,6 +17,11 @@ public class PhoneNumber implements Serializable {
     public PhoneNumber(){
 
     }
+    public PhoneNumber(String phoneNumberString){
+        this.area = phoneNumberString.substring(0,3);
+        this.exchange = phoneNumberString.substring(3,6);
+        this.extension = phoneNumberString.substring(6);
+    }
 
     public String toString() {
         //if area is 001 handle: do later
