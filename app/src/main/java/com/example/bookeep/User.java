@@ -8,29 +8,22 @@ import java.util.UUID;
 
 public class User implements Serializable {
 
+    private String userName;
     private String firstname;
     private String lastname;
-    private ArrayList<String> borrowedIds = new ArrayList<String>();
-    private ArrayList<String> ownedIds = new ArrayList<String>();
+    private ArrayList<String> borrowedIds = new ArrayList<>();
+    private ArrayList<String> ownedIds = new ArrayList<>();
     private Address address;
     private PhoneNumber phoneNumber;
     private String email;
     private String userId;
     private String imageURL;
 
-    public String getUserName() {
-        return userName;
-    }
 
-    public void setUserName(String userName) {
+
+    public User(String userName, String email, String firstname, String lastname){
+
         this.userName = userName;
-    }
-
-    private String userName;
-
-
-    public User(String email, String firstname, String lastname){
-        super();
         this.email = email;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -38,14 +31,6 @@ public class User implements Serializable {
 
     }
 
-    public User(String email, String firstname, String lastname, String userId){
-        super();
-        this.email = email;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.userId = userId;
-
-    }
 
     public User(String userName, String email, String firstname, String lastname, String userId){
 
@@ -58,6 +43,14 @@ public class User implements Serializable {
 
     public User(){
         //this.userId = UUID.randomUUID();
+    }
+
+    public String getUserName(){
+        return userName;
+    }
+
+    public void setUserName(String userName){
+        this.userName = userName;
     }
 
     public String getImageURL() {

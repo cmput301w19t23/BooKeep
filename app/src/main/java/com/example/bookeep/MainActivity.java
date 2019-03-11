@@ -3,10 +3,8 @@ package com.example.bookeep;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,6 +14,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
+
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.bookeep.Fragments.ShelfFragment;
@@ -143,6 +144,17 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        FireBaseController fireBaseController = new FireBaseController(this);
+        //User user = fireBaseController.getCurrentUser();
+        //userText.setText(user.getFirstName() + " " + user.getLastName());
+        ImageButton updateProfile = findViewById(R.id.UserProfileButton);
+        updateProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, EditUserActivity.class);
+                startActivity(intent);
+            }
+        });
         return true;
     }
 
@@ -171,6 +183,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_stand) {
+
             fragmentClass = StandFragment.class;
         } else {
             fragmentClass = ShelfFragment.class;
@@ -180,6 +193,7 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
