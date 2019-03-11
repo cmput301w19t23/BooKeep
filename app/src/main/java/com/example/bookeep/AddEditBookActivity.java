@@ -282,33 +282,8 @@ public class AddEditBookActivity extends AppCompatActivity {
                 book.setDescription(bookDescription.getText().toString().trim());
                 //book.setBookImage(drawable.getBitmap());
                 book.setBookImageURL(imageURL);
+                Log.d("ImageURL:", book.getBookImageURL());
 
-/*
-                databaseReference.child("user-books").child(currentUserID).child(book.getBookId()).addListenerForSingleValueEvent(new ValueEventListener() {
-
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                        for(DataSnapshot bookSnapshot: dataSnapshot.getChildren()){
-
-                            Book existing = bookSnapshot.getValue(Book.class);
-                            if(book.getBookId().equals(existing.getBookId())){
-
-
-
-                            }
-
-                        }
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-
-                });
-*/
 
                 databaseReference.child("user-books").child(currentUserID).child(book.getBookId()).setValue(book);
                 databaseReference.child("books").child(book.getBookId()).setValue(book);
@@ -385,17 +360,15 @@ public class AddEditBookActivity extends AppCompatActivity {
                 //}
 
                 JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
-//<<<<<<< HEAD
                 //bookLink = imageLinks.getString("thumbnail");
                 //bookImage.setImageBitmap(setPicture(bookLink));
-//=======
                 imageURL = imageLinks.getString("thumbnail");
 
                 //Drawable bookImage = (Drawable) loadImageFromWebOperations(imageURL);
                 DownloadImageTask downloadImageTask = new DownloadImageTask();
                 Bitmap bookImageBitMap = downloadImageTask.execute(imageURL).get();
                 bookImage.setImageBitmap(bookImageBitMap);
-//>>>>>>> firebase
+
 
 
                 //txtView.setText(author);

@@ -1,17 +1,24 @@
 package com.example.bookeep.Fragments;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.bookeep.Book;
 import com.example.bookeep.Fragments.ShelfFragment.OnListFragmentInteractionListener;
 import com.example.bookeep.R;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link} and makes a call to the
@@ -39,8 +46,16 @@ public class MyShelfRecyclerViewAdapter extends RecyclerView.Adapter<MyShelfRecy
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).getTitle());
-        holder.mContentView.setText(mValues.get(position).getAuthors().toString());
-
+        holder.mContentView.setText(mValues.get(position).getAuthorsString());
+        DownloadImageTask downloadImageTask = new DownloadImageTask();
+        try {
+            Bitmap bookImage = downloadImageTask.execute(mValues.get(position).getBookImageURL()).get();
+            holder.mImageView.setImageBitmap(bookImage);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,6 +75,7 @@ public class MyShelfRecyclerViewAdapter extends RecyclerView.Adapter<MyShelfRecy
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
+        public final ImageView mImageView;
         public final TextView mIdView;
         public final TextView mContentView;
         public Book mItem;
@@ -69,6 +85,7 @@ public class MyShelfRecyclerViewAdapter extends RecyclerView.Adapter<MyShelfRecy
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.book_title);
             mContentView = (TextView) view.findViewById(R.id.book_author);
+            mImageView = view.findViewById(R.id.book_cover);
         }
 
         @Override
@@ -92,4 +109,22 @@ public class MyShelfRecyclerViewAdapter extends RecyclerView.Adapter<MyShelfRecy
 
         return BookList;
     }
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        protected Bitmap doInBackground(String... urls) {
+
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+        protected void onPostExecute(Bitmap result) {}
+    }
+
 }

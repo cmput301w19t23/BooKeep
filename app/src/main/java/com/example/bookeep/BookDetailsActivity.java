@@ -79,46 +79,6 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
         Intent received = getIntent();
         final String bookId = received.getStringExtra("Book ID");
 
-///TEST
-
-
-
-        //PhoneNumber phoneNumber = new PhoneNumber("587", "938", "3713");
-        //String email = "name@yahoo.com";
-        //String password = "123456";
-        //String first = " Nafee";
-        //String last = "Khan";
-        //fireBaseController.createNewUser(email,password,first,last,phoneNumber);
-
-
-/*
-        //currentUser = fireBaseController.getCurrentUser();
-        currentUser = (User) getIntent().getSerializableExtra("User");
-        book = new Book();
-        book.setTitle("Harry Potter and the Deathly Hallows");
-        //ArrayList<String> authors = new ArrayList<>();
-        //authors.add("J. K. Rowling");
-
-        book.setAuthor("J.K.Rowling");
-        book.setStatus(BookStatus.AVAILABLE);
-        book.setOwner(currentUser.getUserId());
-        //book.setBookId("book1");
-        book.setDescription("The magnificent final book in J. K. Rowling's seven-part saga comes to readers July 21, 2007. You'll find out July 21!");
-        //ok.setISBN(9780545010221);
-        databaseReference.child("books").child(book.getBookId()).setValue(book);
-
-
-
-
-
-
-
-
-
-//TEST
-*/
-        //book = fireBaseController.getBookByBookId(book.getBookId());
-
         databaseReference.child("books").child(bookId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -169,17 +129,6 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         //if(dataSnapshot.getValue(User.class).getUserId().equals(currentUserId)) {
                         currentUser = dataSnapshot.getValue(User.class);
-//                        bookImage = (ImageView) findViewById(R.id.book_image);
-//                        DownloadImageTask downloadImageTask = new DownloadImageTask();
-//                        try {
-//                            Bitmap bitmap = downloadImageTask.execute(book.getBookImageURL()).get();//"http://books.google.com/books/content?id=H8sdBgAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api").get();
-//                            bookImage.setImageBitmap(bitmap);
-//                        } catch (ExecutionException e) {
-//                            e.printStackTrace();
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-
                         // Below: code for if user IS book owner:
                         if (currentUserId.equals(book.getOwner()) && !book.getStatus().equals(BookStatus.BORROWED) && !book.getStatus().equals(BookStatus.ACCEPTED)) {
                             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -270,7 +219,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                                                     book.addRequest(currentUserId);
                                                     book.setStatus(BookStatus.REQUESTED);
                                                     databaseReference.child("books").child(book.getBookId()).setValue(book);
-                                                    databaseReference.child("user-books").child(book.getBookId()).child(book.getBookId()).setValue(book);
+                                                    databaseReference.child("user-books").child(book.getOwner()).child(book.getBookId()).setValue(book);
                                                     fab.setEnabled(false);
                                                     fab.setVisibility(View.GONE);
 
@@ -357,19 +306,6 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                 if(book.getISBN().equals(result.getContents())){
 
                     if(book.getCurrentBorrowerId().equals(currentUserId)){
-                        /*
-                        databaseReference.child("books").child(book.getBookId()).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                book =
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });*/
-
                         book.setStatus(BookStatus.BORROWED);
                         databaseReference.child("books").child(book.getBookId()).setValue(book);
                         databaseReference.child("user-books").child(book.getOwner()).child(book.getBookId()).setValue(book);
@@ -477,7 +413,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
 
     }
 
-    /*@Override
+    @Override
     public void onBackPressed(){
 
         Intent intent = new Intent(BookDetailsActivity.this, MainActivity.class);
@@ -485,7 +421,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
         startActivity(intent);
         finish();
 
-    }*/
+    }
 
     /*
     public Book getBook() {

@@ -39,7 +39,7 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
 
         viewHolder.mItem = mValues.get(i);
         viewHolder.mIdView.setText(viewHolder.mItem.getTitle());
-        viewHolder.mContentView.setText(viewHolder.mItem.getAuthors().toString());
+        viewHolder.mContentView.setText(viewHolder.mItem.getAuthorsString());
         DownloadImageTask downloadImageTask = new DownloadImageTask();
         //Bitmap bookImage = null;
         try {

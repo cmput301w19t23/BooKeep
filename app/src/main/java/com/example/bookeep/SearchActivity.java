@@ -33,6 +33,7 @@ public class SearchActivity extends AppCompatActivity implements SearchFragment.
         fragment = SearchFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.search_fragment_container, fragment).commit();
+
     }
 
     @Override
