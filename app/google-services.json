@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "535509198878-gi1hr7gi3un3u851qgaj3lqa3m5j2ajl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.bookeep",
+            "certificate_hash": "b41212c1357ce2fd837e7241aa893cf1a30db3b9"
+          }
+        },
+        {
           "client_id": "535509198878-ie2gor6i65t4rcacjc47lbirhqaeph3b.apps.googleusercontent.com",
           "client_type": 3
         }
