@@ -40,17 +40,17 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
         viewHolder.mItem = mValues.get(i);
         viewHolder.mIdView.setText(viewHolder.mItem.getTitle());
         viewHolder.mContentView.setText(viewHolder.mItem.getAuthors().toString());
-        //DownloadImageTask downloadImageTask = new DownloadImageTask();
+        DownloadImageTask downloadImageTask = new DownloadImageTask();
         //Bitmap bookImage = null;
-        //try {
-            //Bitmap bookImage = downloadImageTask.execute(mValues.get(i).getBookImageURL()).get();
-            //viewHolder.imageView.setImageBitmap(bookImage);
+        try {
+            Bitmap bookImage = downloadImageTask.execute(mValues.get(i).getBookImageURL()).get();
+            viewHolder.imageView.setImageBitmap(bookImage);
 
-        //} catch (ExecutionException e) {
-          //  e.printStackTrace();
-        //} catch (InterruptedException e) {
-          //  e.printStackTrace();
-        //}
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         viewHolder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,7 +83,7 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.bookTitle);
             mContentView = (TextView) view.findViewById(R.id.bookAuthor);
-            imageView = view.findViewById(R.id.imageView2);
+            imageView = (ImageView) view.findViewById(R.id.book_cover);
         }
 
         @Override
