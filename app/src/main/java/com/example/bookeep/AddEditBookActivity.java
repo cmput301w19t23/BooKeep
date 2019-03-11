@@ -245,6 +245,7 @@ public class AddEditBookActivity extends AppCompatActivity {
                 //book.setBookImage(drawable.getBitmap());
                 book.setStatus(BookStatus.AVAILABLE);
                 book.setBookImageURL(imageURL);
+                book.setISBN(isbn.getText().toString());
 
                 // Add book to "user-books" sorted by userID
                 databaseReference.child("user-books").child(currentUserID).child(book.getBookId()).setValue(book);
@@ -360,17 +361,17 @@ public class AddEditBookActivity extends AppCompatActivity {
                 JSONObject item1 = jsonArray.getJSONObject(0);
                 JSONObject volumeInfo = item1.getJSONObject("volumeInfo");
 
-                if (bookTitle.getText().toString().trim().isEmpty()) {
-                    String title = volumeInfo.getString("title");
-                    bookTitle.setText(title);
-                    bookTitle.setError(null);
-                }
+                //if (bookTitle.getText().toString().trim().isEmpty()) {
+                String title = volumeInfo.getString("title");
+                bookTitle.setText(title);
+                bookTitle.setError(null);
+                //}
 
-                if (bookAuthors.getText().toString().trim().isEmpty()) {
-                    String authors = volumeInfo.getJSONArray("authors").getString(0);
-                    bookAuthors.setText(authors);
-                    bookAuthors.setError(null);
-                }
+                //if (bookAuthors.getText().toString().trim().isEmpty()) {
+                String authors = volumeInfo.getJSONArray("authors").getString(0);
+                bookAuthors.setText(authors);
+                bookAuthors.setError(null);
+                //}
 
                 //String isbn = volumeInfo.getString()
                 JSONArray industryIdentifiers = (JSONArray) volumeInfo.getJSONArray("industryIdentifiers");
@@ -379,10 +380,10 @@ public class AddEditBookActivity extends AppCompatActivity {
                 isbn.setText(isbn13String);
                 isbn.setError(null);
 
-                if (bookDescription.getText().toString().trim().isEmpty()) {
-                    String description = volumeInfo.getString("description");
-                    bookDescription.setText(description);
-                }
+                //if (bookDescription.getText().toString().trim().isEmpty()) {
+                String description = volumeInfo.getString("description");
+                bookDescription.setText(description);
+                //}
 
                 JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
 //<<<<<<< HEAD
@@ -451,6 +452,7 @@ public class AddEditBookActivity extends AppCompatActivity {
                 super.onActivityResult(requestCode, resultCode, data);
             }
         }
+
     }
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager

@@ -56,6 +56,20 @@ public class ShelfFragment extends Fragment {
         @Override
         public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
+            Book changedBook = dataSnapshot.getValue(Book.class);
+
+            for(int i = 0; i < BookList.size(); i++){
+
+                if(BookList.get(i).getBookId().equals(changedBook.getBookId())){
+
+                    BookList.remove(i);
+                    BookList.add(changedBook);
+                    adapter.notifyDataSetChanged();
+
+                }
+
+            }
+
         }
 
         @Override

@@ -1,7 +1,9 @@
 package com.example.bookeep;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -11,8 +13,10 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -20,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,10 +33,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import static com.example.bookeep.AddEditBookActivity.MY_PERMISSIONS_REQUEST_CAMERA;
 
 public class BookDetailsActivity extends AppCompatActivity implements BookDetailsFragment.OnFragmentInteractionListener, RequestsOnBookFragment.OnListFragmentInteractionListener {
 
@@ -49,6 +58,10 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
 
     private List<Request> requests;
 
+    private boolean isRequested;
+
+    private boolean isBorrowed;
+
 
 
     @SuppressLint("RestrictedApi")
@@ -57,7 +70,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_details2);
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        final CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+//        final CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         //toolbar.setTitle("Title");
         setSupportActionBar(toolbar);
         //FirebaseDatabase.getInstance().getReference().child("blah").setValue("gh");
@@ -114,31 +127,66 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                 //if(dataSnapshot.getValue(Book.class).getBookId().equals(bookId)) {
                 book = dataSnapshot.getValue(Book.class);
                 //return book;
+
                 toolbar.setTitle(book.getTitle());
-                toolbarLayout.setTitle(book.getTitle());
+                toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
+                toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
+                    }
+                });
+//                toolbarLayout.setTitle(book.getTitle());
                 currentUserId = firebaseUser.getUid();
+
+                if(book.getStatus().equals(BookStatus.REQUESTED)) {
+
+                    for (String requesterId : book.getRequesterIds()) {
+
+                        if (requesterId.equals(currentUserId)) {
+
+                            isRequested = true;
+                            break;
+
+                        }
+
+                    }
+
+                }
+
+                if(book.getStatus().equals(BookStatus.ACCEPTED) || book.getStatus().equals(BookStatus.BORROWED)) {
+
+                    if (book.getCurrentBorrowerId().equals(currentUserId)) {
+
+                        isBorrowed = true;
+
+                    }
+
+                }
+
                 databaseReference.child("users").child(currentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         //if(dataSnapshot.getValue(User.class).getUserId().equals(currentUserId)) {
                         currentUser = dataSnapshot.getValue(User.class);
-                        bookImage = (ImageView) findViewById(R.id.book_image);
-                        DownloadImageTask downloadImageTask = new DownloadImageTask();
-                        try {
-                            Bitmap bitmap = downloadImageTask.execute(book.getBookImageURL()).get();//"http://books.google.com/books/content?id=H8sdBgAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api").get();
-                            bookImage.setImageBitmap(bitmap);
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+//                        bookImage = (ImageView) findViewById(R.id.book_image);
+//                        DownloadImageTask downloadImageTask = new DownloadImageTask();
+//                        try {
+//                            Bitmap bitmap = downloadImageTask.execute(book.getBookImageURL()).get();//"http://books.google.com/books/content?id=H8sdBgAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api").get();
+//                            bookImage.setImageBitmap(bitmap);
+//                        } catch (ExecutionException e) {
+//                            e.printStackTrace();
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
 
                         // Below: code for if user IS book owner:
-                        if (currentUserId.equals(book.getOwner())) {
+                        if (currentUserId.equals(book.getOwner()) && !book.getStatus().equals(BookStatus.BORROWED) && !book.getStatus().equals(BookStatus.ACCEPTED)) {
                             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
                             //edit book button for owner
                             fab.setImageResource(R.drawable.pencil);
                             fab.setOnClickListener(new View.OnClickListener() {
+
                                 @Override
                                 public void onClick(View view) {
                                     Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
@@ -148,22 +196,71 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                                     startActivity(intent);
 
                                 }
+
                             });
 
-                        } else {
+                        } else if(isBorrowed && book.getStatus().equals(BookStatus.ACCEPTED)){
 
+                            //Scan book to set borrowed
+                            final  FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+                            fab.setImageResource(R.drawable.round_done_black_18dp);
+                            fab.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    if (ContextCompat.checkSelfPermission(BookDetailsActivity.this, Manifest.permission.CAMERA)
+                                            == PackageManager.PERMISSION_GRANTED) {
+                                        // Permission has already been granted
+                                        new IntentIntegrator(BookDetailsActivity.this).initiateScan();
+
+                                    } else {
+
+                                        // Permission is NOT granted
+                                        // Prompt the user for permission
+                                        ActivityCompat.requestPermissions(
+                                                BookDetailsActivity.this,
+                                                new String[]{Manifest.permission.CAMERA},
+                                                MY_PERMISSIONS_REQUEST_CAMERA
+                                        );
+
+                                    }
+
+                                }
+                            });
+
+
+                        } else if(!book.getStatus().equals(BookStatus.ACCEPTED) && !book.getStatus().equals(BookStatus.BORROWED)){//!book.getStatus().equals(BookStatus.BORROWED)){
+
+                            //only iff available or requested.
                             final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
                             //fab.setEnabled(false);
                             //fab.setVisibility(View.GONE);
                             // add request button for borrower
                             fab.setImageResource(R.drawable.ic_add);
-                            fab.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    if (book.getStatus().equals(BookStatus.AVAILABLE)) {
+/*
+                            if(book.getStatus().equals(BookStatus.REQUESTED)) {
 
-                                        //fireBaseController.addRequestToBookByBookId(book.getBookId());
-                                        if(book.getStatus().equals(BookStatus.AVAILABLE) || book.getStatus().equals(BookStatus.REQUESTED)) {
+                                for (String requesterId : book.getRequesterIds()) {
+
+                                    if (requesterId.equals(currentUserId)) {
+                                        fab.setEnabled(false);
+                                        fab.setVisibility(View.GONE);
+                                        break;
+
+                                    }
+
+                                }
+
+                            }*/
+                            if (!isRequested) {
+                                fab.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+
+                                            //fireBaseController.addRequestToBookByBookId(book.getBookId());
+                                        if (book.getStatus().equals(BookStatus.AVAILABLE) || book.getStatus().equals(BookStatus.REQUESTED)) {
 
                                             databaseReference.child("books").child(book.getBookId()).addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
@@ -173,6 +270,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                                                     book.addRequest(currentUserId);
                                                     book.setStatus(BookStatus.REQUESTED);
                                                     databaseReference.child("books").child(book.getBookId()).setValue(book);
+                                                    databaseReference.child("user-books").child(book.getBookId()).child(book.getBookId()).setValue(book);
                                                     fab.setEnabled(false);
                                                     fab.setVisibility(View.GONE);
 
@@ -185,13 +283,24 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
 
                                             });
 
+                                        } else {
+                                            //Toast.makeText(this, "Book not Available for borrowing", Toast.LENGTH_SHORT).show();
+                                            //Toast.makeText(BookDetailsActivity.this, "Book not Available", Toast.LENGTH_SHORT);
+                                            fab.setEnabled(false);
+                                            fab.setVisibility(View.GONE);
+
                                         }
+
+
 
                                     }
 
-                                }
+                                });
 
-                            });
+                            } else {
+                                fab.setEnabled(false);
+                                fab.setVisibility(View.GONE);
+                            }
 
                         }
 
@@ -228,6 +337,53 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
 
 
 
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
+        if(result != null) {
+
+            if(result.getContents() == null) {
+
+                //Log.d("MainActivity", "Cancelled scan");
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+
+            } else {
+
+                //Log.d("MainActivity", "Scanned");
+                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+
+                if(book.getISBN().equals(result.getContents())){
+
+                    if(book.getCurrentBorrowerId().equals(currentUserId)){
+                        /*
+                        databaseReference.child("books").child(book.getBookId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                book =
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });*/
+
+                        book.setStatus(BookStatus.BORROWED);
+                        databaseReference.child("books").child(book.getBookId()).setValue(book);
+                        databaseReference.child("user-books").child(book.getOwner()).child(book.getBookId()).setValue(book);
+                        databaseReference.child("user-borrowed").child(currentUserId).child(book.getBookId()).setValue(book);
+
+                    }
+
+                }
+
+            }
+        } else {
+            // This is important, otherwise the result will not be passed to the fragment
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
@@ -301,9 +457,9 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
     @Override
     public void onBookUpdate(Book book) {
         this.book = book;
-        CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+//        CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbarLayout.setTitle(book.getTitle());
+//        toolbarLayout.setTitle(book.getTitle());
         toolbar.setTitle(book.getTitle());
     }
 
@@ -320,17 +476,18 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
         startActivity(intent);
 
     }
-/*
+
     @Override
     public void onBackPressed(){
 
         Intent intent = new Intent(BookDetailsActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
 
     }
-    */
-/*
+
+    /*
     public Book getBook() {
         return this.book;
     }*/
