@@ -84,7 +84,7 @@ public class EditUserActivity extends AppCompatActivity {
     public void onResume(){
         super.onResume();
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         currentEmail = new ArrayList<>();                               //will contain all emails to check for uniqueness
         currentUsername = new ArrayList<>();                            //will contain all users to check for uniqueness
         errorTextView.setVisibility(View.INVISIBLE);                    //sets error text to invisible
@@ -150,7 +150,13 @@ public class EditUserActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (validation()){
-                    updateUser();
+                    try {
+                        firebaseUser.updateEmail(email.getText().toString());           //changes log in email, but causes exceptions not yet caught.
+                        updateUser();
+                    } catch (Exception e){
+                        String error = e.toString();                                    //catches any exceptions and displays error to be fixed later
+                        displayErrorText(error);
+                    }
                 }
             }
         });
