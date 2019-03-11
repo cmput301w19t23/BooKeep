@@ -326,42 +326,4 @@ public class StandFragment extends Fragment {
         // TODO: Update argument type and name
         public void onListFragmentInteraction(Book item);
     }
-
-
-//    public ArrayList<Book> getBookList() {
-//        currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-//        BookList.clear();
-//        databaseReference.child("users").child(currentUserID).addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//
-//                User currentUser = dataSnapshot.getValue(User.class);
-//                ArrayList<String> ownedIds = currentUser.getOwnedIds();
-//                for(int i = 0; i < ownedIds.size(); i++){
-//                    databaseReference.child("books").child(ownedIds.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                            Book book = dataSnapshot.getValue(Book.class);
-//                            BookList.add(book);
-//                            Log.d("BookListSize1: ", Integer.toString(BookList.size()));
-//                        }
-//
-//                        @Override
-//                        public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                        }
-//                    });
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-//        Log.d("BookListSize2: ", Integer.toString(BookList.size()));
-//        return BookList;
-//    }
-
-
 }

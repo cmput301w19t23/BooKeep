@@ -77,7 +77,7 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).getTitle());
-        holder.mContentView.setText(mValues.get(position).getAuthors().toString());
+        holder.mContentView.setText(mValues.get(position).getAuthorsString());
         DownloadImageTask downloadImageTask = new DownloadImageTask();
         try {
             Bitmap bookImage = downloadImageTask.execute(mValues.get(position).getBookImageURL()).get();
@@ -201,29 +201,15 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
                     mValues.remove(position);
                     notifyItemRemoved(position);
                     notifyItemRangeChanged(position, mValues.size());
-
                 }
 
                 @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-
+                public void onCancelled(@NonNull DatabaseError databaseError) {}
             });
-            /*
-            mValues.remove(position);
-            notifyItemRemoved(position);
-            notifyItemRangeChanged(position, mValues.size());*/
         }
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-
-        //ImageView bmImage;
-        //public DownloadImageTask(ImageView bmImage) {
-        // AddEditBookActivity.this.bookImage = bmImage;
-        //}
-
         protected Bitmap doInBackground(String... urls) {
 
             String urldisplay = urls[0];
@@ -236,17 +222,8 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
                 Log.e("Error", e.getMessage());
                 e.printStackTrace();
             }
-
             return mIcon11;
-
         }
-
-        protected void onPostExecute(Bitmap result) {
-
-            //bmImage.setImageBitmap(result);
-
-        }
-
-
+        protected void onPostExecute(Bitmap result) {}
     }
 }

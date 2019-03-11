@@ -220,7 +220,7 @@ public class BookDetailsFragment extends Fragment {
                 bookISBN.setText(mBook.getISBN());
                 bookStatus.setText(mBook.getStatus().toString());
                 bookDescription.setText(mBook.getDescription());
-                bookOwner.setText(mUser.getEmail());
+                bookOwner.setText(mBook.getOwner());
                 bookOwner.setTextColor(Color.BLUE);
                 bookOwner.setClickable(true);
                 bookOwner.setOnClickListener(new View.OnClickListener() {
