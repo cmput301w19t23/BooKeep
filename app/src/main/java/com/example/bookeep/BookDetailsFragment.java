@@ -207,29 +207,17 @@ public class BookDetailsFragment extends Fragment {
                 bookISBN.setText(mBook.getISBN());
                 bookStatus.setText(mBook.getStatus().toString());
                 bookDescription.setText(mBook.getDescription());
-                databaseReference.child("users").child(mBook.getOwner()).addListenerForSingleValueEvent(new ValueEventListener() {
+                bookOwner.setText(mUser.getEmail());
+                bookOwner.setTextColor(Color.BLUE);
+                bookOwner.setClickable(true);
+                bookOwner.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        final User user = dataSnapshot.getValue(User.class);
-                        bookOwner.setText(user.getEmail());
-                        bookOwner.setTextColor(Color.BLUE);
-                        bookOwner.setClickable(true);
-                        bookOwner.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(getActivity(), UserProfileActivity.class);
-                                intent.putExtra("Current User", user);
-                                startActivity(intent);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getActivity(), UserProfileActivity.class);
+                        intent.putExtra("Current User", mUser);
+                        startActivity(intent);
                     }
                 });
-
 
                 DownloadImageTask downloadImageTask = new DownloadImageTask();
                 try {

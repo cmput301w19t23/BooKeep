@@ -20,7 +20,7 @@
         <activity android:name=".SignUpActivity"></activity>
         <activity
             android:name=".BookDetailsActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/AppTheme.NoActionBar">
             android:parentActivityName="com.example.bookeep.MainActivity" >
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
