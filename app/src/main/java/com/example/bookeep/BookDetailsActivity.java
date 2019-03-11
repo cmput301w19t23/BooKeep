@@ -13,6 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -57,7 +58,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_details2);
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        final CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+//        final CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         //toolbar.setTitle("Title");
         setSupportActionBar(toolbar);
         //FirebaseDatabase.getInstance().getReference().child("blah").setValue("gh");
@@ -115,23 +116,30 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                 book = dataSnapshot.getValue(Book.class);
                 //return book;
                 toolbar.setTitle(book.getTitle());
-                toolbarLayout.setTitle(book.getTitle());
+                toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
+                toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
+                    }
+                });
+//                toolbarLayout.setTitle(book.getTitle());
                 currentUserId = firebaseUser.getUid();
                 databaseReference.child("users").child(currentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         //if(dataSnapshot.getValue(User.class).getUserId().equals(currentUserId)) {
                         currentUser = dataSnapshot.getValue(User.class);
-                        bookImage = (ImageView) findViewById(R.id.book_image);
-                        DownloadImageTask downloadImageTask = new DownloadImageTask();
-                        try {
-                            Bitmap bitmap = downloadImageTask.execute(book.getBookImageURL()).get();//"http://books.google.com/books/content?id=H8sdBgAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api").get();
-                            bookImage.setImageBitmap(bitmap);
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+//                        bookImage = (ImageView) findViewById(R.id.book_image);
+//                        DownloadImageTask downloadImageTask = new DownloadImageTask();
+//                        try {
+//                            Bitmap bitmap = downloadImageTask.execute(book.getBookImageURL()).get();//"http://books.google.com/books/content?id=H8sdBgAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api").get();
+//                            bookImage.setImageBitmap(bitmap);
+//                        } catch (ExecutionException e) {
+//                            e.printStackTrace();
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
 
                         // Below: code for if user IS book owner:
                         if (currentUserId.equals(book.getOwner())) {
@@ -301,9 +309,9 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
     @Override
     public void onBookUpdate(Book book) {
         this.book = book;
-        CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+//        CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbarLayout.setTitle(book.getTitle());
+//        toolbarLayout.setTitle(book.getTitle());
         toolbar.setTitle(book.getTitle());
     }
 

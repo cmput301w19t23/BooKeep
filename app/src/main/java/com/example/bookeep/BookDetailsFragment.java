@@ -12,7 +12,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +54,7 @@ public class BookDetailsFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private Book mBook;
     private User mUser;
+    private String currentUserId;
 
     private OnFragmentInteractionListener mListener;
 
@@ -179,6 +183,10 @@ public class BookDetailsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
          final View view = inflater.inflate(R.layout.fragment_book_details, container, false);
+
+
+
+
         //activity = (BookDetailsActivity) getActivity();
         //b = BookDetailsActivity.book;
         bookTitle = (TextView) view.findViewById(R.id.book_title);
@@ -230,8 +238,80 @@ public class BookDetailsFragment extends Fragment {
         });
 
         databaseReference.child("books").addChildEventListener(updateListener);
-        //isResumed = true;
-        //mBook = fireBaseController.onBookChanged()
+        currentUserId = firebaseUser.getUid();
+        //EXPERIMENT
+        if (currentUserId.equals(mBook.getOwner())) {
+            FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+            //edit book button for owner
+            fab.setImageResource(R.drawable.pencil);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+
+                    Intent intent = new Intent(getContext(), AddEditBookActivity.class);
+                    intent.putExtra("Book to edit", mBook);
+                    startActivity(intent);
+
+                }
+            });
+
+        } else {
+
+            final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+            //fab.setEnabled(false);
+            //fab.setVisibility(View.GONE);
+            // add request button for borrower
+            fab.setImageResource(R.drawable.ic_add);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mBook.getStatus().equals(BookStatus.AVAILABLE)) {
+
+                        //fireBaseController.addRequestToBookByBookId(book.getBookId());
+                        if(mBook.getStatus().equals(BookStatus.AVAILABLE) || mBook.getStatus().equals(BookStatus.REQUESTED)) {
+
+                            databaseReference.child("books").child(mBook.getBookId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @SuppressLint("RestrictedApi")
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                    mBook = dataSnapshot.getValue(Book.class);
+                                    mBook.addRequest(currentUserId);
+                                    mBook.setStatus(BookStatus.REQUESTED);
+                                    databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
+                                    fab.setEnabled(false);
+                                    fab.setVisibility(View.GONE);
+
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+
+                            });
+
+                        }
+
+                    }
+
+                }
+
+            });
+
+        }
+
+        //EXPERIMENT END
+
+
+
+
+
+
+
+
+
 
         return view;
 
