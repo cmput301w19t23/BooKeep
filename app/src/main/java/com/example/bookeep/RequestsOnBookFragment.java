@@ -180,6 +180,7 @@ public class RequestsOnBookFragment extends Fragment {
                 requesters.clear();
                 adapter.notifyDataSetChanged();
                 for(String requesterId: requesterIds){
+
                     databaseReference.child("users").child(requesterId).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
