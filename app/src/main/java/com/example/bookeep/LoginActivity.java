@@ -17,6 +17,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 //import com.google.gson.Gson;
 
+/**
+ * Log in page that allows users to log in or sign up
+ * @author Nafee Khan, Jeff Kirker
+ * @see User
+ * @version 1.0.1
+ */
 public class LoginActivity extends AppCompatActivity {
 
     private EditText edtEmail;
@@ -84,6 +90,11 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
+
+    /**
+     * validates users log in info is correct
+     * @return boolean of whether log in info is right
+     */
     private boolean validation(){
         boolean emailValid = false;
         boolean passwordValid = false;

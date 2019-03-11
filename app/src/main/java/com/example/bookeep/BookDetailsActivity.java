@@ -42,6 +42,14 @@ import java.util.concurrent.ExecutionException;
 
 import static com.example.bookeep.AddEditBookActivity.MY_PERMISSIONS_REQUEST_CAMERA;
 
+/**
+ * Displays the books details when a book is clicked
+ * @author Nafee Khan, Jeff Kirker
+ * @see User
+ * @see Book
+ * @see BookStatus
+ * @version 1.0.1
+ */
 public class BookDetailsActivity extends AppCompatActivity implements BookDetailsFragment.OnFragmentInteractionListener, RequestsOnBookFragment.OnListFragmentInteractionListener {
 
     private Menu menu;
@@ -63,7 +71,12 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
     private boolean isBorrowed;
 
 
-
+    /**
+     * displays the book and its info when selected
+     * @param savedInstanceState Bundled saved instance state
+     * @see Book
+     * @see User
+     */
     @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -288,6 +301,12 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
 
     }
 
+    /**
+     *
+     * @param requestCode int
+     * @param resultCode int
+     * @param data intent
+     */
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 
@@ -322,6 +341,11 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
         }
     }
 
+    /**
+     * creates the options menu
+     * @param menu menu to be created
+     * @return boolean of if menu is displayed
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -331,11 +355,16 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
         return true;
     }
 
+    /**
+     * Handle action bar item clicks here. The action bar will
+     * automatically handle clicks on the Home/Up button, so long
+     * as you specify a parent activity in AndroidManifest.xml.
+     * @param item item in menu
+     * @return boolean
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
         Fragment fragment = null;
         Class fragmentClass = null;
@@ -375,11 +404,19 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * hides an option
+     * @param id id of option to be hid
+     */
     private void hideOption(int id) {
         MenuItem item = menu.findItem(id);
         item.setVisible(false);
     }
 
+    /**
+     * shows an option
+     * @param id of option to be shown
+     */
     private void showOption(int id) {
         MenuItem item = menu.findItem(id);
         item.setVisible(true);
@@ -390,6 +427,10 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
 
     }
 
+    /**
+     * updates display when book is updated
+     * @param book to be updated
+     */
     @Override
     public void onBookUpdate(Book book) {
         this.book = book;
@@ -404,6 +445,10 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
 
     }
 
+    /**
+     * @param item user to be passed to intent
+     * @see User
+     */
     @Override
     public void onListFragmentInteraction(User item) {
 
@@ -413,6 +458,9 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
 
     }
 
+    /**
+     * goes back to book details when pressed back
+     */
     @Override
     public void onBackPressed(){
 
@@ -428,7 +476,9 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
         return this.book;
     }*/
 
-
+    /**
+     * downloads the image task
+     */
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
         //ImageView bmImage;

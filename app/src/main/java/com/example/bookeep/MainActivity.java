@@ -24,6 +24,11 @@ import com.example.bookeep.Fragments.StandFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+/**
+ * Main activity of the app, users can navigate to all use cases from here
+ * @author Nafee Khan, Nolan Brost, Jeff Kirker, Dusan Krstic, Hugh Bagan, Kyle Fujishige
+ * @version 1.0.1
+ */
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FirebaseAuth.AuthStateListener, StandFragment.OnListFragmentInteractionListener, ShelfFragment.OnListFragmentInteractionListener{
     private FireBaseController fireBaseController = new FireBaseController(this);
@@ -127,6 +132,9 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    /**
+     * goes back to log in when back is pressed
+     */
     @Override
     public void onBackPressed() {
 
@@ -140,9 +148,13 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    /**
+     * inflate the menu; this adds items to the action bar if it is present.
+     * @param menu menu to be opened
+     * @return true
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         FireBaseController fireBaseController = new FireBaseController(this);
         //User user = fireBaseController.getCurrentUser();
@@ -158,11 +170,16 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * Handle action bar item clicks here. The action bar will
+     * automatically handle clicks on the Home/Up button, so long
+     * as you specify a parent activity in AndroidManifest.xml.
+     * @param item menu item  selected
+     * @return super.onOptionsItemSelected(item)
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -174,12 +191,17 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Handle navigation view item clicks here.
+     * @param item menu item clicked
+     * @return true
+     */
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         Fragment fragment = null;
         Class fragmentClass = null;
-        // Handle navigation view item clicks here.
+
         int id = item.getItemId();
 
         if (id == R.id.nav_stand) {
@@ -201,12 +223,16 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * //Do what you need to do
+     * @param firebaseAuth firebaseauth
+     */
     @Override
     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         if (firebaseUser != null) {
-            //Do what you need to do
+
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
         }
@@ -214,6 +240,10 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    /**
+     * displays the book
+     * @param item book to be displayed
+     */
     @Override
     public void onListFragmentInteraction(Book item) {
 
@@ -223,6 +253,10 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    /**
+     * sets the tool bar
+     * @param title of tool bar
+     */
     public void setToolBar(String title) {
         getSupportActionBar().setTitle(title);
     }

@@ -53,6 +53,8 @@ import static com.example.bookeep.AddEditBookActivity.MY_PERMISSIONS_REQUEST_CAM
  * to handle interaction events.
  * Use the {@link BookDetailsFragment#newInstance} factory method to
  * create an instance of this fragment.
+ * @author Nafee Khan, Jeff Kirker
+ * @verion 1.0.1
  */
 public class BookDetailsFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match

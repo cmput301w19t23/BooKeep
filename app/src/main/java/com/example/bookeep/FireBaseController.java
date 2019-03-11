@@ -21,6 +21,13 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
+/**
+ * Controller that can handle some firebase functionality
+ * @author Nafee Khan
+ * @see User
+ * @see PhoneNumber
+ * @version 1.0.1
+ */
 public class FireBaseController {
 
     private FirebaseAuth firebaseAuth;
@@ -42,6 +49,15 @@ public class FireBaseController {
 //>>>>>>> firebase
     }
 
+    /**
+     * creates a new user and adds them to firebase
+     * @param userName String of username
+     * @param email string of email
+     * @param password string of password
+     * @param firstName string of first name
+     * @param lastName string of last name
+     * @param phoneNumber string of phone numbner
+     */
     public void createNewUser(final String userName, final String email, String password, final String firstName, final String lastName, final PhoneNumber phoneNumber){
         final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
@@ -102,7 +118,11 @@ public class FireBaseController {
 
     }
 
-
+    /**
+     * signs a user in to the app through firebase
+     * @param email users email string
+     * @param password users password string
+     */
     public void signIn(String email, String password){
 
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
@@ -144,12 +164,19 @@ public class FireBaseController {
 
     }
 
+    /**
+     * checks if user is signed in
+     * @return user signed in boolean
+     */
     public Boolean isUserLoggedIn(){
 
         return firebaseUser != null;
 
     }
 
+    /**
+     * signs the user out
+     */
     public void signOut(){
 
         firebaseAuth.signOut();
@@ -157,11 +184,17 @@ public class FireBaseController {
     }
 
 
-
+    /**
+     * returns the current users id
+     * @return string of user id
+     */
     public String getCurrentUserId(){
         return firebaseUser.getUid();
     }
 
+    /**
+     * launches main activity when a user is logged in
+     */
     public void launchMainActivity(){
 
         if(isUserLoggedIn()) {
