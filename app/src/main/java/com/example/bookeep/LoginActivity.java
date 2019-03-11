@@ -11,6 +11,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -43,14 +44,6 @@ public class LoginActivity extends AppCompatActivity {
         btnSignIn = (Button) findViewById(R.id.btn_sign_in);
         btnSignUp = (Button) findViewById(R.id.btn_sign_up);
 
-
-//        if( fireBaseController.isUserLoggedIn()){
-//
-//            fireBaseController.launchMainActivity();
-//
-//        }
-
-//<<<<<<< HEAD
         edtPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -60,8 +53,6 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
-//=======
-//>>>>>>> firebase
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +63,8 @@ public class LoginActivity extends AppCompatActivity {
                     fireBaseController.signIn(edtEmail.getText().toString(), edtPassword.getText().toString());
 
 
+                } else {
+                    Toast.makeText(LoginActivity.this, "Incorrect Email or Password", Toast.LENGTH_SHORT).show();
                 }
 
             }
