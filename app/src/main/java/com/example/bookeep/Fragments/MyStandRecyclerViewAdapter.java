@@ -56,16 +56,25 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
     String currentUserId = firebaseUser.getUid();
-    private ChildEventListener mChildEventListener;
 
+
+    /**
+     * Constructor for adapter.
+     * @param items
+     * @param listener
+     */
     public MyStandRecyclerViewAdapter(List<Book> items, OnListFragmentInteractionListener listener) {
-
         mValues = items;
         mListener = listener;
 
     }
 
-
+    /**
+     * Constructor for view holder
+     * @param parent
+     * @param viewType
+     * @return the view holder
+     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -73,6 +82,11 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
         return new ViewHolder(view);
     }
 
+    /**
+     * Binds the items in the list to be displayed to the view holder.
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValues.get(position);
@@ -103,17 +117,20 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
                 }
             }
         });
-
-
     }
 
+    /**
+     *  Counts list size.
+     * @return list size
+     */
     @Override
     public int getItemCount() {
         return mValues.size();
     }
 
     /**
-     * RecyclerView ViewHolder
+     * The viewHolder. This takes all the attributes of the book object to be
+     * displayed nad places them in appropriate views.
      */
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
@@ -165,7 +182,6 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
             this.position = position;
             this.view = view;
         }
-
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
             int id = menuItem.getItemId();
@@ -183,7 +199,8 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
         }
     }
 
-    /**
+    /** This method is for deleting books from the owned booklist.
+     *
      * @param position
      */
     public void removeBook(final int position) {
@@ -209,6 +226,12 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
         }
     }
 
+
+    /**
+     * This class downloads the images when passed a URL.
+     * TODO: Create a full class that can be called by the various methods that
+     * use this. Super redundant.
+     */
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         protected Bitmap doInBackground(String... urls) {
 

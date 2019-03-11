@@ -27,24 +27,29 @@ import java.util.ArrayList;
 
 /**
  * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
+ *
+ * @author Jeff Kirker, Nafee Khan
+ *
  */
 public class ShelfFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
 
-
+    //Firebase references
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+
+
     private OnListFragmentInteractionListener mListener;
     ArrayList<Book> BookList = new ArrayList<Book>();
     MyShelfRecyclerViewAdapter adapter;
     private String currentUserID;
 
+    /** This is a ChildEventListener for firebase that listens for any changes to the user-books
+     * child and updates the borrowed book list in real time.
+     */
     private ChildEventListener updateListener = new ChildEventListener() {
         @Override
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -52,40 +57,27 @@ public class ShelfFragment extends Fragment {
             BookList.add(newBook);
             adapter.notifyDataSetChanged();
         }
-
         @Override
         public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
             Book changedBook = dataSnapshot.getValue(Book.class);
-
             for(int i = 0; i < BookList.size(); i++){
-
                 if(BookList.get(i).getBookId().equals(changedBook.getBookId())){
 
                     BookList.remove(i);
                     BookList.add(changedBook);
                     adapter.notifyDataSetChanged();
-
                 }
-
             }
-
         }
+        @Override
+        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {}
 
         @Override
-        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-        }
+        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
 
         @Override
-        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-        }
+        public void onCancelled(@NonNull DatabaseError databaseError) {}
     };
 
     /**
@@ -105,11 +97,22 @@ public class ShelfFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return the fragment view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -135,6 +138,10 @@ public class ShelfFragment extends Fragment {
         return view;
     }
 
+    /**
+     * This is necessary to connect with the MainActivity so that book cards are clickable.
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -145,13 +152,22 @@ public class ShelfFragment extends Fragment {
                     + " must implement OnListFragmentInteractionListener");
         }
     }
+
+    /**
+     *
+     */
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
-    
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(Book item);
