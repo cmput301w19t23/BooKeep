@@ -76,7 +76,7 @@ public class SearchFragment extends Fragment {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot,@Nullable String s) {
                 Book book = dataSnapshot.getValue(Book.class);
-                if (book.getStatus() == BookStatus.AVAILABLE) {
+                if (book.getStatus().equals(BookStatus.AVAILABLE) || book.getStatus().equals(BookStatus.REQUESTED)) {
                     BookList.add(book);
                 }
                 adapter.notifyDataSetChanged();
