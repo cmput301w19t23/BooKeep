@@ -27,47 +27,39 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
 /**
  * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
+ *
+ * @author Jeff Kirker
  */
 public class StandFragment extends Fragment {
 
-    private boolean isResumed;
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
     private String currentUserID;
-    private User currentUser;
 
     ArrayList<Book> BookList = new ArrayList<>();
     MyStandRecyclerViewAdapter adapter;
 
-
+    /** This is a ChildEventListener for firebase that listens for any changes to the user-books
+     * child and updates the owned book list in real time.
+     */
     private ChildEventListener updateListener = new ChildEventListener() {
         @Override
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             Book newBook = dataSnapshot.getValue(Book.class);
             BookList.add(newBook);
             adapter.notifyDataSetChanged();
             Log.d("BookListSize1: ", Integer.toString(BookList.size()));
-
         }
-
         @Override
         public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
@@ -97,70 +89,6 @@ public class StandFragment extends Fragment {
         public void onCancelled(@NonNull DatabaseError databaseError) {}
     };
 
-    /*OLD DTSRUCTURE
-    private ChildEventListener updateListener = new ChildEventListener() {
-
-        @Override
-        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-        }
-
-        @Override
-        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            User changedUser = dataSnapshot.getValue(User.class);
-
-            if(changedUser.getUserId().equals(currentUserID)){
-
-                if(changedUser != null) {
-
-                    currentUser = changedUser;
-
-                    if(isResumed){
-
-                        ArrayList<String> booksOwnedIds = currentUser.getOwnedIds();
-                        BookList.clear();
-                        adapter.notifyDataSetChanged();
-                        for(String bookId: booksOwnedIds){
-                            databaseReference.child("books").child(bookId).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    BookList.add(dataSnapshot.getValue(Book.class));
-                                    adapter.notifyDataSetChanged();
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                }
-
-                            });
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-        }
-
-        @Override
-        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-        }
-
-        @Override
-        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-        }
-    };*/
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
@@ -171,9 +99,7 @@ public class StandFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public StandFragment() {
-
-    }
+    public StandFragment() {}
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
@@ -211,7 +137,7 @@ public class StandFragment extends Fragment {
         Context context = view.getContext();
         recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
 
-        // FAB to add more buttons
+        // FAB to add more books
         FloatingActionButton addBook = (FloatingActionButton) view.findViewById(R.id.addBook);
         addBook.setOnClickListener(new View.OnClickListener() {
 
@@ -220,70 +146,22 @@ public class StandFragment extends Fragment {
                 /** TODO: Get rid of entire startActivityForResult chain
                  *
                  */
-                //startActivityForResult(intent, 23);
                 startActivity(intent);
-                //getActivity().finish();
             }
 
         });
 
         databaseReference.child("user-books").child(currentUserID).addChildEventListener(updateListener);
 
-
-/*OLD STRUCTURE
-        databaseReference.child("users").child(currentUserID).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                currentUser = dataSnapshot.getValue(User.class);
-                ArrayList<String> booksOwnedIds = currentUser.getOwnedIds();
-                BookList.clear();
-                adapter.notifyDataSetChanged();
-                for(String bookId: booksOwnedIds){
-                    databaseReference.child("books").child(bookId).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                            BookList.add(dataSnapshot.getValue(Book.class));
-                            adapter.notifyDataSetChanged();
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-
-                    });
-
-                }
-                databaseReference.child("users").addChildEventListener(updateListener);
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });*/
-
         return view;
     }
 
-
-    @Override
-    public void onResume() {
-        isResumed = true;
-        super.onResume();
-    }
-
-    @Override
-    public void onPause(){
-        isResumed = false;
-        super.onPause();
-    }
-
+    /**
+     * Depreciated method, but necessary until we can solve the TODOs
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -295,6 +173,11 @@ public class StandFragment extends Fragment {
             }
         }
     }
+
+    /**
+     * Connects the stand to our MainActivity so books are clickable
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -306,6 +189,9 @@ public class StandFragment extends Fragment {
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -317,10 +203,6 @@ public class StandFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name

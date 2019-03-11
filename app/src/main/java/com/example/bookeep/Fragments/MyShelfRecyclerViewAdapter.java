@@ -21,20 +21,32 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a BookList and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
+ *
+ * @author Jeff Kirker, Nafee Khan
  */
 public class MyShelfRecyclerViewAdapter extends RecyclerView.Adapter<MyShelfRecyclerViewAdapter.ViewHolder> {
 
     private final List<Book> mValues;
     private final OnListFragmentInteractionListener mListener;
 
+    /**
+     * Constructor for the adapter.
+     * @param items
+     * @param listener
+     */
     public MyShelfRecyclerViewAdapter(List<Book> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
 
+    /**
+     * Constructor for the view holder.
+     * @param parent
+     * @param viewType
+     * @return ViewHolder
+     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -42,6 +54,11 @@ public class MyShelfRecyclerViewAdapter extends RecyclerView.Adapter<MyShelfRecy
         return new ViewHolder(view);
     }
 
+    /**
+     * Binds the items in the list to be displayed to the view holder.
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
@@ -68,11 +85,19 @@ public class MyShelfRecyclerViewAdapter extends RecyclerView.Adapter<MyShelfRecy
         });
     }
 
+    /**
+     * Counts the size of the list.
+     * @return size of list
+     */
     @Override
     public int getItemCount() {
         return mValues.size();
     }
 
+    /**
+     * The viewHolder. This takes all the attributes of the book object to be
+     * displayed nad places them in appropriate views.
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final ImageView mImageView;
@@ -94,21 +119,11 @@ public class MyShelfRecyclerViewAdapter extends RecyclerView.Adapter<MyShelfRecy
         }
     }
 
-
-    // Method to make dummy book list
-    public static ArrayList<Book> createBookList(int COUNT) {
-        ArrayList<Book> BookList = new ArrayList<Book>();
-        Book newBook = new Book();
-        newBook.setTitle("Neuromancer");
-        ArrayList<String> authors = new ArrayList<String>();
-        authors.add("William Gibson");
-        newBook.setAuthor(authors);
-        for (int i = 1; i <= COUNT; i++) {
-            BookList.add(newBook);
-        }
-
-        return BookList;
-    }
+    /**
+     * This class downloads the images when passed a URL.
+     * TODO: Create a full class that can be called by the various methods that
+     * use this. Super redundant.
+     */
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         protected Bitmap doInBackground(String... urls) {
 
@@ -126,5 +141,4 @@ public class MyShelfRecyclerViewAdapter extends RecyclerView.Adapter<MyShelfRecy
         }
         protected void onPostExecute(Bitmap result) {}
     }
-
 }
