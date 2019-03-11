@@ -23,13 +23,14 @@ public class SearchActivity extends AppCompatActivity implements SearchFragment.
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference databaseReference;
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+    Fragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        Fragment fragment = SearchFragment.newInstance();
+        fragment = SearchFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.search_fragment_container, fragment).commit();
     }
@@ -43,6 +44,29 @@ public class SearchActivity extends AppCompatActivity implements SearchFragment.
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search_action));
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                Bundle bundle = new Bundle();
+                bundle.putString("query", s);
+                fragment = new SearchKeyWordsFragment();
+                fragment.setArguments(bundle);
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.search_fragment_container, fragment).commit();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                Bundle bundle = new Bundle();
+                bundle.putString("query", s);
+                fragment = new SearchKeyWordsFragment();
+                fragment.setArguments(bundle);
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.search_fragment_container, fragment).commit();
+                return false;
+            }
+        });
 
         return true;
     }

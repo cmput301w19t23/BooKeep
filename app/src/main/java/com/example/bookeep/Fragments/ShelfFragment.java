@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.bookeep.Book;
+import com.example.bookeep.MainActivity;
 import com.example.bookeep.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -98,6 +99,7 @@ public class ShelfFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        ((MainActivity) getActivity()).setToolBar("My Borrowed Books");
         currentUserID = firebaseUser.getUid();
         BookList = new ArrayList<Book>();
 

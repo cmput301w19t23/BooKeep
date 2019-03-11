@@ -129,7 +129,7 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
             mIdView = (TextView) view.findViewById(R.id.book_title);
             mContentView = (TextView) view.findViewById(R.id.book_author);
             overflow = (ImageButton) view.findViewById(R.id.overflow_menu);
-            imageView = view.findViewById(R.id.imageView4);
+            imageView = view.findViewById(R.id.book_cover);
         }
 
         @Override

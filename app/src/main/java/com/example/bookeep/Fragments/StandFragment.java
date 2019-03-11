@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 
 import com.example.bookeep.AddEditBookActivity;
 import com.example.bookeep.Book;
+import com.example.bookeep.MainActivity;
 import com.example.bookeep.R;
 import com.example.bookeep.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -192,6 +193,8 @@ public class StandFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        ((MainActivity) getActivity()).setToolBar("My Owned Books");
         currentUserID = firebaseUser.getUid();
         BookList = new ArrayList<>();
 

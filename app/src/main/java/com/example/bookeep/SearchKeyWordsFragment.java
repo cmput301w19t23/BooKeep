@@ -8,8 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,13 +19,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
 
 import java.util.ArrayList;
 
-
-public class SearchFragment extends Fragment {
-
+public class SearchKeyWordsFragment extends Fragment {
     private boolean isResumed;
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -38,15 +33,9 @@ public class SearchFragment extends Fragment {
     SearchRecyclerViewAdapter adapter;
 
     // TODO: Customize parameters
-    private OnListFragmentInteractionListener mListener;
+    private SearchFragment.OnListFragmentInteractionListener mListener;
 
-    public SearchFragment() {}
-
-    public static SearchFragment newInstance () {
-        SearchFragment fragment = new SearchFragment();
-        return fragment;
-
-    }
+    public SearchKeyWordsFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +46,7 @@ public class SearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater,ViewGroup container,
                              Bundle savedInstanceState) {
         BookList = new ArrayList<>();
+        final String query = getArguments().getString("query");
 
         View view = inflater.inflate(R.layout.fragment_search_list,container,false);
         Context context = view.getContext();
@@ -76,7 +66,9 @@ public class SearchFragment extends Fragment {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot,@Nullable String s) {
                 Book book = dataSnapshot.getValue(Book.class);
-                if (book.getStatus() == BookStatus.AVAILABLE) {
+                if (book.getStatus() == BookStatus.AVAILABLE &&
+                        (book.getTitle().toLowerCase().contains(query.toLowerCase()) ||
+                                book.getAuthorsString().toLowerCase().contains(query.toLowerCase()))) {
                     BookList.add(book);
                 }
                 adapter.notifyDataSetChanged();
@@ -127,8 +119,8 @@ public class SearchFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof SearchFragment.OnListFragmentInteractionListener) {
+            mListener = (SearchFragment.OnListFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");

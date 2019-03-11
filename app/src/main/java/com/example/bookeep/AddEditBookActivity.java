@@ -314,14 +314,7 @@ public class AddEditBookActivity extends AppCompatActivity {
                 databaseReference.child("books").child(book.getBookId()).setValue(book);
 
             }
-
-
-
-            // Add book to "books
-
-            Intent intent = new Intent(AddEditBookActivity.this, BookDetailsActivity.class);
-            intent.putExtra("Book ID", book.getBookId());
-            startActivity(intent);
+            // Return to stand and display books
             finish();
         }
     }
