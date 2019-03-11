@@ -99,7 +99,7 @@ public class AddEditBookActivity extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
         Intent intent = getIntent();
-        setResult(RESULT_CANCELED,intent);
+        setResult(RESULT_CANCELED, intent);
 
         bookImage = (ImageView) findViewById(R.id.bookImage);
         bookTitle = (EditText) findViewById(R.id.editBookTitle);
@@ -113,7 +113,7 @@ public class AddEditBookActivity extends AppCompatActivity {
 
         Bundle bundle = intent.getExtras();
 
-        if (bundle != null) {
+        if(bundle != null){
 
             book = (Book) intent.getSerializableExtra("Book to edit");
 
@@ -156,7 +156,7 @@ public class AddEditBookActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (ContextCompat.checkSelfPermission(AddEditBookActivity.this,Manifest.permission.CAMERA)
+                if (ContextCompat.checkSelfPermission(AddEditBookActivity.this, Manifest.permission.CAMERA)
                         == PackageManager.PERMISSION_GRANTED) {
                     // Permission has already been granted
                     new IntentIntegrator(AddEditBookActivity.this).initiateScan();
@@ -180,7 +180,7 @@ public class AddEditBookActivity extends AppCompatActivity {
         isbn.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
             @Override
-            public void onFocusChange(View v,boolean hasFocus) {
+            public void onFocusChange(View v, boolean hasFocus) {
 
                 if (!hasFocus) {
 
@@ -232,9 +232,9 @@ public class AddEditBookActivity extends AppCompatActivity {
 
             //Get the user object
             currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            if (book == null) {
+            if(book == null) {
 
-                book = new Book(isbn.getText().toString().trim(),currentUserID);
+                book = new Book(isbn.getText().toString().trim(), currentUserID);
 
                 ArrayList<String> Authors = new ArrayList<>();
                 Authors.add(bookAuthors.getText().toString().trim());
@@ -295,17 +295,18 @@ public class AddEditBookActivity extends AppCompatActivity {
     }
 
     public void ImageUpload(View view) {
-        Intent intent = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
-        startActivityForResult(intent,69);
+        startActivityForResult(intent, 69);
 
     }
+
 
 
     //https://developer.android.com/training/permissions/requesting#java
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[],int[] grantResults) {
+                                           String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_CAMERA: {
                 // If request is cancelled, the result arrays are empty.
@@ -371,6 +372,8 @@ public class AddEditBookActivity extends AppCompatActivity {
 
 
 
+
+
                 //txtView.setText(author);
             } catch (ExecutionException e) {
                 e.printStackTrace();
@@ -385,31 +388,31 @@ public class AddEditBookActivity extends AppCompatActivity {
 
     //taken from https://stackoverflow.com/questions/18543668/integrate-zxing-in-android-studio
     //also taken from https://stackoverflow.com/questions/38471963/setimagebitmap-not-displaying?rq=1
-    public void onActivityResult(int requestCode,int resultCode,Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == 69 && resultCode == RESULT_OK) {
             if (data != null) {
-                super.onActivityResult(requestCode,resultCode,data);
+                super.onActivityResult(requestCode, resultCode, data);
                 Uri selectedImage = data.getData();
                 //bookLink = selectedImage.toString();
                 //bookImage.setImageBitmap(setPicture(bookLink));
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),selectedImage);
-                    bitmap = Bitmap.createScaledBitmap(bitmap,147,150,true);
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                    bitmap = Bitmap.createScaledBitmap(bitmap, 147, 150, true);
                     bookImage.setImageBitmap(bitmap);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         } else {
-            IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
+            IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
             if (result != null) {
                 if (result.getContents() == null) {
-                    Log.d("MainActivity","Cancelled scan");
-                    Toast.makeText(this,"Cancelled",Toast.LENGTH_LONG).show();
+                    Log.d("MainActivity", "Cancelled scan");
+                    Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
                 } else {
-                    Log.d("MainActivity","Scanned");
-                    Toast.makeText(this,"Scanned: " + result.getContents(),Toast.LENGTH_LONG).show();
+                    Log.d("MainActivity", "Scanned");
+                    Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
                     //txtView = findViewById(R.id.text1);
                     if (isNetworkAvailable()) {
                         if (result.getContents().length() == 10 || result.getContents().length() == 13)
@@ -419,12 +422,11 @@ public class AddEditBookActivity extends AppCompatActivity {
                 }
             } else {
                 // This is important, otherwise the result will not be passed to the fragment
-                super.onActivityResult(requestCode,resultCode,data);
+                super.onActivityResult(requestCode, resultCode, data);
             }
         }
 
     }
-
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -432,7 +434,6 @@ public class AddEditBookActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 
     }
-
     //taken from https://stackoverflow.com/questions/6407324/how-to-display-image-from-url-on-android
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
@@ -451,7 +452,7 @@ public class AddEditBookActivity extends AppCompatActivity {
                 InputStream in = new java.net.URL(urldisplay).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
             } catch (Exception e) {
-                Log.e("Error",e.getMessage());
+                Log.e("Error", e.getMessage());
                 e.printStackTrace();
             }
 
@@ -465,7 +466,6 @@ public class AddEditBookActivity extends AppCompatActivity {
 
 
     }
-}
 /*
     public Bitmap setPicture(String ImageLink) {
         if (ImageLink.startsWith("http")) {
@@ -513,6 +513,8 @@ public class AddEditBookActivity extends AppCompatActivity {
         }
     }
     */
+}
+
 
 
 

@@ -93,14 +93,20 @@ public class LoginActivity extends AppCompatActivity {
 
         if (Patterns.EMAIL_ADDRESS.matcher(edtEmail.getText().toString()).matches()) {
             emailValid = true;
-        } else {
-            edtEmail.setError("Invalid email");
         }
-        if (edtPassword.getText().toString().length() > 5) {
+        if (edtPassword.getText().toString().length() > 0) {
             passwordValid = true;
-        } else {
-            edtPassword.setError("Must be at least 6 characters");
         }
+        /*
+        if (editHeartRate.getText().toString().length() > 0) {
+            heartValid = true;
+        }
+        if (pickDate.getText().toString().length() > 0) {
+            dateValid = true;
+        }
+        if (pickTime.getText().toString().length() > 0) {
+            timeValid = true;
+        }*/
 
         return (emailValid && passwordValid);
     }
