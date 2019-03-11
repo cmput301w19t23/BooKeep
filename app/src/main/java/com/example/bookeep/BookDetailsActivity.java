@@ -263,7 +263,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                                                     book.addRequest(currentUserId);
                                                     book.setStatus(BookStatus.REQUESTED);
                                                     databaseReference.child("books").child(book.getBookId()).setValue(book);
-                                                    databaseReference.child("user-books").child(currentUserId).child(book.getBookId()).setValue(book);
+                                                    databaseReference.child("user-books").child(book.getBookId()).child(book.getBookId()).setValue(book);
                                                     fab.setEnabled(false);
                                                     fab.setVisibility(View.GONE);
 
