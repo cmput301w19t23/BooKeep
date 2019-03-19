@@ -32,8 +32,10 @@ import com.google.firebase.auth.FirebaseUser;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FirebaseAuth.AuthStateListener, StandFragment.OnListFragmentInteractionListener, ShelfFragment.OnListFragmentInteractionListener{
     private FireBaseController fireBaseController = new FireBaseController(this);
-    public Integer ADD_REQUEST = 0;
-    public Integer EDIT_REQUEST = 1;
+
+    Menu menu;
+    Class fragmentClass = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +45,6 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         Fragment fragment = null;
-        Class fragmentClass = null;
         fragmentClass = StandFragment.class;
         try {
             fragment = (Fragment) fragmentClass.newInstance();
@@ -100,13 +101,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * inflate the menu; this adds items to the action bar if it is present.
+     * Inflate the menu; this adds items to the action bar if it is present.
      * @param menu menu to be opened
      * @return true
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         getMenuInflater().inflate(R.menu.main, menu);
+        showFilter(true);
+
         FireBaseController fireBaseController = new FireBaseController(this);
         //User user = fireBaseController.getCurrentUser();
         //userText.setText(user.getFirstName() + " " + user.getLastName());
@@ -122,6 +126,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
+     * Sets the filter button to be visible or not, depending on current
+     * fragment.
+     * @param showMenu
+     */
+    public void showFilter(boolean showMenu){
+        if(menu == null)
+            return;
+        menu.setGroupVisible(R.id.filter_menu_group, showMenu);
+    }
+
+    /**
      * Handle action bar item clicks here. The action bar will
      * automatically handle clicks on the Home/Up button, so long
      * as you specify a parent activity in AndroidManifest.xml.
@@ -134,7 +149,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.search_button) {
             Intent intent = new Intent(MainActivity.this, SearchActivity.class);
             startActivity(intent);
         }
@@ -151,16 +166,17 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         Fragment fragment = null;
-        Class fragmentClass = null;
 
         int id = item.getItemId();
 
         if (id == R.id.nav_stand) {
-
             fragmentClass = StandFragment.class;
+            showFilter(true);
         } else {
             fragmentClass = ShelfFragment.class;
+            showFilter(false);
         }
+
         try {
             fragment = (Fragment) fragmentClass.newInstance();
         } catch (Exception e) {
