@@ -23,6 +23,12 @@ import com.example.bookeep.Fragments.ShelfFragment;
 import com.example.bookeep.Fragments.StandFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * Main activity of the app, users can navigate to all use cases from here
@@ -64,6 +70,33 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+
+        //Sets a value event listener on the user so any changes to their name/email will be displayed.
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        String userId = firebaseUser.getUid();
+        DatabaseReference myRef = database.getReference("users").child(userId);
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if (user != null){
+                    TextView nameView = findViewById(R.id.name);
+                    TextView emailView = findViewById(R.id.email);
+                    String nameString = user.getFirstname() + " " + user.getLastname();
+                    String emailString = user.getEmail();
+                    nameView.setText(nameString);
+                    emailView.setText(emailString);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+/*      //sets up on
         // Set the Drawer layout to display the currently logged in User
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         // Check to make sure user is signed in.
@@ -79,8 +112,8 @@ public class MainActivity extends AppCompatActivity
             TextView name = (TextView) headerView.findViewById(R.id.name);
             name.setText(R.string.app_name);
             TextView email = (TextView) headerView.findViewById(R.id.email);
-            email.setText(R.string.not_signed_in);
-        }
+            email.setText(R.string.not_signed_in);*/
+
     }
 
     /**
