@@ -38,8 +38,6 @@ import java.util.ArrayList;
  * @see MainActivity
  * @version 1.0.1
  */
-//https://firebase.google.com/docs/reference/js/firebase.User#updateEmail
-    //should push updated email to firebase authentication
 public class EditUserActivity extends AppCompatActivity {
     private EditText userName;
     private ImageView userPicture;
@@ -132,7 +130,7 @@ public class EditUserActivity extends AppCompatActivity {
                     userName.setText(currentUser.getUserName());
                     currentUsername.add(currentUser.getUserName());
                     firstName.setText(currentUser.getFirstname());
-                    lastName.setText(currentUser.getFirstname());
+                    lastName.setText(currentUser.getLastname());
                     email.setText(currentUser.getEmail());
                     currentEmail.add(currentUser.getEmail());
                     phoneNumber.setText(currentUser.getPhoneNumber().toString());
