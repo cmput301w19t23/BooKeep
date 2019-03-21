@@ -109,7 +109,11 @@
 
     <string name="edit_book">Edit Details</string>
     <string name="delete_book">Delete Book</string>
-
+    <string name="borrowed">Borrowed</string>
+    <string name="accepted">Accepted</string>
+    <string name="requested">Requested</string>
+    <string name="available">Available</string>
+    <string name="all_owned">All Owned</string>
 
 
 </resources>

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,8 +18,11 @@ import android.view.MenuItem;
 
 
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.bookeep.Fragments.MyStandRecyclerViewAdapter;
 import com.example.bookeep.Fragments.ShelfFragment;
 import com.example.bookeep.Fragments.StandFragment;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,6 +39,12 @@ public class MainActivity extends AppCompatActivity
 
     Menu menu;
     Class fragmentClass = null;
+
+    private int allOwned = 0;
+    private int available = 1;
+    private int requested = 2;
+    private int accepted = 3;
+    private int borrowed = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +119,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
         getMenuInflater().inflate(R.menu.main, menu);
-        showFilter(true);
+//        showFilter(true);
 
         FireBaseController fireBaseController = new FireBaseController(this);
         //User user = fireBaseController.getCurrentUser();
@@ -123,17 +133,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
         return true;
-    }
-
-    /**
-     * Sets the filter button to be visible or not, depending on current
-     * fragment.
-     * @param showMenu
-     */
-    public void showFilter(boolean showMenu){
-        if(menu == null)
-            return;
-        menu.setGroupVisible(R.id.filter_menu_group, showMenu);
     }
 
     /**
@@ -154,8 +153,11 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         }
 
+
         return super.onOptionsItemSelected(item);
     }
+
+
 
     /**
      * Handle navigation view item clicks here.
@@ -171,10 +173,10 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_stand) {
             fragmentClass = StandFragment.class;
-            showFilter(true);
+//            showFilter(true);
         } else {
             fragmentClass = ShelfFragment.class;
-            showFilter(false);
+//            showFilter(false);
         }
 
         try {

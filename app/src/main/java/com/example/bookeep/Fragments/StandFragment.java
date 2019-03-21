@@ -1,5 +1,6 @@
 package com.example.bookeep.Fragments;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,8 +13,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.bookeep.AddEditBookActivity;
 import com.example.bookeep.Book;
@@ -46,8 +51,16 @@ public class StandFragment extends Fragment {
 
     private String currentUserID;
 
+
     ArrayList<Book> BookList = new ArrayList<>();
     MyStandRecyclerViewAdapter adapter;
+
+    ArrayList<Book> fullBookList = new ArrayList<>();
+    ArrayList<Book> borrowedList = new ArrayList<>();
+    ArrayList<Book> requestedList = new ArrayList<>();
+    ArrayList<Book> acceptedList = new ArrayList<>();
+    ArrayList<Book> availableList = new ArrayList<>();
+
 
     /** This is a ChildEventListener for firebase that listens for any changes to the user-books
      * child and updates the owned book list in real time.
@@ -57,8 +70,28 @@ public class StandFragment extends Fragment {
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
             Book newBook = dataSnapshot.getValue(Book.class);
             BookList.add(newBook);
+            fullBookList.add(newBook);
+
+            //Build arrays for different book status
+            String status = newBook.getStatus().toString();
+            Log.d("BookStatus: ", status);
+            switch (status){
+                case "AVAILABLE":
+                    availableList.add(newBook);
+                    break;
+                case "BORROWED":
+                    borrowedList.add(newBook);
+                    break;
+                case "REQUESTED":
+                    requestedList.add(newBook);
+                    break;
+                case "ACCEPTED":
+                    acceptedList.add(newBook);
+                    break;
+            }
+
+            Log.d("borrowedLength", Integer.toString(borrowedList.size()));
             adapter.notifyDataSetChanged();
-            Log.d("BookListSize1: ", Integer.toString(BookList.size()));
         }
         @Override
         public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -68,12 +101,25 @@ public class StandFragment extends Fragment {
             for(int i = 0; i < BookList.size(); i++){
 
                 if(BookList.get(i).getBookId().equals(changedBook.getBookId())){
-
                     BookList.remove(i);
                     BookList.add(changedBook);
-                    adapter.notifyDataSetChanged();
-
+                } else if(fullBookList.get(i).getBookId().equals(changedBook.getBookId())){
+                    fullBookList.remove(i);
+                    fullBookList.add(changedBook);
+                } else if(availableList.get(i).getBookId().equals(changedBook.getBookId())){
+                    availableList.remove(i);
+                    availableList.add(changedBook);
+                } else if(borrowedList.get(i).getBookId().equals(changedBook.getBookId())){
+                    borrowedList.remove(i);
+                    borrowedList.add(changedBook);
+                } else if(requestedList.get(i).getBookId().equals(changedBook.getBookId())){
+                    requestedList.remove(i);
+                    requestedList.add(changedBook);
+                } else if(acceptedList.get(i).getBookId().equals(changedBook.getBookId())) {
+                    acceptedList.remove(i);
+                    acceptedList.add(changedBook);
                 }
+                adapter.notifyDataSetChanged();
 
             }
 
@@ -114,6 +160,7 @@ public class StandFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -121,6 +168,7 @@ public class StandFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         ((MainActivity) getActivity()).setToolBar("My Owned Books");
+
         currentUserID = firebaseUser.getUid();
         BookList = new ArrayList<>();
 
@@ -154,6 +202,52 @@ public class StandFragment extends Fragment {
         databaseReference.child("user-books").child(currentUserID).addChildEventListener(updateListener);
 
         return view;
+    }
+
+    /**
+     * This method creates the filter drop down method in place of an options
+     * menu.
+     * @param menu
+     * @param inflater
+     */
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        inflater.inflate(R.menu.stand_filter_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    /**
+     * This is the option selection method for the filter drop down menu.
+     * @param item
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch(id) {
+            case R.id.view_all:
+                Toast.makeText(getContext(), "Viewing all", Toast.LENGTH_SHORT).show();
+                setFilter(0);
+                return true;
+            case R.id.view_available:
+                Toast.makeText(getContext(), "Viewing available", Toast.LENGTH_SHORT).show();
+                setFilter(1);
+                return true;
+            case R.id.view_accepted:
+                Toast.makeText(getContext(), "Viewing accepted", Toast.LENGTH_SHORT).show();
+                setFilter(2);
+                return true;
+            case R.id.view_requested:
+                Toast.makeText(getContext(), "Viewing requested", Toast.LENGTH_SHORT).show();
+                setFilter(3);
+                return true;
+            case R.id.view_borrowed:
+                Toast.makeText(getContext(), "Viewing borrowed", Toast.LENGTH_SHORT).show();
+                setFilter(4);
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -207,5 +301,43 @@ public class StandFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onListFragmentInteraction(Book item);
+    }
+
+
+    /**
+     * This method replaces the recyclerView data with a new list that contains
+     * only statuses of the selected type.
+     * @param type
+     */
+    public void setFilter(int type){
+        BookList.clear();
+
+        Log.d("listsize1:", Integer.toString(BookList.size()));
+        Log.d("filterType:", Integer.toString(type));
+        switch(type) {
+            case 0:
+                Log.d("fullsize:", Integer.toString(fullBookList.size()));
+                BookList.addAll(fullBookList);
+                break;
+            case 1:
+                Log.d("availsize:", Integer.toString(availableList.size()));
+                BookList.addAll(availableList);
+                break;
+            case 2:
+                Log.d("acceptedsize:", Integer.toString(acceptedList.size()));
+                BookList.addAll(acceptedList);
+                break;
+            case 3:
+
+                Log.d("reqsize:", Integer.toString(requestedList.size()));
+                BookList.addAll(requestedList);
+                break;
+            case 4:
+                Log.d("borrowedsize:", Integer.toString(borrowedList.size()));
+                BookList.addAll(borrowedList);
+                break;
+        }
+        Log.d("listsize2:", Integer.toString(BookList.size()));
+        adapter.notifyDataSetChanged();
     }
 }
