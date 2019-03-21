@@ -114,6 +114,7 @@
     <string name="requested">Requested</string>
     <string name="available">Available</string>
     <string name="all_owned">All Owned</string>
+    <string name="new_request">New Request!</string>
 
 
 </resources>

@@ -30,6 +30,10 @@ public class Book implements Serializable {
     private ArrayList<String> requesterIds = new ArrayList<String>();
     //private Bitmap bookImage;
     private String bookImageURL;
+    private Boolean newRequest;
+
+
+
     /**
      * gets the books image url
      * @return bookImageUrl
@@ -58,6 +62,7 @@ public class Book implements Serializable {
         this.ownerId = ownerId;
         this.bookId = UUID.randomUUID().toString();
         this.status = BookStatus.AVAILABLE;
+        this.newRequest = false;
     }
 
     /**
@@ -274,6 +279,17 @@ public class Book implements Serializable {
         return authorsString;
     }
 
+    public void setNewRequest(){
+        this.newRequest = true;
+    }
+
+    public void clearNewRequest(){
+        this.newRequest = false;
+    }
+
+    public Boolean getNewRequest(){
+        return this.newRequest;
+    }
 
 
 }
