@@ -266,7 +266,6 @@ public class BookDetailsFragment extends Fragment {
         databaseReference.child("books").addChildEventListener(updateListener);
         currentUserId = firebaseUser.getUid();
 
-        //EXPERIMENT
         if(mBook.getStatus().equals(BookStatus.REQUESTED)) {
 
             for (String requesterId : mBook.getRequesterIds()) {
@@ -305,9 +304,7 @@ public class BookDetailsFragment extends Fragment {
                     Intent intent = new Intent(getContext(), AddEditBookActivity.class);
                     intent.putExtra("Book to edit", mBook);
                     startActivity(intent);
-
                 }
-
             });
 
         } else if(isBorrowed && mBook.getStatus().equals(BookStatus.ACCEPTED)){
@@ -331,12 +328,9 @@ public class BookDetailsFragment extends Fragment {
                         ActivityCompat.requestPermissions(getActivity(),
                                 new String[]{Manifest.permission.CAMERA},
                                 MY_PERMISSIONS_REQUEST_CAMERA);
-
                     }
-
                 }
             });
-
 
         } else if(!mBook.getStatus().equals(BookStatus.ACCEPTED) && !mBook.getStatus().equals(BookStatus.BORROWED)){//!book.getStatus().equals(BookStatus.BORROWED)){
 
@@ -366,8 +360,6 @@ public class BookDetailsFragment extends Fragment {
                 fab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
-
                         //fireBaseController.addRequestToBookByBookId(book.getBookId());
                         if (mBook.getStatus().equals(BookStatus.AVAILABLE) || mBook.getStatus().equals(BookStatus.REQUESTED)) {
 
@@ -378,18 +370,15 @@ public class BookDetailsFragment extends Fragment {
                                     mBook = dataSnapshot.getValue(Book.class);
                                     mBook.addRequest(currentUserId);
                                     mBook.setStatus(BookStatus.REQUESTED);
+                                    mBook.setNewRequest();
                                     databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
                                     databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);
                                     fab.setEnabled(false);
                                     fab.setVisibility(View.GONE);
 
                                 }
-
                                 @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                }
-
+                                public void onCancelled(@NonNull DatabaseError databaseError) {}
                             });
 
                         } else {
@@ -397,11 +386,7 @@ public class BookDetailsFragment extends Fragment {
                             //Toast.makeText(BookDetailsActivity.this, "Book not Available", Toast.LENGTH_SHORT);
                             fab.setEnabled(false);
                             fab.setVisibility(View.GONE);
-
                         }
-
-
-
                     }
 
                 });
@@ -412,17 +397,6 @@ public class BookDetailsFragment extends Fragment {
             }
 
         }
-
-        //EXPERIMENT END
-
-
-
-
-
-
-
-
-
 
         return view;
 

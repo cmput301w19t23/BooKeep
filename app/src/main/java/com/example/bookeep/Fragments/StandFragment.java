@@ -50,7 +50,7 @@ public class StandFragment extends Fragment {
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
     private String currentUserID;
-
+    private Menu menu;
 
     ArrayList<Book> BookList = new ArrayList<>();
     MyStandRecyclerViewAdapter adapter;
@@ -98,31 +98,45 @@ public class StandFragment extends Fragment {
 
             Book changedBook = dataSnapshot.getValue(Book.class);
 
-            for(int i = 0; i < BookList.size(); i++){
+            for(int i = 0; i < BookList.size(); i++) {
 
-                if(BookList.get(i).getBookId().equals(changedBook.getBookId())){
+                if (BookList.get(i).getBookId().equals(changedBook.getBookId())) {
                     BookList.remove(i);
                     BookList.add(changedBook);
-                } else if(fullBookList.get(i).getBookId().equals(changedBook.getBookId())){
+                }
+            }
+            for(int i = 0; i < fullBookList.size(); i++) {
+                if (fullBookList.get(i).getBookId().equals(changedBook.getBookId())) {
                     fullBookList.remove(i);
                     fullBookList.add(changedBook);
-                } else if(availableList.get(i).getBookId().equals(changedBook.getBookId())){
+                }
+            }
+            for(int i = 0; i < availableList.size(); i++) {
+                if (availableList.get(i).getBookId().equals(changedBook.getBookId())) {
                     availableList.remove(i);
                     availableList.add(changedBook);
-                } else if(borrowedList.get(i).getBookId().equals(changedBook.getBookId())){
+                }
+            }
+            for(int i = 0; i < borrowedList.size(); i++) {
+                if (borrowedList.get(i).getBookId().equals(changedBook.getBookId())) {
                     borrowedList.remove(i);
                     borrowedList.add(changedBook);
-                } else if(requestedList.get(i).getBookId().equals(changedBook.getBookId())){
+                }
+            }
+            for(int i = 0; i < requestedList.size(); i++) {
+                if (requestedList.get(i).getBookId().equals(changedBook.getBookId())) {
                     requestedList.remove(i);
                     requestedList.add(changedBook);
-                } else if(acceptedList.get(i).getBookId().equals(changedBook.getBookId())) {
+                }
+            }
+            for(int i = 0; i < acceptedList.size(); i++) {
+                if (acceptedList.get(i).getBookId().equals(changedBook.getBookId())) {
                     acceptedList.remove(i);
                     acceptedList.add(changedBook);
                 }
-                adapter.notifyDataSetChanged();
-
             }
 
+            adapter.notifyDataSetChanged();
         }
 
         @Override
@@ -214,6 +228,7 @@ public class StandFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
         inflater.inflate(R.menu.stand_filter_menu, menu);
+        this.menu = menu;
         super.onCreateOptionsMenu(menu, inflater);
     }
 

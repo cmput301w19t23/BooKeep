@@ -46,10 +46,10 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
 
     private final List<Book> mValues;
     private final OnListFragmentInteractionListener mListener;
-    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+    private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+    private FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
     String currentUserId = firebaseUser.getUid();
 
 
@@ -108,6 +108,12 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
             matrix.setSaturation(0);
             ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
             holder.imageView.setColorFilter(filter);
+            holder.imageView.setAlpha(150);
+        }
+        if(!mValues.get(position).getNewRequest()){
+            holder.newRequestView.setVisibility(View.INVISIBLE);
+            holder.imageView.setColorFilter(null);
+            holder.imageView.setAlpha(255);
         }
 
 
@@ -149,7 +155,7 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
         public Book mItem;
         public final ImageButton overflow;
         public final ImageView imageView;
-        public final TextView newRequestView;
+        public final ImageView newRequestView;
 
         public ViewHolder(View view) {
             super(view);

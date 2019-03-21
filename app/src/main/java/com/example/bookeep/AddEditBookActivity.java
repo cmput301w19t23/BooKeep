@@ -1,14 +1,6 @@
 package com.example.bookeep;
 
 
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -19,16 +11,13 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.nfc.Tag;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.provider.MediaStore;
-import android.renderscript.Sampler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -36,7 +25,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -86,6 +74,7 @@ public class AddEditBookActivity extends AppCompatActivity {
     private Button scanBook;
     private Button saveBook;
     private JSONObject jsonObject;
+    private Boolean newRequestBool;
 
     //private String bookLink;
 
@@ -239,7 +228,7 @@ public class AddEditBookActivity extends AppCompatActivity {
             pass = Boolean.FALSE;
         }
 
-        if (pass) {                                                                     //if all fields are entered properly the book is added to firebase
+        if (pass) {//if all fields are entered properly the book is added to firebase
 
             //Get the user object
             currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -293,7 +282,6 @@ public class AddEditBookActivity extends AppCompatActivity {
                 book.setDescription(bookDescription.getText().toString().trim());
                 //book.setBookImage(drawable.getBitmap());
                 book.setBookImageURL(book.getBookImageURL());
-                Log.d("ImageURL:", book.getBookImageURL());
 
 
                 databaseReference.child("user-books").child(currentUserID).child(book.getBookId()).setValue(book);
