@@ -292,7 +292,7 @@ public class AddEditBookActivity extends AppCompatActivity {
                 BitmapDrawable drawable = (BitmapDrawable) bookImage.getDrawable();
                 book.setDescription(bookDescription.getText().toString().trim());
                 //book.setBookImage(drawable.getBitmap());
-                book.setBookImageURL(imageURL);
+                book.setBookImageURL(book.getBookImageURL());
                 Log.d("ImageURL:", book.getBookImageURL());
 
 

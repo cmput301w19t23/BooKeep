@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,8 +18,11 @@ import android.view.MenuItem;
 
 
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.bookeep.Fragments.MyStandRecyclerViewAdapter;
 import com.example.bookeep.Fragments.ShelfFragment;
 import com.example.bookeep.Fragments.StandFragment;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,8 +42,16 @@ import com.google.firebase.database.ValueEventListener;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FirebaseAuth.AuthStateListener, StandFragment.OnListFragmentInteractionListener, ShelfFragment.OnListFragmentInteractionListener{
     private FireBaseController fireBaseController = new FireBaseController(this);
-    public Integer ADD_REQUEST = 0;
-    public Integer EDIT_REQUEST = 1;
+
+    Menu menu;
+    Class fragmentClass = null;
+
+    private int allOwned = 0;
+    private int available = 1;
+    private int requested = 2;
+    private int accepted = 3;
+    private int borrowed = 4;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +61,6 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         Fragment fragment = null;
-        Class fragmentClass = null;
         fragmentClass = StandFragment.class;
         try {
             fragment = (Fragment) fragmentClass.newInstance();
@@ -133,13 +144,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * inflate the menu; this adds items to the action bar if it is present.
+     * Inflate the menu; this adds items to the action bar if it is present.
      * @param menu menu to be opened
      * @return true
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         getMenuInflater().inflate(R.menu.main, menu);
+//        showFilter(true);
+
         FireBaseController fireBaseController = new FireBaseController(this);
         //User user = fireBaseController.getCurrentUser();
         //userText.setText(user.getFirstName() + " " + user.getLastName());
@@ -167,13 +181,16 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.search_button) {
             Intent intent = new Intent(MainActivity.this, SearchActivity.class);
             startActivity(intent);
         }
 
+
         return super.onOptionsItemSelected(item);
     }
+
+
 
     /**
      * Handle navigation view item clicks here.
@@ -184,16 +201,17 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         Fragment fragment = null;
-        Class fragmentClass = null;
 
         int id = item.getItemId();
 
         if (id == R.id.nav_stand) {
-
             fragmentClass = StandFragment.class;
+//            showFilter(true);
         } else {
             fragmentClass = ShelfFragment.class;
+//            showFilter(false);
         }
+
         try {
             fragment = (Fragment) fragmentClass.newInstance();
         } catch (Exception e) {
