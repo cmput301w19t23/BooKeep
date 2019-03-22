@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
 
@@ -92,14 +92,16 @@ public class MainActivity extends AppCompatActivity
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 if (user != null){
-                    TextView nameView = findViewById(R.id.name);
-                    TextView emailView = findViewById(R.id.email);
+                    View headerView = navigationView.getHeaderView(0);
+                    TextView nameView = headerView.findViewById(R.id.name);
+                    TextView emailView = headerView.findViewById(R.id.email);
                     String nameString = user.getFirstname() + " " + user.getLastname();
                     String emailString = user.getEmail();
                     nameView.setText(nameString);
                     emailView.setText(emailString);
                 }
             }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
