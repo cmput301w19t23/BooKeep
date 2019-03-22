@@ -1,13 +1,12 @@
 package com.example.bookeep.Fragments;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,14 +21,11 @@ import android.widget.TextView;
 
 import com.example.bookeep.AddEditBookActivity;
 import com.example.bookeep.Book;
-import com.example.bookeep.BookDetailsActivity;
 import com.example.bookeep.Fragments.StandFragment.OnListFragmentInteractionListener;
-import com.example.bookeep.MainActivity;
 import com.example.bookeep.R;
 import com.example.bookeep.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,7 +33,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -51,10 +46,10 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
 
     private final List<Book> mValues;
     private final OnListFragmentInteractionListener mListener;
-    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+    private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+    private FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
     String currentUserId = firebaseUser.getUid();
 
 
@@ -93,6 +88,9 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
         holder.mIdView.setText(mValues.get(position).getTitle());
         holder.mContentView.setText(mValues.get(position).getAuthorsString());
         DownloadImageTask downloadImageTask = new DownloadImageTask();
+
+
+
         try {
             Bitmap bookImage = downloadImageTask.execute(mValues.get(position).getBookImageURL()).get();
             holder.imageView.setImageBitmap(bookImage);
@@ -101,6 +99,24 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        //If new request, make the new request alert visible and turn the book
+        // cover grayscale.
+        if(mValues.get(position).getNewRequest()){
+            holder.newRequestView.setVisibility(View.VISIBLE);
+            ColorMatrix matrix = new ColorMatrix();
+            matrix.setSaturation(0);
+            ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+            holder.imageView.setColorFilter(filter);
+            holder.imageView.setAlpha(150);
+        }
+        if(!mValues.get(position).getNewRequest()){
+            holder.newRequestView.setVisibility(View.INVISIBLE);
+            holder.imageView.setColorFilter(null);
+            holder.imageView.setAlpha(255);
+        }
+
+
         holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -139,6 +155,7 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
         public Book mItem;
         public final ImageButton overflow;
         public final ImageView imageView;
+        public final ImageView newRequestView;
 
         public ViewHolder(View view) {
             super(view);
@@ -147,6 +164,7 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
             mContentView = (TextView) view.findViewById(R.id.book_author);
             overflow = (ImageButton) view.findViewById(R.id.overflow_menu);
             imageView = view.findViewById(R.id.book_cover);
+            newRequestView = view.findViewById(R.id.new_request_view);
         }
 
         @Override
@@ -188,8 +206,6 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
 
             if (id == R.id.delete_book) {
                 removeBook(position);
-                
-
             } else if (id == R.id.edit_book) {
                 Intent intent = new Intent(view.getContext(), AddEditBookActivity.class);
                 intent.putExtra("Book to edit", mValues.get(position));

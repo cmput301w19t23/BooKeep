@@ -46,11 +46,10 @@ public class MainActivity extends AppCompatActivity
     Menu menu;
     Class fragmentClass = null;
 
-    private int allOwned = 0;
-    private int available = 1;
-    private int requested = 2;
-    private int accepted = 3;
-    private int borrowed = 4;
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+    private String currentUserID = firebaseUser.getUid();
+    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -250,7 +249,11 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onListFragmentInteraction(Book item) {
-
+        if(item.getOwner().equals(currentUserID)){
+            item.clearNewRequest();
+            databaseReference.child("user-books").child(currentUserID).child(item.getBookId()).setValue(item);
+            databaseReference.child("books").child(item.getBookId()).setValue(item);
+        }
         Intent intent = new Intent(MainActivity.this, BookDetailsActivity.class);
         intent.putExtra("Book ID", item.getBookId());
         startActivity(intent);
