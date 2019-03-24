@@ -100,19 +100,13 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
             e.printStackTrace();
         }
 
-        //If new request, make the new request alert visible and turn the book
-        // cover grayscale.
-        if(mValues.get(position).getNewRequest()){
+
+        if(mValues.get(position).getRequesterIds().size() != 0){
             holder.newRequestView.setVisibility(View.VISIBLE);
-            ColorMatrix matrix = new ColorMatrix();
-            matrix.setSaturation(0);
-            ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
-            holder.imageView.setColorFilter(filter);
             holder.imageView.setAlpha(150);
         }
-        if(!mValues.get(position).getNewRequest()){
+        if(mValues.get(position).getRequesterIds().size() == 0){
             holder.newRequestView.setVisibility(View.INVISIBLE);
-            holder.imageView.setColorFilter(null);
             holder.imageView.setAlpha(255);
         }
 

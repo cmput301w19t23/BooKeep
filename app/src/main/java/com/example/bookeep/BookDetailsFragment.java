@@ -2,6 +2,7 @@ package com.example.bookeep;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,12 +14,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,7 +28,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -61,6 +61,11 @@ public class BookDetailsFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "book";
     private static final String ARG_PARAM2 = "current user";
+
+
+
+
+
 
     // TODO: Rename and change types of parameters
     private Book mBook;
@@ -115,10 +120,6 @@ public class BookDetailsFragment extends Fragment {
                         bookCover = getView().findViewById(R.id.book_cover);
 
                         bookTitle.setText(mBook.getTitle());
-                        //android.support.v7.widget.Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-                        //CollapsingToolbarLayout toolbarLayout = getActivity().findViewById(R.id.toolbar_layout);
-                        //toolbar.setTitle(mBook.getTitle());
-                        //toolbarLayout.setTitle(mBook.getTitle());
                         DownloadImageTask downloadImageTask = new DownloadImageTask();
                         try {
                             Bitmap bitmap = downloadImageTask.execute(mBook.getBookImageURL()).get();//"http://books.google.com/books/content?id=H8sdBgAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api").get();
@@ -153,12 +154,6 @@ public class BookDetailsFragment extends Fragment {
 
         }
     };
-   // private final View view;
-
-    //public BookDetailsActivity activity;
-
-    //private Book b;
-   // Book book;
 
     public BookDetailsFragment() {
         // Required empty public constructor
@@ -185,6 +180,8 @@ public class BookDetailsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         if (getArguments() != null) {
             mBook = (Book) getArguments().getSerializable(ARG_PARAM1);
             mUser = (User) getArguments().getSerializable(ARG_PARAM2);
@@ -197,13 +194,7 @@ public class BookDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-         final View view = inflater.inflate(R.layout.fragment_book_details, container, false);
-
-
-
-
-        //activity = (BookDetailsActivity) getActivity();
-        //b = BookDetailsActivity.book;
+        final View view = inflater.inflate(R.layout.fragment_book_details, container, false);
         bookTitle = (TextView) view.findViewById(R.id.book_title);
         bookAuthors = (TextView) view.findViewById(R.id.book_authors);
         bookISBN = (TextView) view.findViewById(R.id.book_isbn);
@@ -334,28 +325,10 @@ public class BookDetailsFragment extends Fragment {
 
         } else if(!mBook.getStatus().equals(BookStatus.ACCEPTED) && !mBook.getStatus().equals(BookStatus.BORROWED)){//!book.getStatus().equals(BookStatus.BORROWED)){
 
-            //only iff available or requested.
             final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
 
-            //fab.setEnabled(false);
-            //fab.setVisibility(View.GONE);
-            // add request button for borrower
             fab.setImageResource(R.drawable.ic_add);
-/*
-                            if(book.getStatus().equals(BookStatus.REQUESTED)) {
 
-                                for (String requesterId : book.getRequesterIds()) {
-
-                                    if (requesterId.equals(currentUserId)) {
-                                        fab.setEnabled(false);
-                                        fab.setVisibility(View.GONE);
-                                        break;
-
-                                    }
-
-                                }
-
-                            }*/
             if (!isRequested) {
                 fab.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -496,12 +469,6 @@ public class BookDetailsFragment extends Fragment {
         mListener = null;
     }
 
-    //public void setBook(Book book) {
-//
-        //this.book = book;
-
-  //  }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -519,12 +486,6 @@ public class BookDetailsFragment extends Fragment {
         public void onBookUpdate(Book book);
     }
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-
-        //ImageView bmImage;
-        //public DownloadImageTask(ImageView bmImage) {
-        // AddEditBookActivity.this.bookImage = bmImage;
-        //}
-
         protected Bitmap doInBackground(String... urls) {
 
             String urldisplay = urls[0];
@@ -548,6 +509,9 @@ public class BookDetailsFragment extends Fragment {
 
         }
 
-
     }
+
+
+
+
 }
