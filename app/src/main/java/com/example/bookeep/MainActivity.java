@@ -45,6 +45,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import static com.example.bookeep.NotificationHandler.CHANNEL_1_ID;
+import static com.example.bookeep.NotificationHandler.CHANNEL_2_ID;
 
 /**
  * Main activity of the app, users can navigate to all use cases from here
@@ -66,6 +67,9 @@ public class MainActivity extends AppCompatActivity
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
 
+
+    // This childEventListener listens for changes to the user's books and
+    // pushes notifications if a book is requested.
     private ChildEventListener requestListener = new ChildEventListener() {
         @Override
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -85,22 +89,36 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
-        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-        }
+        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {}
 
         @Override
-        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-        }
+        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
 
         @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-        }
+        public void onCancelled(@NonNull DatabaseError databaseError) {}
     };
 
+    private ChildEventListener acceptedListener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            Book book = dataSnapshot.getValue(Book.class);
+            if(book.getStatus().toString().equals("ACCEPTED")){
+                sendOnChannel2(book);
+            }
+        }
 
+        @Override
+        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+
+        @Override
+        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {}
+
+        @Override
+        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {}
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +126,8 @@ public class MainActivity extends AppCompatActivity
 
         databaseReference.child("user-books").child(currentUserID)
                 .addChildEventListener(requestListener);
+        databaseReference.child("user-borrowed").child(currentUserID)
+                .addChildEventListener(acceptedListener);
 
 
         notificationManager = NotificationManagerCompat.from(this);
@@ -307,6 +327,10 @@ public class MainActivity extends AppCompatActivity
 
     public void sendOnChannel1(Book book){
 
+        book.clearNewRequest();
+        databaseReference.child("books").child(book.getBookId()).setValue(book);
+        databaseReference.child("user-books").child(book.getBookId()).setValue(book);
+
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
@@ -323,4 +347,23 @@ public class MainActivity extends AppCompatActivity
 
         notificationManager.notify(1, notification);
     }
+    public void sendOnChannel2(Book book){
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
+                .setSmallIcon(R.drawable.ic_notification_icon)
+                .setContentTitle("Request Accepted!")
+                .setContentText("Your request to borrow '" + book.getTitle() + "' has been accepted")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .build();
+
+        notificationManager.notify(2, notification);
+    }
+
 }
