@@ -1,10 +1,19 @@
 package com.example.bookeep;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -27,12 +36,15 @@ import com.example.bookeep.Fragments.ShelfFragment;
 import com.example.bookeep.Fragments.StandFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import static com.example.bookeep.NotificationHandler.CHANNEL_1_ID;
 
 /**
  * Main activity of the app, users can navigate to all use cases from here
@@ -43,6 +55,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FirebaseAuth.AuthStateListener, StandFragment.OnListFragmentInteractionListener, ShelfFragment.OnListFragmentInteractionListener{
     private FireBaseController fireBaseController = new FireBaseController(this);
 
+    private NotificationManagerCompat notificationManager;
+
     Menu menu;
     Class fragmentClass = null;
 
@@ -51,9 +65,52 @@ public class MainActivity extends AppCompatActivity
     private String currentUserID = firebaseUser.getUid();
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
+
+    private ChildEventListener requestListener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+        }
+
+        @Override
+        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            Book book = dataSnapshot.getValue(Book.class);
+            Log.d("MainActivity", "onChildChanged reached");
+            if(book.getOwner().equals(currentUserID)){
+                if(book.getNewRequest()){
+                    Log.d("MainActivity", "Notification sent");
+                    sendOnChannel1(book);
+                }
+            }
+        }
+
+        @Override
+        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+        }
+    };
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        databaseReference.child("user-books").child(currentUserID)
+                .addChildEventListener(requestListener);
+
+
+        notificationManager = NotificationManagerCompat.from(this);
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -108,23 +165,6 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
-/*      //sets up on
-        // Set the Drawer layout to display the currently logged in User
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        // Check to make sure user is signed in.
-        if (currentUser != null) {
-            View headerView = navigationView.getHeaderView(0);
-            TextView name = (TextView) headerView.findViewById(R.id.name);
-            name.setText(currentUser.getDisplayName()); // This isn't actually set anywhere
-            TextView email = (TextView) headerView.findViewById(R.id.email);
-            email.setText(currentUser.getEmail());
-        } else {
-            // User is not signed in: set default text
-            View headerView = navigationView.getHeaderView(0);
-            TextView name = (TextView) headerView.findViewById(R.id.name);
-            name.setText(R.string.app_name);
-            TextView email = (TextView) headerView.findViewById(R.id.email);
-            email.setText(R.string.not_signed_in);*/
 
     }
 
@@ -153,11 +193,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
         getMenuInflater().inflate(R.menu.main, menu);
-//        showFilter(true);
 
         FireBaseController fireBaseController = new FireBaseController(this);
-        //User user = fireBaseController.getCurrentUser();
-        //userText.setText(user.getFirstName() + " " + user.getLastName());
         ImageButton updateProfile = findViewById(R.id.UserProfileButton);
         updateProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -181,7 +218,6 @@ public class MainActivity extends AppCompatActivity
 
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.search_button) {
             Intent intent = new Intent(MainActivity.this, SearchActivity.class);
             startActivity(intent);
@@ -207,10 +243,8 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_stand) {
             fragmentClass = StandFragment.class;
-//            showFilter(true);
         } else {
             fragmentClass = ShelfFragment.class;
-//            showFilter(false);
         }
 
         try {
@@ -266,5 +300,27 @@ public class MainActivity extends AppCompatActivity
      */
     public void setToolBar(String title) {
         getSupportActionBar().setTitle(title);
+    }
+
+
+
+
+    public void sendOnChannel1(Book book){
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
+                .setSmallIcon(R.drawable.ic_notification_icon)
+                .setContentTitle("New Request!")
+                .setContentText("New request to borrow '" + book.getTitle() + "'")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .build();
+
+        notificationManager.notify(1, notification);
     }
 }

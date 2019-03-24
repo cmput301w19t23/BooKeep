@@ -1,13 +1,18 @@
 package com.example.bookeep.Fragments;
 
-import android.app.ActionBar;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,7 +29,6 @@ import com.example.bookeep.AddEditBookActivity;
 import com.example.bookeep.Book;
 import com.example.bookeep.MainActivity;
 import com.example.bookeep.R;
-import com.example.bookeep.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -43,6 +47,10 @@ import static android.app.Activity.RESULT_OK;
  * @author Jeff Kirker
  */
 public class StandFragment extends Fragment {
+
+
+
+    private NotificationManagerCompat notificationManager;
 
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -99,42 +107,48 @@ public class StandFragment extends Fragment {
             Book changedBook = dataSnapshot.getValue(Book.class);
 
             for(int i = 0; i < BookList.size(); i++) {
-
                 if (BookList.get(i).getBookId().equals(changedBook.getBookId())) {
                     BookList.remove(i);
                     BookList.add(changedBook);
+                    break;
                 }
             }
             for(int i = 0; i < fullBookList.size(); i++) {
                 if (fullBookList.get(i).getBookId().equals(changedBook.getBookId())) {
                     fullBookList.remove(i);
                     fullBookList.add(changedBook);
+                    break;
                 }
             }
             for(int i = 0; i < availableList.size(); i++) {
                 if (availableList.get(i).getBookId().equals(changedBook.getBookId())) {
                     availableList.remove(i);
                     availableList.add(changedBook);
+                    break;
                 }
             }
             for(int i = 0; i < borrowedList.size(); i++) {
                 if (borrowedList.get(i).getBookId().equals(changedBook.getBookId())) {
                     borrowedList.remove(i);
                     borrowedList.add(changedBook);
+                    break;
                 }
             }
             for(int i = 0; i < requestedList.size(); i++) {
                 if (requestedList.get(i).getBookId().equals(changedBook.getBookId())) {
                     requestedList.remove(i);
                     requestedList.add(changedBook);
+                    break;
                 }
             }
             for(int i = 0; i < acceptedList.size(); i++) {
                 if (acceptedList.get(i).getBookId().equals(changedBook.getBookId())) {
                     acceptedList.remove(i);
                     acceptedList.add(changedBook);
+                    break;
                 }
             }
+
 
             adapter.notifyDataSetChanged();
         }
@@ -182,6 +196,8 @@ public class StandFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         ((MainActivity) getActivity()).setToolBar("My Owned Books");
+
+
 
         currentUserID = firebaseUser.getUid();
         BookList = new ArrayList<>();

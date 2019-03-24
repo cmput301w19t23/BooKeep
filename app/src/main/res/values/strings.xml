@@ -115,6 +115,8 @@
     <string name="available">Available</string>
     <string name="all_owned">All Owned</string>
     <string name="new_request">New Request!</string>
+    <string name="channel_name">test channel</string>
+    <string name="channel_description">testing description</string>
 
 
 </resources>
