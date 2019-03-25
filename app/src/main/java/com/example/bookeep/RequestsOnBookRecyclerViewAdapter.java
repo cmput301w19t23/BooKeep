@@ -74,6 +74,7 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                         mBook = dataSnapshot.getValue(Book.class);
+                        mBook.setNewAccepted();
                         mBook.setCurrentBorrower(holder.mItem.getUserId());
                         mBook.setStatus(BookStatus.ACCEPTED);
                         mBook.clearRequesters();
@@ -98,16 +99,6 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
 
                             }
                         });
-
-
-
-                        //mBook.addRequest(mValues.get(position).getUserId());
-                        /*mBook.setStatus(BookStatus.ACCEPTED);
-                        mBook.clearRequesters();
-                        mValues.clear();
-                        databaseReference.child("books").child(mBookId).setValue(mBook);
-                        notifyItemRangeRemoved(0,mValues.size());*/
-
 
                     }
 
