@@ -31,6 +31,7 @@ public class Book implements Serializable {
     //private Bitmap bookImage;
     private String bookImageURL;
     private Boolean newRequest;
+    private Boolean newAccepted;
 
 
 
@@ -63,6 +64,7 @@ public class Book implements Serializable {
         this.bookId = UUID.randomUUID().toString();
         this.status = BookStatus.AVAILABLE;
         this.newRequest = false;
+        this.newAccepted = false;
     }
 
     /**
@@ -291,5 +293,15 @@ public class Book implements Serializable {
         return this.newRequest;
     }
 
+    public void setNewAccepted(){
+        this.newAccepted = true;
+    }
 
+    public void clearNewAccepted(){
+        this.newAccepted = false;
+    }
+
+    public Boolean getNewAccepted(){
+        return this.newAccepted;
+    }
 }

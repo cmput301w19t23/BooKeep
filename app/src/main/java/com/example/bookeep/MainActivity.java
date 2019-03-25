@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
             Book book = dataSnapshot.getValue(Book.class);
-            if(book.getStatus().toString().equals("ACCEPTED")){
+            if(book.getNewAccepted()){
                 sendOnChannel2(book);
             }
         }
@@ -329,7 +329,7 @@ public class MainActivity extends AppCompatActivity
 
         book.clearNewRequest();
         databaseReference.child("books").child(book.getBookId()).setValue(book);
-        databaseReference.child("user-books").child(book.getBookId()).setValue(book);
+        databaseReference.child("user-books").child(book.getOwner()).child(book.getBookId()).setValue(book);
 
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -348,6 +348,12 @@ public class MainActivity extends AppCompatActivity
         notificationManager.notify(1, notification);
     }
     public void sendOnChannel2(Book book){
+
+
+        book.clearNewRequest();
+        databaseReference.child("books").child(book.getBookId()).setValue(book);
+        databaseReference.child("user-books").child(book.getOwner()).child(book.getBookId()).setValue(book);
+        databaseReference.child("user-borrowed").child(currentUserID).child(book.getBookId()).setValue(book);
 
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
