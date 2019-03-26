@@ -26,8 +26,7 @@ public class User implements Serializable {
     private String email;
     private String userId;
     private String imageURL;
-    private Double rating;
-    private ArrayList<Integer> ratingList;
+
 
 
 
@@ -248,23 +247,5 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    /**
-     * Gets the users rating, returns -1 if no ratings
-     * @return The users current rating
-     */
-    public Double getRating(){
-        if (rating != null){
-            return rating;
-        }
-        return -1.0;
-    }
 
-    public void addRating(int rating){
-        ratingList.add(rating);
-        int sum = 0;
-        for (int i = 0; i < ratingList.size() ; i++) {
-            sum += ratingList.get(i);
-        }
-        this.rating =(double)sum / ratingList.size();
-    }
 }

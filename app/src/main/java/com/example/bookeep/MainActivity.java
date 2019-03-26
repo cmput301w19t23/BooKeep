@@ -140,14 +140,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        FireBaseController fireBaseController = new FireBaseController(this);
+        final FireBaseController fireBaseController = new FireBaseController(this);
         //User user = fireBaseController.getCurrentUser();
         //userText.setText(user.getFirstName() + " " + user.getLastName());
         ImageButton updateProfile = findViewById(R.id.UserProfileButton);
         updateProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, EditUserActivity.class);
+                Intent intent = new Intent(MainActivity.this, UserProfileActivity.class);
+                intent.putExtra("uuid",fireBaseController.getCurrentUserId());
                 startActivity(intent);
             }
         });
