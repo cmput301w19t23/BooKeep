@@ -350,7 +350,7 @@ public class MainActivity extends AppCompatActivity
     public void sendOnChannel2(Book book){
 
 
-        book.clearNewRequest();
+        book.clearNewAccepted();
         databaseReference.child("books").child(book.getBookId()).setValue(book);
         databaseReference.child("user-books").child(book.getOwner()).child(book.getBookId()).setValue(book);
         databaseReference.child("user-borrowed").child(currentUserID).child(book.getBookId()).setValue(book);
