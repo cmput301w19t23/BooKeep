@@ -17,7 +17,7 @@ android:layout_height="match_parent">
         android:id="@+id/set_location_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="center|bottom"
         android:background="@color/colorPrimary"
         android:orientation="vertical"
         android:padding="5dp"
@@ -31,12 +31,14 @@ android:layout_height="match_parent">
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
+                android:onClick="onSaveButtonPressed"
                 android:text="@string/save_marker" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
+                android:onClick="onClearButtonPressed"
                 android:text="@string/clear_marker" />
         </LinearLayout>
     </LinearLayout>
