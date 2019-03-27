@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,6 +6,30 @@
     android:layout_height="match_parent"
     tools:context=".UserProfileActivity">
 
+
+    <TextView
+        android:id="@+id/lender_number_reviews"
+        android:layout_width="wrap_content"
+        android:layout_height="19dp"
+        android:layout_marginTop="8dp"
+        android:text="0 Lender Reviews"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <RatingBar
+        android:id="@+id/lender_ratingbar"
+        style="@style/Widget.AppCompat.RatingBar.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:scaleX="1.3"
+        android:scaleY="1.3"
+        android:transformPivotX="0dp"
+        android:transformPivotY="0dp"
+        app:layout_constraintStart_toStartOf="@+id/profile_users_email"
+        app:layout_constraintTop_toBottomOf="@+id/borrower_number_reviews" />
 
     <TextView
         android:id="@+id/name_Profile"
@@ -31,19 +54,17 @@
         app:layout_constraintTop_toBottomOf="@+id/name_Profile" />
 
     <RatingBar
-        android:id="@+id/profile_rating"
+        android:id="@+id/borrower_ratingbar"
         style="@style/Widget.AppCompat.RatingBar.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="-2dp"
-        android:layout_marginLeft="-2dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:scaleX="1.3"
         android:scaleY="1.3"
         android:transformPivotX="0dp"
         android:transformPivotY="0dp"
-        app:layout_constraintStart_toStartOf="@+id/username_Profile"
-        app:layout_constraintTop_toBottomOf="@+id/username_Profile" />
+        app:layout_constraintStart_toStartOf="@+id/profile_users_email"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <TextView
         android:id="@+id/contact"
@@ -55,18 +76,17 @@
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_number_reviews" />
+        app:layout_constraintTop_toBottomOf="@+id/profile_pic" />
 
     <TextView
-        android:id="@+id/profile_number_reviews"
+        android:id="@+id/borrower_number_reviews"
         android:layout_width="wrap_content"
         android:layout_height="19dp"
-        android:layout_marginStart="2dp"
-        android:layout_marginLeft="2dp"
-        android:layout_marginTop="16dp"
-        android:text="0 Reviews"
-        app:layout_constraintStart_toStartOf="@+id/profile_rating"
-        app:layout_constraintTop_toBottomOf="@+id/profile_rating" />
+        android:layout_marginTop="8dp"
+        android:text="0 Borrower Reviews"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/borrower_rating" />
 
     <TextView
         android:id="@+id/profile_phone_number"
@@ -75,7 +95,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:text="Phone Nunber:"
+        android:text="Phone Number:"
         android:textColor="@color/colorPrimaryDark"
         app:layout_constraintStart_toStartOf="@+id/contact"
         app:layout_constraintTop_toBottomOf="@+id/contact" />
@@ -118,5 +138,37 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/profile_pic" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="User Ratings"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_email" />
+
+    <TextView
+        android:id="@+id/borrower_rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Borrower Rating"
+        android:textColor="@color/colorPrimaryDark"
+        app:layout_constraintStart_toStartOf="@+id/profile_email"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Lender Rating"
+        android:textColor="@color/colorPrimaryDark"
+        app:layout_constraintStart_toStartOf="@+id/borrower_rating"
+        app:layout_constraintTop_toBottomOf="@+id/borrower_number_reviews" />
 
 </android.support.constraint.ConstraintLayout>

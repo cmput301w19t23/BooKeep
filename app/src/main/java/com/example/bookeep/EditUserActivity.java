@@ -122,7 +122,7 @@ public class EditUserActivity extends AppCompatActivity {
         });
 
         //this will get the users info from the database to prefill editing fields and to check if username/email haven't changed
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User currentUser = dataSnapshot.getValue(User.class);

@@ -30,6 +30,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 /**
  * Main activity of the app, users can navigate to all use cases from here
  * @author Nafee Khan, Nolan Brost, Jeff Kirker, Dusan Krstic, Hugh Bagan, Kyle Fujishige
@@ -67,7 +69,7 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
 
@@ -82,8 +84,9 @@ public class MainActivity extends AppCompatActivity
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 if (user != null){
-                    TextView nameView = findViewById(R.id.name);
-                    TextView emailView = findViewById(R.id.email);
+                    View headerView = navigationView.getHeaderView(0);
+                    TextView nameView = (TextView) headerView.findViewById(R.id.name);
+                    TextView emailView = (TextView) headerView.findViewById(R.id.email);
                     String nameString = user.getFirstname() + " " + user.getLastname();
                     String emailString = user.getEmail();
                     nameView.setText(nameString);
@@ -140,7 +143,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        final FireBaseController fireBaseController = new FireBaseController(this);
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        final String userId = firebaseUser.getUid();
         //User user = fireBaseController.getCurrentUser();
         //userText.setText(user.getFirstName() + " " + user.getLastName());
         ImageButton updateProfile = findViewById(R.id.UserProfileButton);
@@ -148,7 +153,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, UserProfileActivity.class);
-                intent.putExtra("uuid",fireBaseController.getCurrentUserId());
+                intent.putExtra("uuid",userId);
                 startActivity(intent);
             }
         });
