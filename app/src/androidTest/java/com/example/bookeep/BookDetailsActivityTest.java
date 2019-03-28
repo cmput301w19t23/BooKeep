@@ -59,7 +59,7 @@ public class BookDetailsActivityTest extends ActivityTestRule<LoginActivity>{
         solo.clickOnButton("Sign In");
         solo.sleep(1000);
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
-        solo.clickOnView(solo.getView(R.id.action_settings));
+        solo.clickOnView(solo.getView(R.id.search_button));
         solo.clickOnImage(2);
         solo.sleep(1000);
         solo.assertCurrentActivity("Wrong Activity", BookDetailsActivity.class);

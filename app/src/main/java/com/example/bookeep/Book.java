@@ -1,14 +1,10 @@
 package com.example.bookeep;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-
-import com.example.bookeep.BookStatus;
+import android.location.Location;
 
 import java.io.Serializable;
-import java.net.URI;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.UUID;
 
 /**
@@ -32,6 +28,9 @@ public class Book implements Serializable {
     private String bookImageURL;
     private Boolean newRequest;
     private Boolean newAccepted;
+    private String borrowLocation;
+    private String returnLocation;
+    private String calendarDate;
 
 
 
@@ -303,5 +302,29 @@ public class Book implements Serializable {
 
     public Boolean getNewAccepted(){
         return this.newAccepted;
+    }
+
+    public String getBorrowLocation() {
+        return borrowLocation;
+    }
+
+    public void setBorrowLocation(String borrowLocation) {
+        this.borrowLocation = borrowLocation;
+    }
+
+    public String getReturnLocation() {
+        return returnLocation;
+    }
+
+    public void setReturnLocation(String returnLocation) {
+        this.returnLocation = returnLocation;
+    }
+
+    public String getCalendarDate() {
+        return calendarDate;
+    }
+
+    public void setCalendarDate(String calendarDate) {
+        this.calendarDate = calendarDate;
     }
 }

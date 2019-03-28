@@ -45,13 +45,13 @@ public class TestActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = "nnnnnn@ualberta.ca";
+                /*String email = "nnnnnn@ualberta.ca";
                 String password = "123456";
                 String first= "Nafee";
                 String last = "Khan";
                 String userName = "NafeeK";
                 PhoneNumber phoneNumber = new PhoneNumber("587","938","3713");
-                fireBaseController.createNewUser(userName,email,password,first,last,phoneNumber);
+                fireBaseController.createNewUser(userName,email,password,first,last,phoneNumber);*/
 
             }
         });
