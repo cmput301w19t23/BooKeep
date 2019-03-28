@@ -47,51 +47,17 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = getIntent();
         setContentView(R.layout.activity_set_location);
+        Intent intent = getIntent();
         marker = null;
         book = (Book) intent.getSerializableExtra("Book");
         user = (User) intent.getSerializableExtra("User");
-        if (book.getCurrentBorrowerId() != user.getUserId() && book.getOwner() != user.getUserId()) {
+        if (!book.getOwner().equals(user.getUserId()) && !book.getCurrentBorrowerId().equals(user.getUserId())) {
             finish();
         }
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        //This chunk of code was used to test books directly from firebase. Call this activity with
-        //Intent.putExtra("Book, book) and Intent.putExtra("User", user).
-
-        /*databaseReference.child("books").child("5e5d0a95-f1ee-4503-9f2b-f35017cbdc90").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                book = dataSnapshot.getValue(Book.class);
-                databaseReference.child("users").child(book.getOwner()).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        user = dataSnapshot.getValue(User.class);
-                        if (user.getUserId() != book.getOwner() && user.getUserId() != book.getCurrentBorrowerId()) {
-                            finish();
-                        }
-                        calendar = Calendar.getInstance();
-                        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-                        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                                .findFragmentById(R.id.map);
-                        mapFragment.getMapAsync(SetLocationActivity.this);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });*/
     }
 
 
@@ -106,10 +72,14 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        Intent intent = getIntent();
+        marker = null;
 
         if (ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            mMap.setMyLocationEnabled(false);
+            ActivityCompat.requestPermissions(SetLocationActivity.this,
+                    new String[] {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_LOCATION);
         } else {
             mMap.setMyLocationEnabled(true);
         }
@@ -161,15 +131,14 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
     }
 
     public void onSaveButtonPressed(View view) {
-        if (user.getUserId() == book.getOwner()) {
+        if (user.getUserId().equals(book.getOwner())) {
             book.setBorrowLocation(location.toString());
             book.setReturnLocation(null);
-        } else if (user.getUserId() == book.getCurrentBorrowerId()) {
+        } else {
             book.setReturnLocation(location.toString());
             book.setBorrowLocation(null);
-        } else {
-            finish();
         }
+
 
         DatePickerFragment datePickerFragment = new DatePickerFragment();
         datePickerFragment.setOnDateSelectedListener(this);

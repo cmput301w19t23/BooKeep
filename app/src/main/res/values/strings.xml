@@ -120,6 +120,7 @@
     <string name="clear_marker">Clear</string>
     <string name="save_marker">Save</string>
     <string name="title_activity_set_location">Map</string>
+    <string name="title_activity_get_location">Map</string>
 
 
 </resources>

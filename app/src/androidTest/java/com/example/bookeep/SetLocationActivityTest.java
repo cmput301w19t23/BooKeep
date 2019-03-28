@@ -34,7 +34,7 @@ import static org.junit.Assert.assertFalse;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
-public class SetLocationActivityTest extends ActivityTestRule<SetLocationActivity> {
+public class SetLocationActivityTest extends ActivityTestRule<TestActivity2> {
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference databaseReference = database.getReference();
@@ -45,12 +45,12 @@ public class SetLocationActivityTest extends ActivityTestRule<SetLocationActivit
     Intent intent;
 
     public  SetLocationActivityTest() {
-        super (SetLocationActivity.class, true, true);
+        super (TestActivity2.class, true, true);
     }
 
     @Rule
-    public ActivityTestRule<SetLocationActivity> rule =
-            new ActivityTestRule<>(SetLocationActivity.class, true, true);
+    public ActivityTestRule<TestActivity2> rule =
+            new ActivityTestRule<>(TestActivity2.class, true, true);
 
     @Before
     public void setUp() throws Exception {
@@ -64,8 +64,8 @@ public class SetLocationActivityTest extends ActivityTestRule<SetLocationActivit
 
     @Test
     public void test1() {
-        solo.assertCurrentActivity("Wrong activity", SetLocationActivity.class);
-        solo.sleep(100000);
+        solo.assertCurrentActivity("Wrong activity", TestActivity2.class);
+        solo.sleep(100000000);
     }
 
     /*@Override
