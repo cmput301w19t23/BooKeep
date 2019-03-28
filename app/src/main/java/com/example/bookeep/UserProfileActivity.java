@@ -4,12 +4,16 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,7 +37,8 @@ public class UserProfileActivity extends AppCompatActivity {
     private String userId;
     private FirebaseDatabase database;
     private DatabaseReference myRef;
-    private BorrowerRating brating;
+    private FirebaseUser firebaseUser;
+    private FirebaseAuth firebaseAuth;
 //https://stackoverflow.com/questions/14483393/how-do-i-change-the-android-actionbar-title-and-icon look to for changing action bar to allow edits
 
     @Override
@@ -57,6 +62,8 @@ public class UserProfileActivity extends AppCompatActivity {
         numBorrowerReviewsView = findViewById(R.id.borrower_number_reviews);
         numLenderReveiewsView = findViewById(R.id.lender_number_reviews);
         database = FirebaseDatabase.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
         myRef = database.getReference("users").child(userId);
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -75,19 +82,25 @@ public class UserProfileActivity extends AppCompatActivity {
 
             }
         });
-        brating = new BorrowerRating(userId);
-
-
-
-
-
     }
-/*    public void addRating(View view){
-        EditText num = findViewById(R.id.rating);
-        Integer rating = Integer.getInteger(num.getText().toString());
 
-        brating.addRating(2);
-        borrowerRatingBar.setRating(brating.getRating());
-        numBorrowerReviewsView.setText(brating.getNumRatings().toString() + " Borrower Reviews");
-    }*/
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if(firebaseUser.getUid().equals(userId)) {
+            getMenuInflater().inflate(R.menu.user_profile_menu, menu);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.edit_icon) {
+            Intent intent = new Intent(this, EditUserActivity.class);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
