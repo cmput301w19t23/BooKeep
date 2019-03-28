@@ -1,20 +1,12 @@
 package com.example.bookeep;
 
 import android.Manifest;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
-import android.support.design.button.MaterialButton;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.text.format.Time;
 import android.view.View;
-import android.widget.TimePicker;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -39,7 +31,7 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
 
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference databaseReference;
+    DatabaseReference databaseReference = database.getReference();
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
     private Book book;
@@ -48,8 +40,8 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
     private GoogleMap mMap;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 32;
     private Marker marker;
-    private Location location;
-    Calendar calendar;
+    private LatLng location;
+    static Calendar calendar;
 
 
     @Override
@@ -58,16 +50,48 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
         Intent intent = getIntent();
         setContentView(R.layout.activity_set_location);
         marker = null;
-        if (intent.getExtras() != null) {
-            book = (Book) intent.getSerializableExtra("Book");
-            user = (User) intent.getSerializableExtra("User");
-
+        book = (Book) intent.getSerializableExtra("Book");
+        user = (User) intent.getSerializableExtra("User");
+        if (book.getCurrentBorrowerId() != user.getUserId() && book.getOwner() != user.getUserId()) {
+            finish();
         }
-        calendar = Calendar.getInstance();
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        //This chunk of code was used to test books directly from firebase. Call this activity with
+        //Intent.putExtra("Book, book) and Intent.putExtra("User", user).
+
+        /*databaseReference.child("books").child("5e5d0a95-f1ee-4503-9f2b-f35017cbdc90").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                book = dataSnapshot.getValue(Book.class);
+                databaseReference.child("users").child(book.getOwner()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        user = dataSnapshot.getValue(User.class);
+                        if (user.getUserId() != book.getOwner() && user.getUserId() != book.getCurrentBorrowerId()) {
+                            finish();
+                        }
+                        calendar = Calendar.getInstance();
+                        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+                        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                                .findFragmentById(R.id.map);
+                        mapFragment.getMapAsync(SetLocationActivity.this);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });*/
     }
 
 
@@ -101,10 +125,7 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
                 if (marker != null) {
                     marker.remove();
                 }
-                location = new Location("PressLocationProvider");
-                location.setLatitude(latLng.latitude);
-                location.setLongitude(latLng.longitude);
-                location.setAccuracy(100);
+                location = latLng;
                 marker = mMap.addMarker(new MarkerOptions().position(latLng).title("Meet Here"));
                 View view = findViewById(R.id.set_location_menu);
                 view.setVisibility(View.VISIBLE);
@@ -140,28 +161,19 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
     }
 
     public void onSaveButtonPressed(View view) {
-        Boolean pass = Boolean.TRUE;
         if (user.getUserId() == book.getOwner()) {
-            book.setBorrowLocation(location);
+            book.setBorrowLocation(location.toString());
             book.setReturnLocation(null);
         } else if (user.getUserId() == book.getCurrentBorrowerId()) {
-            book.setReturnLocation(location);
+            book.setReturnLocation(location.toString());
             book.setBorrowLocation(null);
         } else {
-            pass = Boolean.FALSE;
+            finish();
         }
 
         DatePickerFragment datePickerFragment = new DatePickerFragment();
+        datePickerFragment.setOnDateSelectedListener(this);
         datePickerFragment.show(getSupportFragmentManager(), "datePicker");
-
-        TimePickerFragment timePickerFragment = new TimePickerFragment();
-        timePickerFragment.show(getSupportFragmentManager(), "timePicker");
-
-        book.setCalendarDate(calendar);
-
-
-        databaseReference.child("books").child(book.getBookId()).setValue(book);
-        finish();
 
     }
 
@@ -176,6 +188,10 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
     public void getTime(int hour,int minute) {
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.HOUR_OF_DAY, hour);
+        book.setCalendarDate(calendar.getTime().toString());
+
+        databaseReference.child("books").child(book.getBookId()).setValue(book);
+        finish();
     }
 
     @Override
@@ -183,5 +199,8 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month);
         calendar.set(Calendar.DAY_OF_MONTH, day);
+        TimePickerFragment timePickerFragment = new TimePickerFragment();
+        timePickerFragment.setOnTimeSelectedListener(this);
+        timePickerFragment.show(getSupportFragmentManager(), "timePicker");
     }
 }

@@ -64,17 +64,25 @@ public class SetLocationActivityTest extends ActivityTestRule<SetLocationActivit
 
     @Test
     public void test1() {
+        solo.assertCurrentActivity("Wrong activity", SetLocationActivity.class);
+        solo.sleep(100000);
+    }
+
+    /*@Override
+    public SetLocationActivity getActivity() {
         databaseReference.child("books").child("5e5d0a95-f1ee-4503-9f2b-f35017cbdc90").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 book = dataSnapshot.getValue(Book.class);
-                intent.putExtra("Book", book);
-                databaseReference.child("users").child(book.getOwner()).addListenerForSingleValueEvent(new ValueEventListener() {
+                databaseReference.child("users");
+                databaseReference.child(book.getOwner());
+                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         user = dataSnapshot.getValue(User.class);
-                        intent.putExtra("User", user);
-                        rule.launchActivity(intent);
+                        intent = new Intent(getActivity(), )
+                        intent.putExtra("Book",book);
+                        intent.putExtra("User",user);
                     }
 
                     @Override
@@ -89,5 +97,6 @@ public class SetLocationActivityTest extends ActivityTestRule<SetLocationActivit
 
             }
         });
-    }
+        //return super.getActivity();
+    }*/
 }

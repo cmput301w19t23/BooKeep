@@ -12,8 +12,12 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
     public OnDateSelectedListener onDateSelectedListener;
 
+    public void setOnDateSelectedListener(OnDateSelectedListener onDateSelectedListener) {
+        this.onDateSelectedListener = onDateSelectedListener;
+    }
+
     public interface OnDateSelectedListener {
-        void getDate(int year, int month, int day);
+        void getDate(int year,int month,int day);
     }
 
     @Override

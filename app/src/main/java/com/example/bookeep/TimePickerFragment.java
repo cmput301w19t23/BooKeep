@@ -13,6 +13,10 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
 
     public OnTimeSelectedListener onTimeSelectedListener;
 
+    public void setOnTimeSelectedListener(OnTimeSelectedListener onTimeSelectedListener) {
+        this.onTimeSelectedListener = onTimeSelectedListener;
+    }
+
     public interface OnTimeSelectedListener {
         void getTime(int hour,int minute);
     }

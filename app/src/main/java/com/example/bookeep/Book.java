@@ -28,9 +28,9 @@ public class Book implements Serializable {
     private String bookImageURL;
     private Boolean newRequest;
     private Boolean newAccepted;
-    private Location borrowLocation;
-    private Location returnLocation;
-    private Calendar calendarDate;
+    private String borrowLocation;
+    private String returnLocation;
+    private String calendarDate;
 
 
 
@@ -304,27 +304,27 @@ public class Book implements Serializable {
         return this.newAccepted;
     }
 
-    public Location getBorrowLocation() {
+    public String getBorrowLocation() {
         return borrowLocation;
     }
 
-    public void setBorrowLocation(Location borrowLocation) {
+    public void setBorrowLocation(String borrowLocation) {
         this.borrowLocation = borrowLocation;
     }
 
-    public Location getReturnLocation() {
+    public String getReturnLocation() {
         return returnLocation;
     }
 
-    public void setReturnLocation(Location returnLocation) {
+    public void setReturnLocation(String returnLocation) {
         this.returnLocation = returnLocation;
     }
 
-    public Calendar getCalendarDate() {
+    public String getCalendarDate() {
         return calendarDate;
     }
 
-    public void setCalendarDate(Calendar calendarDate) {
+    public void setCalendarDate(String calendarDate) {
         this.calendarDate = calendarDate;
     }
 }
