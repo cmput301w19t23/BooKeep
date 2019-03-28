@@ -91,7 +91,20 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_more_vert" />
+                app:srcCompat="@drawable/ic_more_vert"/>
+
+            <ImageView
+                android:id="@+id/new_request_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@id/book_cover"
+                app:layout_constraintEnd_toEndOf="@id/book_cover"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@id/book_cover"
+                app:layout_constraintTop_toTopOf="@id/book_cover"
+                app:layout_constraintVertical_bias="1.0"
+                app:srcCompat="@mipmap/ic__request_banner_foreground" />
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>

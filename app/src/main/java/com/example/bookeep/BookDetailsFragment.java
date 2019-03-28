@@ -2,6 +2,7 @@ package com.example.bookeep;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,12 +14,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,7 +28,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -62,6 +62,11 @@ public class BookDetailsFragment extends Fragment {
     private static final String ARG_PARAM1 = "book";
     private static final String ARG_PARAM2 = "current user";
 
+
+
+
+
+
     // TODO: Rename and change types of parameters
     private Book mBook;
     private User mUser;
@@ -81,6 +86,9 @@ public class BookDetailsFragment extends Fragment {
     private ImageView bookCover;
     private FireBaseController fireBaseController = new FireBaseController(getActivity());
     private boolean isResumed;
+    private boolean testBool1;
+    private boolean testBool2;
+
 
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -101,6 +109,7 @@ public class BookDetailsFragment extends Fragment {
 
                 if(changedBook != null) {
                     //mBook = changedBook;//dataSnapshot.getValue(Book.class);
+                    BookStatus prevStatus = changedBook.getStatus();
                     if(isResumed) {
                         mBook = changedBook;
                         if (mListener != null) {
@@ -115,10 +124,6 @@ public class BookDetailsFragment extends Fragment {
                         bookCover = getView().findViewById(R.id.book_cover);
 
                         bookTitle.setText(mBook.getTitle());
-                        //android.support.v7.widget.Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-                        //CollapsingToolbarLayout toolbarLayout = getActivity().findViewById(R.id.toolbar_layout);
-                        //toolbar.setTitle(mBook.getTitle());
-                        //toolbarLayout.setTitle(mBook.getTitle());
                         DownloadImageTask downloadImageTask = new DownloadImageTask();
                         try {
                             Bitmap bitmap = downloadImageTask.execute(mBook.getBookImageURL()).get();//"http://books.google.com/books/content?id=H8sdBgAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api").get();
@@ -132,7 +137,15 @@ public class BookDetailsFragment extends Fragment {
                         //bookISBN.setText(mBook.getISBN());
                         bookStatus.setText(mBook.getStatus().toString());
                         bookDescription.setText(mBook.getDescription());
+                        /*
+                        if (currentUserId.equals(mBook.getCurrentBorrowerId())
+                                && mBook.getStatus().equals(BookStatus.ACCEPTED)
+                                && !prevStatus.equals(BookStatus.ACCEPTED)){
+
+                        }*/
+
                     }
+
                 }
             }
 
@@ -153,12 +166,6 @@ public class BookDetailsFragment extends Fragment {
 
         }
     };
-   // private final View view;
-
-    //public BookDetailsActivity activity;
-
-    //private Book b;
-   // Book book;
 
     public BookDetailsFragment() {
         // Required empty public constructor
@@ -185,6 +192,8 @@ public class BookDetailsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         if (getArguments() != null) {
             mBook = (Book) getArguments().getSerializable(ARG_PARAM1);
             mUser = (User) getArguments().getSerializable(ARG_PARAM2);
@@ -197,13 +206,7 @@ public class BookDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-         final View view = inflater.inflate(R.layout.fragment_book_details, container, false);
-
-
-
-
-        //activity = (BookDetailsActivity) getActivity();
-        //b = BookDetailsActivity.book;
+        final View view = inflater.inflate(R.layout.fragment_book_details, container, false);
         bookTitle = (TextView) view.findViewById(R.id.book_title);
         bookAuthors = (TextView) view.findViewById(R.id.book_authors);
         bookISBN = (TextView) view.findViewById(R.id.book_isbn);
@@ -266,7 +269,6 @@ public class BookDetailsFragment extends Fragment {
         databaseReference.child("books").addChildEventListener(updateListener);
         currentUserId = firebaseUser.getUid();
 
-        //EXPERIMENT
         if(mBook.getStatus().equals(BookStatus.REQUESTED)) {
 
             for (String requesterId : mBook.getRequesterIds()) {
@@ -291,6 +293,8 @@ public class BookDetailsFragment extends Fragment {
             }
 
         }
+ // = currentUserId.equals(mBook.getCurrentBorrowerId());
+        testBool1 = mBook.isInTransaction();
 
         if (currentUserId.equals(mBook.getOwner()) && !mBook.getStatus().equals(BookStatus.BORROWED) && !mBook.getStatus().equals(BookStatus.ACCEPTED)) {
             FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
@@ -305,14 +309,84 @@ public class BookDetailsFragment extends Fragment {
                     Intent intent = new Intent(getContext(), AddEditBookActivity.class);
                     intent.putExtra("Book to edit", mBook);
                     startActivity(intent);
-
                 }
-
             });
 
-        } else if(isBorrowed && mBook.getStatus().equals(BookStatus.ACCEPTED)){
-
+        } else if(isBorrowed && mBook.getStatus().equals(BookStatus.ACCEPTED) && /*mBook.isInTransaction().equals(true)*/mBook.isInTransaction()){
+            //borrwer ends transaction by receiving and scanning
             //Scan book to set borrowed
+            FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+            fab.setImageResource(R.drawable.round_done_black_18dp);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        // Permission has already been granted
+                        new IntentIntegrator(getActivity()).initiateScan();
+
+                    } else {
+
+                        // Permission is NOT granted
+                        // Prompt the user for permission
+                        ActivityCompat.requestPermissions(getActivity(),
+                                new String[]{Manifest.permission.CAMERA},
+                                MY_PERMISSIONS_REQUEST_CAMERA);
+                    }
+                    //fab.setEnabled(false);
+                    //fab.setVisibility(View.GONE);
+                }
+            });
+
+        } else if(!mBook.getStatus().equals(BookStatus.ACCEPTED) && !mBook.getStatus().equals(BookStatus.BORROWED)){//!book.getStatus().equals(BookStatus.BORROWED)){
+
+            final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+
+            fab.setImageResource(R.drawable.ic_add);
+
+            if (!isRequested) {
+                fab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //fireBaseController.addRequestToBookByBookId(book.getBookId());
+                        if (mBook.getStatus().equals(BookStatus.AVAILABLE) || mBook.getStatus().equals(BookStatus.REQUESTED)) {
+
+                            databaseReference.child("books").child(mBook.getBookId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                    mBook = dataSnapshot.getValue(Book.class);
+                                    mBook.addRequest(currentUserId);
+                                    mBook.setStatus(BookStatus.REQUESTED);
+                                    mBook.setNewRequest();
+                                    databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
+                                    databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);
+                                    fab.setEnabled(false);
+                                    fab.setVisibility(View.GONE);
+
+                                }
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {}
+                            });
+
+                        } else {
+                            //Toast.makeText(this, "Book not Available for borrowing", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(BookDetailsActivity.this, "Book not Available", Toast.LENGTH_SHORT);
+                            fab.setEnabled(false);
+                            fab.setVisibility(View.GONE);
+                        }
+                    }
+
+                });
+
+            } else {
+                fab.setEnabled(false);
+                fab.setVisibility(View.GONE);
+            }
+
+        } else if(currentUserId.equals(mBook.getOwner()) && mBook.getStatus().equals(BookStatus.ACCEPTED) && /*mBook.isInTransaction().equals(false)*/!mBook.isInTransaction()){
+            // owner starts transaction
             final  FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
             fab.setImageResource(R.drawable.round_done_black_18dp);
             fab.setOnClickListener(new View.OnClickListener() {
@@ -331,98 +405,14 @@ public class BookDetailsFragment extends Fragment {
                         ActivityCompat.requestPermissions(getActivity(),
                                 new String[]{Manifest.permission.CAMERA},
                                 MY_PERMISSIONS_REQUEST_CAMERA);
-
                     }
-
+                    //fab.setEnabled(false);
+                    //fab.setVisibility(View.GONE);
                 }
             });
 
 
-        } else if(!mBook.getStatus().equals(BookStatus.ACCEPTED) && !mBook.getStatus().equals(BookStatus.BORROWED)){//!book.getStatus().equals(BookStatus.BORROWED)){
-
-            //only iff available or requested.
-            final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-
-            //fab.setEnabled(false);
-            //fab.setVisibility(View.GONE);
-            // add request button for borrower
-            fab.setImageResource(R.drawable.ic_add);
-/*
-                            if(book.getStatus().equals(BookStatus.REQUESTED)) {
-
-                                for (String requesterId : book.getRequesterIds()) {
-
-                                    if (requesterId.equals(currentUserId)) {
-                                        fab.setEnabled(false);
-                                        fab.setVisibility(View.GONE);
-                                        break;
-
-                                    }
-
-                                }
-
-                            }*/
-            if (!isRequested) {
-                fab.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-
-                        //fireBaseController.addRequestToBookByBookId(book.getBookId());
-                        if (mBook.getStatus().equals(BookStatus.AVAILABLE) || mBook.getStatus().equals(BookStatus.REQUESTED)) {
-
-                            databaseReference.child("books").child(mBook.getBookId()).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                                    mBook = dataSnapshot.getValue(Book.class);
-                                    mBook.addRequest(currentUserId);
-                                    mBook.setStatus(BookStatus.REQUESTED);
-                                    databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
-                                    databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);
-                                    fab.setEnabled(false);
-                                    fab.setVisibility(View.GONE);
-
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                }
-
-                            });
-
-                        } else {
-                            //Toast.makeText(this, "Book not Available for borrowing", Toast.LENGTH_SHORT).show();
-                            //Toast.makeText(BookDetailsActivity.this, "Book not Available", Toast.LENGTH_SHORT);
-                            fab.setEnabled(false);
-                            fab.setVisibility(View.GONE);
-
-                        }
-
-
-
-                    }
-
-                });
-
-            } else {
-                fab.setEnabled(false);
-                fab.setVisibility(View.GONE);
-            }
-
         }
-
-        //EXPERIMENT END
-
-
-
-
-
-
-
-
-
 
         return view;
 
@@ -460,9 +450,17 @@ public class BookDetailsFragment extends Fragment {
                         });*/
 
                         mBook.setStatus(BookStatus.BORROWED);
+                        mBook.endTransaction();
                         databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
                         databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);
                         databaseReference.child("user-borrowed").child(currentUserId).child(mBook.getBookId()).setValue(mBook);
+
+                    } else if (mBook.getOwner().equals(currentUserId)){
+
+                        mBook.startTransaction();
+                        databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
+                        databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);
+                        databaseReference.child("user-borrowed").child(mBook.getCurrentBorrowerId()).child(mBook.getBookId()).setValue(mBook);
 
                     }
 
@@ -522,12 +520,6 @@ public class BookDetailsFragment extends Fragment {
         mListener = null;
     }
 
-    //public void setBook(Book book) {
-//
-        //this.book = book;
-
-  //  }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -545,12 +537,6 @@ public class BookDetailsFragment extends Fragment {
         public void onBookUpdate(Book book);
     }
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-
-        //ImageView bmImage;
-        //public DownloadImageTask(ImageView bmImage) {
-        // AddEditBookActivity.this.bookImage = bmImage;
-        //}
-
         protected Bitmap doInBackground(String... urls) {
 
             String urldisplay = urls[0];
@@ -574,6 +560,9 @@ public class BookDetailsFragment extends Fragment {
 
         }
 
-
     }
+
+
+
+
 }
