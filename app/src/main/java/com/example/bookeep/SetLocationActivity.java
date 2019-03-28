@@ -24,7 +24,15 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Calendar;
 
-
+/**This activity is used to setup a google map fragment. It will ask for location, and jump to
+ * Edmonton. When a user places a spot on the map, a menu will popup asking if they want to
+ * save it, or clear it. If they press save, a datepicker and timepicker fragment will be called
+ * to ensure a proper date and time is inputted. This will setup a date and time to meetup.
+ * @author kyle
+ * @see Book
+ * @see User
+ * @see GoogleMap
+ */
 public class SetLocationActivity extends FragmentActivity implements OnMapReadyCallback,
         TimePickerFragment.OnTimeSelectedListener,
         DatePickerFragment.OnDateSelectedListener {
@@ -47,51 +55,18 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = getIntent();
         setContentView(R.layout.activity_set_location);
+        Intent intent = getIntent();
         marker = null;
+        calendar = Calendar.getInstance();
         book = (Book) intent.getSerializableExtra("Book");
         user = (User) intent.getSerializableExtra("User");
-        if (book.getCurrentBorrowerId() != user.getUserId() && book.getOwner() != user.getUserId()) {
-            finish();
+        if (!book.getOwner().equals(user.getUserId()) && !book.getCurrentBorrowerId().equals(user.getUserId())) {
+            return;
         }
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        //This chunk of code was used to test books directly from firebase. Call this activity with
-        //Intent.putExtra("Book, book) and Intent.putExtra("User", user).
-
-        /*databaseReference.child("books").child("5e5d0a95-f1ee-4503-9f2b-f35017cbdc90").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                book = dataSnapshot.getValue(Book.class);
-                databaseReference.child("users").child(book.getOwner()).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        user = dataSnapshot.getValue(User.class);
-                        if (user.getUserId() != book.getOwner() && user.getUserId() != book.getCurrentBorrowerId()) {
-                            finish();
-                        }
-                        calendar = Calendar.getInstance();
-                        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-                        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                                .findFragmentById(R.id.map);
-                        mapFragment.getMapAsync(SetLocationActivity.this);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });*/
     }
 
 
@@ -106,10 +81,14 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        Intent intent = getIntent();
+        marker = null;
 
         if (ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            mMap.setMyLocationEnabled(false);
+            ActivityCompat.requestPermissions(SetLocationActivity.this,
+                    new String[] {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_LOCATION);
         } else {
             mMap.setMyLocationEnabled(true);
         }
@@ -160,16 +139,22 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
         }
     }
 
+    /**Save button method that is called when a user presses the save button. This method ensures
+     * that the location is placed as either a borrow or return location based on which user
+     * has called this activity. It will then call the DatePickerFragment, which will ensure
+     * the user inputs a proper date.
+     *
+     * @param view
+     */
     public void onSaveButtonPressed(View view) {
-        if (user.getUserId() == book.getOwner()) {
+        if (user.getUserId().equals(book.getOwner())) {
             book.setBorrowLocation(location.toString());
             book.setReturnLocation(null);
-        } else if (user.getUserId() == book.getCurrentBorrowerId()) {
+        } else {
             book.setReturnLocation(location.toString());
             book.setBorrowLocation(null);
-        } else {
-            finish();
         }
+
 
         DatePickerFragment datePickerFragment = new DatePickerFragment();
         datePickerFragment.setOnDateSelectedListener(this);
@@ -177,6 +162,11 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
 
     }
 
+    /**When the clear button is pressed, we simply just remove the marker that's been placed
+     * and make the menu appear gone again.
+     *
+     * @param view
+     */
     public void onClearButtonPressed(View view) {
         marker.remove();
         View view2 = findViewById(R.id.set_location_menu);
@@ -184,16 +174,33 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
     }
 
 
+    /**Overridden method from TimePickerFragment. This method is overridden in this activity
+     * so that the time can be sent from the fragment back to this activity. Once this method
+     * finishes, we save the book to the database, and finish this activity.
+     *
+     * @param hour
+     * @param minute
+     */
     @Override
     public void getTime(int hour,int minute) {
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.SECOND, 0);
         book.setCalendarDate(calendar.getTime().toString());
 
         databaseReference.child("books").child(book.getBookId()).setValue(book);
         finish();
     }
 
+
+    /**Overridden method from DatePickerFragment. This method is overridden in this activity
+     * so that the date can be sent from the fragment back to this activity. This method is
+     * used to call the TimePickerFragment.
+     *
+     * @param year
+     * @param month
+     * @param day
+     */
     @Override
     public void getDate(int year,int month,int day) {
         calendar.set(Calendar.YEAR, year);
