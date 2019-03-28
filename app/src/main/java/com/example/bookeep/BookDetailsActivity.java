@@ -67,9 +67,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
     private List<Request> requests;
 
     private boolean isRequested;
-
     private boolean isBorrowed;
-
 
     /**
      * displays the book and its info when selected
@@ -153,10 +151,10 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
     }
 
     /**
-     *
-     * @param requestCode int
-     * @param resultCode int
-     * @param data intent
+     * Process scanning and add the book to Firebase.
+     * @param requestCode the code for the activity request
+     * @param resultCode the code for the activity result
+     * @param data Intent data for scanning
      */
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
@@ -176,10 +174,31 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                 if(book.getISBN().equals(result.getContents())){
 
                     if(book.getCurrentBorrowerId().equals(currentUserId)){
+                        /*
+                        databaseReference.child("books").child(book.getBookId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                book =
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });*/
+
                         book.setStatus(BookStatus.BORROWED);
+                        book.endTransaction();
                         databaseReference.child("books").child(book.getBookId()).setValue(book);
                         databaseReference.child("user-books").child(book.getOwner()).child(book.getBookId()).setValue(book);
                         databaseReference.child("user-borrowed").child(currentUserId).child(book.getBookId()).setValue(book);
+
+                    } else if (book.getOwner().equals(currentUserId)){
+
+                        book.startTransaction();
+                        databaseReference.child("books").child(book.getBookId()).setValue(book);
+                        databaseReference.child("user-books").child(book.getOwner()).child(book.getBookId()).setValue(book);
+                        databaseReference.child("user-borrowed").child(book.getCurrentBorrowerId()).child(book.getBookId()).setValue(book);
 
                     }
 

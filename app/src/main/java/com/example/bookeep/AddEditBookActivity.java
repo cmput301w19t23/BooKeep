@@ -365,11 +365,20 @@ public class AddEditBookActivity extends AppCompatActivity {
 
                 //String isbn = volumeInfo.getString()
                 JSONArray industryIdentifiers = (JSONArray) volumeInfo.getJSONArray("industryIdentifiers");
-                JSONObject isbn13 = industryIdentifiers.getJSONObject(1);
-                String isbn13String = isbn13.getString("identifier");
-                isbn.setText(isbn13String);
-                isbn.setError(null);
 
+                JSONObject isbn0 = industryIdentifiers.getJSONObject(0);
+                String isbn0String = isbn0.getString("identifier");
+
+                JSONObject isbn1 = industryIdentifiers.getJSONObject(1);
+                String isbn1String = isbn1.getString("identifier");
+
+                if(isbn0String.length() == 13) {
+                    isbn.setText(isbn0String);
+                    isbn.setError(null);
+                } else {
+                    isbn.setText(isbn1String);
+                    isbn.setError(null);
+                }
                 //if (bookDescription.getText().toString().trim().isEmpty()) {
                 String description = volumeInfo.getString("description");
                 bookDescription.setText(description);
