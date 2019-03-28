@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -29,8 +31,9 @@ public class UserProfileActivity extends AppCompatActivity {
     private TextView phoneNumberView;
     private TextView emailAddressView;
     private String userId;
-    FirebaseDatabase database;
-    DatabaseReference myRef;
+    private FirebaseDatabase database;
+    private DatabaseReference myRef;
+    private BorrowerRating brating;
 //https://stackoverflow.com/questions/14483393/how-do-i-change-the-android-actionbar-title-and-icon look to for changing action bar to allow edits
 
     @Override
@@ -43,6 +46,7 @@ public class UserProfileActivity extends AppCompatActivity {
         } else{
             userId = "";
         }
+
         usernameView = findViewById(R.id.username_Profile);
         profilePicture = findViewById(R.id.profile_pic);
         nameView = findViewById(R.id.name_Profile);
@@ -71,10 +75,19 @@ public class UserProfileActivity extends AppCompatActivity {
 
             }
         });
+        brating = new BorrowerRating(userId);
 
 
 
 
 
     }
+/*    public void addRating(View view){
+        EditText num = findViewById(R.id.rating);
+        Integer rating = Integer.getInteger(num.getText().toString());
+
+        brating.addRating(2);
+        borrowerRatingBar.setRating(brating.getRating());
+        numBorrowerReviewsView.setText(brating.getNumRatings().toString() + " Borrower Reviews");
+    }*/
 }
