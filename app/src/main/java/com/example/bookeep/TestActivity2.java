@@ -29,10 +29,6 @@ public class TestActivity2 extends AppCompatActivity {
     }
 
     public void getLocationClick(View view) {
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = database.getReference();
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         databaseReference.child("books").child("c9d0edcc-f885-4789-ae4c-e343d57289c7").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
