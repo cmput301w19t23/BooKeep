@@ -39,7 +39,6 @@ public class UserProfileActivity extends AppCompatActivity {
     private DatabaseReference myRef;
     private FirebaseUser firebaseUser;
     private FirebaseAuth firebaseAuth;
-//https://stackoverflow.com/questions/14483393/how-do-i-change-the-android-actionbar-title-and-icon look to for changing action bar to allow edits
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +70,11 @@ public class UserProfileActivity extends AppCompatActivity {
                 User user = dataSnapshot.getValue(User.class);
                 String name = user.getFirstname() + " " + user.getLastname();
                 nameView.setText(name);
-                usernameView.setText(user.getUserName());
+                String username = user.getUserName();
+                if (username.length() > 22) {
+                    username = username.replace(" ","\n");
+                }
+                usernameView.setText(username);
                 phoneNumberView.setText(user.getPhoneNumber().toString());
                 emailAddressView.setText(user.getEmail());
 

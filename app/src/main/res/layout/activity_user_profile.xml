@@ -32,26 +32,13 @@
         app:layout_constraintTop_toBottomOf="@+id/borrower_number_reviews" />
 
     <TextView
-        android:id="@+id/name_Profile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginLeft="48dp"
-        android:layout_marginTop="16dp"
-        android:text="TextView"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="24sp"
-        app:layout_constraintStart_toEndOf="@+id/profile_pic"
-        app:layout_constraintTop_toTopOf="@+id/profile_pic" />
-
-    <TextView
         android:id="@+id/username_Profile"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="18dp"
         android:layout_marginTop="16dp"
         android:text="TextView"
-        app:layout_constraintStart_toStartOf="@+id/name_Profile"
-        app:layout_constraintTop_toBottomOf="@+id/name_Profile" />
+        app:layout_constraintStart_toStartOf="@+id/linearLayout"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     <RatingBar
         android:id="@+id/borrower_ratingbar"
@@ -170,5 +157,27 @@
         android:textColor="@color/colorPrimaryDark"
         app:layout_constraintStart_toStartOf="@+id/borrower_rating"
         app:layout_constraintTop_toBottomOf="@+id/borrower_number_reviews" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toEndOf="@+id/profile_pic"
+        app:layout_constraintTop_toTopOf="@+id/profile_pic">
+
+        <TextView
+            android:id="@+id/name_Profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18sp"
+            tools:layout_editor_absoluteX="176dp"
+            tools:layout_editor_absoluteY="48dp" />
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
