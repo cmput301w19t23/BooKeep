@@ -33,7 +33,7 @@ public class TestActivity2 extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = database.getReference();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        databaseReference.child("books").child("5e5d0a95-f1ee-4503-9f2b-f35017cbdc90").addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.child("books").child("c9d0edcc-f885-4789-ae4c-e343d57289c7").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 book = dataSnapshot.getValue(Book.class);
@@ -50,11 +50,11 @@ public class TestActivity2 extends AppCompatActivity {
     }
 
     public void setLocationClick(View view) {
-        databaseReference.child("books").child("5e5d0a95-f1ee-4503-9f2b-f35017cbdc90").addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.child("books").child("c9d0edcc-f885-4789-ae4c-e343d57289c7").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 book = dataSnapshot.getValue(Book.class);
-                databaseReference.child("users").child(book.getOwner()).addListenerForSingleValueEvent(new ValueEventListener() {
+                databaseReference.child("users").child(book.getCurrentBorrowerId()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         user = dataSnapshot.getValue(User.class);

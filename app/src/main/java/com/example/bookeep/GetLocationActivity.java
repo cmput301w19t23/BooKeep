@@ -63,6 +63,10 @@ public class GetLocationActivity extends FragmentActivity implements OnMapReadyC
             mMap.setMyLocationEnabled(true);
         }
 
+        if (book.getReturnLocation() == null && book.getBorrowLocation() == null) {
+            return;
+        }
+
         if (book.getReturnLocation() == null) {
             m = Pattern.compile("\\(([^)]+)\\)").matcher(book.getBorrowLocation());
         } else {

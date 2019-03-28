@@ -50,10 +50,11 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
         setContentView(R.layout.activity_set_location);
         Intent intent = getIntent();
         marker = null;
+        calendar = Calendar.getInstance();
         book = (Book) intent.getSerializableExtra("Book");
         user = (User) intent.getSerializableExtra("User");
         if (!book.getOwner().equals(user.getUserId()) && !book.getCurrentBorrowerId().equals(user.getUserId())) {
-            finish();
+            return;
         }
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
