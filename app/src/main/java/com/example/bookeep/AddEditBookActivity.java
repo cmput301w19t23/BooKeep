@@ -365,7 +365,7 @@ public class AddEditBookActivity extends AppCompatActivity {
 
                 //String isbn = volumeInfo.getString()
                 JSONArray industryIdentifiers = (JSONArray) volumeInfo.getJSONArray("industryIdentifiers");
-                JSONObject isbn13 = industryIdentifiers.getJSONObject(1);
+                JSONObject isbn13 = industryIdentifiers.getJSONObject(0);
                 String isbn13String = isbn13.getString("identifier");
                 isbn.setText(isbn13String);
                 isbn.setError(null);

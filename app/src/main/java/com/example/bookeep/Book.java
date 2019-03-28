@@ -31,6 +31,19 @@ public class Book implements Serializable {
     private String borrowLocation;
     private String returnLocation;
     private String calendarDate;
+    private boolean inTransaction;
+
+    public void startTransaction(){
+        this.inTransaction = true;
+    }
+
+    public void endTransaction(){
+        this.inTransaction = false;
+    }
+
+    public boolean isInTransaction(){
+        return this.inTransaction;
+    }
 
 
 
@@ -64,6 +77,8 @@ public class Book implements Serializable {
         this.status = BookStatus.AVAILABLE;
         this.newRequest = false;
         this.newAccepted = false;
+        this.inTransaction = false;
+
     }
 
     /**
@@ -73,6 +88,9 @@ public class Book implements Serializable {
         super();
         this.bookId = UUID.randomUUID().toString();
         this.status = BookStatus.AVAILABLE;
+        this.newRequest = false;
+        this.newAccepted = false;
+        this.inTransaction = false;
     }
 
     //public Bitmap getBookImage() {
