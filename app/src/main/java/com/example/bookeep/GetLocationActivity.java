@@ -18,6 +18,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**This activity is used to setup a google map fragment. It will ask for location, and jump to
+ * the location of the marker given in the book location that was fed in the intent. The marker
+ * will say to meet at that spot at a given date and time.
+ *
+ * @author kyle
+ * @see Book
+ * @see GoogleMap
+ */
 public class GetLocationActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
@@ -82,6 +90,13 @@ public class GetLocationActivity extends FragmentActivity implements OnMapReadyC
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
     }
 
+    /**asks for location persmission
+     * see https://developer.android.com/training/permissions/requesting#java
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions,int[] grantResults) {

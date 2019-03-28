@@ -24,7 +24,15 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Calendar;
 
-
+/**This activity is used to setup a google map fragment. It will ask for location, and jump to
+ * Edmonton. When a user places a spot on the map, a menu will popup asking if they want to
+ * save it, or clear it. If they press save, a datepicker and timepicker fragment will be called
+ * to ensure a proper date and time is inputted. This will setup a date and time to meetup.
+ * @author kyle
+ * @see Book
+ * @see User
+ * @see GoogleMap
+ */
 public class SetLocationActivity extends FragmentActivity implements OnMapReadyCallback,
         TimePickerFragment.OnTimeSelectedListener,
         DatePickerFragment.OnDateSelectedListener {
@@ -131,6 +139,13 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
         }
     }
 
+    /**Save button method that is called when a user presses the save button. This method ensures
+     * that the location is placed as either a borrow or return location based on which user
+     * has called this activity. It will then call the DatePickerFragment, which will ensure
+     * the user inputs a proper date.
+     *
+     * @param view
+     */
     public void onSaveButtonPressed(View view) {
         if (user.getUserId().equals(book.getOwner())) {
             book.setBorrowLocation(location.toString());
@@ -147,6 +162,11 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
 
     }
 
+    /**When the clear button is pressed, we simply just remove the marker that's been placed
+     * and make the menu appear gone again.
+     *
+     * @param view
+     */
     public void onClearButtonPressed(View view) {
         marker.remove();
         View view2 = findViewById(R.id.set_location_menu);
@@ -154,16 +174,33 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
     }
 
 
+    /**Overridden method from TimePickerFragment. This method is overridden in this activity
+     * so that the time can be sent from the fragment back to this activity. Once this method
+     * finishes, we save the book to the database, and finish this activity.
+     *
+     * @param hour
+     * @param minute
+     */
     @Override
     public void getTime(int hour,int minute) {
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.SECOND, 0);
         book.setCalendarDate(calendar.getTime().toString());
 
         databaseReference.child("books").child(book.getBookId()).setValue(book);
         finish();
     }
 
+
+    /**Overridden method from DatePickerFragment. This method is overridden in this activity
+     * so that the date can be sent from the fragment back to this activity. This method is
+     * used to call the TimePickerFragment.
+     *
+     * @param year
+     * @param month
+     * @param day
+     */
     @Override
     public void getDate(int year,int month,int day) {
         calendar.set(Calendar.YEAR, year);
