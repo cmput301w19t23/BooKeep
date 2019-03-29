@@ -38,6 +38,9 @@ public class SearchActivity extends AppCompatActivity implements SearchFragment.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        /*fragment = SearchOptionsFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.search_fragment_container, fragment).commit();*/
 
         fragment = SearchFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
