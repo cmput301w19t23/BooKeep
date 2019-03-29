@@ -43,7 +43,6 @@ import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import static com.example.bookeep.NotificationHandler.CHANNEL_1_ID;
 import static com.example.bookeep.NotificationHandler.CHANNEL_2_ID;
 
@@ -213,13 +212,17 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
         getMenuInflater().inflate(R.menu.main, menu);
-
-        FireBaseController fireBaseController = new FireBaseController(this);
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        final String userId = firebaseUser.getUid();
+        //User user = fireBaseController.getCurrentUser();
+        //userText.setText(user.getFirstName() + " " + user.getLastName());
         ImageButton updateProfile = findViewById(R.id.UserProfileButton);
         updateProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, EditUserActivity.class);
+                Intent intent = new Intent(MainActivity.this, UserProfileActivity.class);
+                intent.putExtra("uuid",userId);
                 startActivity(intent);
             }
         });
