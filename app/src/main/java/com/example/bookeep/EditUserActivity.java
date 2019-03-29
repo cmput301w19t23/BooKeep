@@ -183,8 +183,7 @@ public class EditUserActivity extends AppCompatActivity {
     /**
      * checks all editTexts to make sure they were filled correctly
      * @return true if entered info is valid, and false otherwise
-     */
-
+     */1
     private boolean validation() {
 
         boolean emailValid = false;
