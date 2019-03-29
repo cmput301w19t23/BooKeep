@@ -37,16 +37,11 @@ public class FireBaseController {
     private Context context;
 
     public FireBaseController(Context context) {
-        //this.context = context;
         firebaseAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference();
         firebaseUser = firebaseAuth.getCurrentUser();
-//<<<<<<< HEAD
-   
-//=======
         this.context = context;
-//>>>>>>> firebase
     }
 
     /**
