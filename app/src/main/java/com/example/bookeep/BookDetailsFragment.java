@@ -2,7 +2,6 @@ package com.example.bookeep;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,8 +17,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -57,17 +54,10 @@ import static com.example.bookeep.AddEditBookActivity.MY_PERMISSIONS_REQUEST_CAM
  * @verion 1.0.1
  */
 public class BookDetailsFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "book";
     private static final String ARG_PARAM2 = "current user";
 
-
-
-
-
-
-    // TODO: Rename and change types of parameters
     private Book mBook;
     private User mUser;
     private String currentUserId;
@@ -367,6 +357,7 @@ public class BookDetailsFragment extends Fragment {
                                     mBook.setNewRequest();
                                     databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
                                     databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);
+                                    databaseReference.child("user-requested").child(currentUserId).child(mBook.getBookId()).setValue(mBook);
                                     fab.setEnabled(false);
                                     fab.setVisibility(View.GONE);
 
@@ -376,8 +367,6 @@ public class BookDetailsFragment extends Fragment {
                             });
 
                         } else {
-                            //Toast.makeText(this, "Book not Available for borrowing", Toast.LENGTH_SHORT).show();
-                            //Toast.makeText(BookDetailsActivity.this, "Book not Available", Toast.LENGTH_SHORT);
                             fab.setEnabled(false);
                             fab.setVisibility(View.GONE);
                         }

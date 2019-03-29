@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bookeep.Fragments.MyStandRecyclerViewAdapter;
+import com.example.bookeep.Fragments.PendingRequestFragment;
 import com.example.bookeep.Fragments.ShelfFragment;
 import com.example.bookeep.Fragments.StandFragment;
 import com.google.firebase.auth.FirebaseAuth;
@@ -52,7 +53,7 @@ import static com.example.bookeep.NotificationHandler.CHANNEL_2_ID;
  * @version 1.0.1
  */
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, FirebaseAuth.AuthStateListener, StandFragment.OnListFragmentInteractionListener, ShelfFragment.OnListFragmentInteractionListener{
+        implements NavigationView.OnNavigationItemSelectedListener, FirebaseAuth.AuthStateListener, StandFragment.OnListFragmentInteractionListener,PendingRequestFragment.OnListFragmentInteractionListener, ShelfFragment.OnListFragmentInteractionListener{
     private FireBaseController fireBaseController = new FireBaseController(this);
 
     private NotificationManagerCompat notificationManager;
@@ -266,8 +267,10 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_stand) {
             fragmentClass = StandFragment.class;
-        } else {
+        } else if(id == R.id.nav_shelf){
             fragmentClass = ShelfFragment.class;
+        } else if(id == R.id.nav_pending){
+            fragmentClass = PendingRequestFragment.class;
         }
 
         try {

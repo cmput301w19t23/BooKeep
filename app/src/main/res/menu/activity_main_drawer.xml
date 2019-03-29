@@ -7,11 +7,15 @@
         <item
             android:id="@+id/nav_shelf"
             android:icon="@drawable/ic_shelf"
-            android:title="My Shelf" />
+            android:title="@string/my_shelf" />
         <item
             android:id="@+id/nav_stand"
             android:icon="@drawable/ic_stand"
-            android:title="My Stand" />
+            android:title="@string/my_stand" />
+        <item
+            android:id="@+id/nav_pending"
+            android:icon="@drawable/ic_update"
+            android:title="@string/pending_requests"/>
     </group>
 
 </menu>
