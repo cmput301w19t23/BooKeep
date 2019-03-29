@@ -5,10 +5,17 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
 
+/**
+ * Creates notification channels
+ * @author Jeff Kirker
+ */
 public class NotificationHandler extends Application {
     public static final String CHANNEL_1_ID = "channel1";
     public static final String CHANNEL_2_ID = "channel2";
 
+    /**
+     * Immediately creates notification channels upon creation
+     */
     @Override
     public void onCreate() {
         super.onCreate();
@@ -16,6 +23,10 @@ public class NotificationHandler extends Application {
         createNotificationChannel();
     }
 
+    /**
+     * Creates channels 1 and 2 for Requesting and Accepting respectively.
+     * Includes NotificationManager
+     */
     private void createNotificationChannel() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
