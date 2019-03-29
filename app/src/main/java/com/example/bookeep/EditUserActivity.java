@@ -122,7 +122,7 @@ public class EditUserActivity extends AppCompatActivity {
         });
 
         //this will get the users info from the database to prefill editing fields and to check if username/email haven't changed
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User currentUser = dataSnapshot.getValue(User.class);
@@ -169,7 +169,7 @@ public class EditUserActivity extends AppCompatActivity {
         String lastNameString = lastName.getText().toString();
         String firstNameString = firstName.getText().toString();
         String userNameString = userName.getText().toString();
-        String phoneString = phoneNumber.getText().toString();
+        String phoneString = phoneNumber.getText().toString().replace("-","");
         user = new User(userNameString, emailString, firstNameString, lastNameString, userId);
         user.setPhoneNumber(new PhoneNumber(phoneString));
         user.setEmail(emailString);
@@ -199,9 +199,9 @@ public class EditUserActivity extends AppCompatActivity {
             emailValid = (!emails.contains(email.getText().toString())
                           || currentEmail.contains(email.getText().toString()));
         }
-
+        String phone = phoneNumber.getText().toString().replace("-","");
         //Checks to make sure a proper phone numebr is given and sets phoneValid accordingly
-        if (Patterns.PHONE.matcher(phoneNumber.getText().toString()).matches() && phoneNumber.getText().toString().length() == 10) {
+        if (Patterns.PHONE.matcher(phone).matches() && phone.length() == 10) {
             phoneValid = true;
         }
 

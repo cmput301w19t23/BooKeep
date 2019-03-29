@@ -17,7 +17,10 @@
         android:id="@+id/UserProfileButton"
         android:layout_width="100dp"
         android:layout_height="80dp"
-        tools:srcCompat="@tools:sample/avatars" />
+        android:background="@color/colorPrimary"
+        android:scaleType="fitCenter"
+        android:src="@drawable/profile_pic"
+        tools:srcCompat="@drawable/profile_pic" />
 
     <TextView
         android:id="@+id/name"

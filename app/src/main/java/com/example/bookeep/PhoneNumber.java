@@ -47,7 +47,7 @@ public class PhoneNumber implements Serializable {
      * @return phonenumber string
      */
     public String toString() {
-        return area + exchange + extension;
+        return area + "-" + exchange + "-" + extension;
     }
 
     /**
