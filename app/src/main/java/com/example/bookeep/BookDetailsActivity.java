@@ -67,9 +67,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
     private List<Request> requests;
 
     private boolean isRequested;
-
     private boolean isBorrowed;
-
 
     /**
      * displays the book and its info when selected
@@ -153,10 +151,10 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
     }
 
     /**
-     *
-     * @param requestCode int
-     * @param resultCode int
-     * @param data intent
+     * Process scanning and add the book to Firebase.
+     * @param requestCode the code for the activity request
+     * @param resultCode the code for the activity result
+     * @param data Intent data for scanning
      */
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);

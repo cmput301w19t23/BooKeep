@@ -33,37 +33,6 @@ public class Book implements Serializable {
     private String calendarDate;
     private boolean inTransaction;
 
-    public void startTransaction(){
-        this.inTransaction = true;
-    }
-
-    public void endTransaction(){
-        this.inTransaction = false;
-    }
-
-    public boolean isInTransaction(){
-        return this.inTransaction;
-    }
-
-
-
-    /**
-     * gets the books image url
-     * @return bookImageUrl
-     */
-    public String getBookImageURL() {
-        return bookImageURL;
-    }
-
-    /**
-     * sets a new bookImageUrl
-     * @param bookImageURL String of the image url
-     */
-    public void setBookImageURL(String bookImageURL) {
-        this.bookImageURL = bookImageURL;
-    }
-
-
     /**
      * Creates a book object
      * @param ISBN String of the isbn
@@ -93,13 +62,9 @@ public class Book implements Serializable {
         this.inTransaction = false;
     }
 
-    //public Bitmap getBookImage() {
-      //  return bookImage;
-    //}
+    //public Bitmap getBookImage() { return bookImage; }
 
-    //public void setBookImage(Bitmap bookImage) {
-        //this.bookImage = bookImage;
-    //}
+    //public void setBookImage(Bitmap bookImage) { this.bookImage = bookImage; }
 
     /**
      * gets the requester ids
@@ -114,34 +79,16 @@ public class Book implements Serializable {
      * @param requesterId A string of the requester to be added to requester ids
      */
     public void addRequest(String requesterId){
-
         if(this.status == BookStatus.AVAILABLE || this.status == BookStatus.REQUESTED) {
             this.requesterIds.add(requesterId);
         }
-
     }
-
-    //public String getAuthors() {
-        /*
-        String authorsString = null;
-        for(String author: authors){
-            authorsString = authorsString+author;
-        }
-        return authorsString;*/
-      //  return authors;
-    //}
 
     /**
      * gets authors of books
      * @return An array list of authors of the books
      */
-    public ArrayList<String> getAuthors() {
-        return authors;
-    }
-
-    //public void setAuthor(String authors){//ArrayList<String> authors) {
-        //this.authors = authors;
-    //}
+    public ArrayList<String> getAuthors() { return authors; }
 
     /**
      * sets new authors
@@ -227,11 +174,7 @@ public class Book implements Serializable {
      * sets new owner
      * @param ownerId string of owner id
      */
-    public void setOwner(String ownerId) {
-
-        this.ownerId = ownerId;
-
-    }
+    public void setOwner(String ownerId) { this.ownerId = ownerId; }
 
     /**
      * gets the books status
@@ -278,11 +221,7 @@ public class Book implements Serializable {
      * removes a requester by their id
      * @param reqId string of the user id to be removed from requesters
      */
-    public void removeRequester(String reqId){
-
-        this.requesterIds.remove(reqId);
-
-    }
+    public void removeRequester(String reqId){ this.requesterIds.remove(reqId); }
 
     /**
      * gets a string of all authors
@@ -298,51 +237,115 @@ public class Book implements Serializable {
         return authorsString;
     }
 
+    /**
+     * Sets the new request status to true.
+     */
     public void setNewRequest(){
         this.newRequest = true;
     }
 
+    /**
+     * Sets the new request status to false.
+     */
     public void clearNewRequest(){
         this.newRequest = false;
     }
 
+    /**
+     * Gets the status of the new request.
+     * @return Whether or not there is a new request.
+     */
     public Boolean getNewRequest(){
         return this.newRequest;
     }
 
+    /**
+     * Sets the newly accepted status to true.
+     */
     public void setNewAccepted(){
         this.newAccepted = true;
     }
 
+    /**
+     * Sets the newly accepted status to false.
+     */
     public void clearNewAccepted(){
         this.newAccepted = false;
     }
 
+    /**
+     * Gets the newly accepted status.
+     * @return Whether or not the book has been recently accepted.
+     */
     public Boolean getNewAccepted(){
         return this.newAccepted;
     }
 
+    /**
+     * Gets the agreed upon on location of the accepted borrow.
+     * @return The location of the exchange.
+     */
     public String getBorrowLocation() {
         return borrowLocation;
     }
 
+    /**
+     * Sets the location of the accepted borrow.
+     * @param borrowLocation The location to borrow at.
+     */
     public void setBorrowLocation(String borrowLocation) {
         this.borrowLocation = borrowLocation;
     }
 
-    public String getReturnLocation() {
-        return returnLocation;
-    }
+    /**
+     * Gets the location that the book will be returned at.
+     * @return The location to be returned at.
+     */
+    public String getReturnLocation() { return returnLocation; }
 
-    public void setReturnLocation(String returnLocation) {
-        this.returnLocation = returnLocation;
-    }
+    /**
+     * Sets the lcoation that the book will be returned at.
+     * @param returnLocation The location for the book to be.
+     */
+    public void setReturnLocation(String returnLocation) { this.returnLocation = returnLocation; }
 
-    public String getCalendarDate() {
-        return calendarDate;
-    }
+    /**
+     * Gets the calendar date.
+     * @return
+     */
+    public String getCalendarDate() { return calendarDate; }
 
-    public void setCalendarDate(String calendarDate) {
-        this.calendarDate = calendarDate;
-    }
+    /**
+     * Sets the calendar date.
+     * @param calendarDate The new date to set to.
+     */
+    public void setCalendarDate(String calendarDate) { this.calendarDate = calendarDate; }
+
+    /**
+     * gets the books image url
+     * @return bookImageUrl
+     */
+    public String getBookImageURL() { return bookImageURL; }
+
+    /**
+     * sets a new bookImageUrl
+     * @param bookImageURL String of the image url
+     */
+    public void setBookImageURL(String bookImageURL) { this.bookImageURL = bookImageURL; }
+
+    /**
+     * Sets the transaction status to true.
+     */
+    public void startTransaction(){ this.inTransaction = true; }
+
+    /**
+     * Sets the transaction status to false.
+     */
+    public void endTransaction(){ this.inTransaction = false; }
+
+    /**
+     * Gets the status of the transaction.
+     * @return Whether or not a transaction is occurring.
+     */
+    public boolean isInTransaction(){ return this.inTransaction; }
 }

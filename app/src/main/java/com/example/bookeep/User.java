@@ -28,6 +28,9 @@ public class User implements Serializable {
     private String imageURL;
 
 
+
+
+
     /**
      * creates a user with a random uuid
      * @param userName username string
@@ -253,4 +256,6 @@ public class User implements Serializable {
     public void setEmail(String email) {
         this.email = email;
     }
+
+
 }
