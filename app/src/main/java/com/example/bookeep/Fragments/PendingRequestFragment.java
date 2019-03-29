@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +16,6 @@ import android.view.ViewGroup;
 import com.example.bookeep.Book;
 import com.example.bookeep.MainActivity;
 import com.example.bookeep.R;
-import com.example.bookeep.Fragments.dummy.DummyContent;
-import com.example.bookeep.Fragments.dummy.DummyContent.DummyItem;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -50,52 +49,69 @@ public class PendingRequestFragment extends Fragment {
     MyPendingRequestRecyclerViewAdapter adapter;
     private String currentUserID;
 
-
     private ChildEventListener updateListener = new ChildEventListener() {
         @Override
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            Boolean added = false;
             Book newBook = dataSnapshot.getValue(Book.class);
-            BookList.add(newBook);
-
-//            if(dataSnapshot.child(newBook.getBookId()).child("requesterIds")
-//                    .child(currentUserID).exists()){
-//                BookList.add(newBook);
-//            } else {
-//                databaseReference.child("user-requested").child(currentUserID)
-//                        .child(newBook.getBookId()).removeValue();
-//            }
+            List<String> requesters = newBook.getRequesterIds();
+            for(String requesterID : requesters){
+               if(requesterID.equals(currentUserID)){
+                   BookList.add(newBook);
+                   added = true;
+               }
+            }
+            if(!added){
+                databaseReference.child("user-requested").child(currentUserID).child(newBook.getBookId()).removeValue();
+            }
             adapter.notifyDataSetChanged();
         }
         @Override
         public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
             Book changedBook = dataSnapshot.getValue(Book.class);
-            for(int i = 0; i < BookList.size(); i++){
-                if(BookList.get(i).getBookId().equals(changedBook.getBookId())){
-                    if(dataSnapshot.child(changedBook.getBookId())
-                            .child("requesterIds").child(currentUserID)
-                            .exists()){
-                        BookList.remove(i);
-                        BookList.add(changedBook);
-                    } else if(!dataSnapshot.child(changedBook.getBookId())
-                            .child("requesterIds").child(currentUserID)
-                            .exists()) {
-                        BookList.remove(i);
-                        databaseReference.child("user-requested").child(currentUserID).child(changedBook.getBookId()).removeValue();
+
+//            for(Book book : BookList){
+//                if(changedBook.getBookId().equals(book.getBookId())){
+//                    changedBook.
+//                }
+//            }
+
+            Boolean changed = false;
+            for(Book book : BookList) {
+                if (book.getBookId().equals(changedBook.getBookId())) {
+                    List<String> requesters = changedBook.getRequesterIds();
+                    for (String requesterID : requesters) {
+                        Log.d("Requester:", requesterID);
+                        if (requesterID.equals(currentUserID)) {
+                            BookList.remove(book);
+                            BookList.add(changedBook);
+                            changed = true;
+                        }
                     }
-                    adapter.notifyDataSetChanged();
                 }
             }
+
+            if(!changed){
+                for(Book book : BookList) {
+                    if (book.getBookId().equals(changedBook.getBookId())) {
+                        BookList.remove(book);
+                        databaseReference.child("user-requested").child(currentUserID).child(changedBook.getBookId()).removeValue();
+                    }
+                }
+            }
+        adapter.notifyDataSetChanged();
+
         }
         @Override
         public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-//            Book removedBook = dataSnapshot.getValue(Book.class);
-//            for(int i = 0; i<BookList.size();i++){
-//                if(BookList.get(i).getBookId().equals(removedBook.getBookId())){
-//                    BookList.remove(i);
-//                    adapter.notifyDataSetChanged();
-//                }
-//            }
+            Book removedBook = dataSnapshot.getValue(Book.class);
+            for(int i = 0; i<BookList.size();i++){
+                if(BookList.get(i).getBookId().equals(removedBook.getBookId())){
+                    BookList.remove(i);
+                    adapter.notifyDataSetChanged();
+                }
+            }
         }
 
         @Override

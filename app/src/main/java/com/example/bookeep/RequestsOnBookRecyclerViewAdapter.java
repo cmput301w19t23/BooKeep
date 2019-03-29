@@ -2,7 +2,6 @@ package com.example.bookeep;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +36,7 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference databaseReference = database.getReference();
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-    String currenUserId = firebaseUser.getUid();
+    String currentUserId = firebaseUser.getUid();
     private String mBookId;
     private Book mBook;
     private List<String> mRequesters;
@@ -68,7 +67,6 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
         holder.txtRequesterName.setText(mValues.get(position).getFirstname() + " " + mValues.get(position).getLastname() );
         holder.txtRequesterUsername.setText("@" + mValues.get(position).getUserName());
         holder.btnAcceptRequest.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 databaseReference.child("books").child(mBookId).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -82,8 +80,17 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
                         mBook.setStatus(BookStatus.ACCEPTED);
                         mBook.clearRequesters();
                         databaseReference.child("books").child(mBookId).setValue(mBook);
-                        databaseReference.child("user-books").child(currenUserId).child(mBookId).setValue(mBook);
+                        databaseReference.child("user-books").child(currentUserId).child(mBookId).setValue(mBook);
                         databaseReference.child("user-borrowed").child(holder.mItem.getUserId()).child(mBookId).setValue(mBook);
+
+                        for(int i = 0; i<mRequesters.size(); i++){
+                            databaseReference.child("user-requested")
+                                    .child(mRequesters.get(i))
+                                    .child(mBook.getBookId())
+                                    .removeValue();
+                        }
+
+
                         databaseReference.child("users").child(holder.mItem.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -134,7 +141,7 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
                         }
 
                         databaseReference.child("books").child(mBookId).setValue(mBook);
-                        databaseReference.child("user-books").child(currenUserId).child(mBookId).setValue(mBook);
+                        databaseReference.child("user-books").child(currentUserId).child(mBookId).setValue(mBook);
                         removeRequester(position);
 
                     }
