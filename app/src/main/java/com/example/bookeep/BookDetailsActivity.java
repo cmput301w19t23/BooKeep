@@ -331,7 +331,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
     /**
      * goes back to book details when pressed back
      */
-    @Override
+    /*@Override
     public void onBackPressed(){
 
         Intent intent = new Intent(BookDetailsActivity.this, MainActivity.class);
@@ -339,7 +339,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
         startActivity(intent);
         finish();
 
-    }
+    }*/
 
     /*
     public Book getBook() {
