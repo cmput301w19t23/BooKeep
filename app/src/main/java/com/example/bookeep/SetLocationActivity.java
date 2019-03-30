@@ -45,6 +45,8 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
     private Book book;
     private User user;
 
+    private String currentUserId;
+
     private GoogleMap mMap;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 32;
     private Marker marker;
@@ -61,8 +63,11 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
         calendar = Calendar.getInstance();
         book = (Book) intent.getSerializableExtra("Book");
         user = (User) intent.getSerializableExtra("User");
+
+        currentUserId = firebaseUser.getUid();
         if (!book.getOwner().equals(user.getUserId()) && !book.getCurrentBorrowerId().equals(user.getUserId())) {
             return;
+            //finish();
         }
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -189,6 +194,8 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
         book.setCalendarDate(calendar.getTime().toString());
 
         databaseReference.child("books").child(book.getBookId()).setValue(book);
+        databaseReference.child("user-books").child(currentUserId).child(book.getBookId()).setValue(book);
+        databaseReference.child("user-borrowed").child(book.getCurrentBorrowerId()).child(book.getBookId()).setValue(book);
         finish();
     }
 

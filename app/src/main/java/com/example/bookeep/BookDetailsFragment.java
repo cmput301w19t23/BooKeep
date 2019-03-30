@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -290,10 +291,13 @@ public class BookDetailsFragment extends Fragment {
         testBool1 = mBook.isInTransaction();
 
         if (currentUserId.equals(mBook.getOwner()) && !mBook.getStatus().equals(BookStatus.BORROWED) && !mBook.getStatus().equals(BookStatus.ACCEPTED)) {
-            FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+            //FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
             //edit book button for owner
-            fab.setImageResource(R.drawable.pencil);
-            fab.setOnClickListener(new View.OnClickListener() {
+            Button button = (Button) view.findViewById(R.id.user_specific_button);
+            //fab.setImageResource(R.drawable.pencil);
+            button.setText("EDIT BOOK");
+            button.setTextColor(Color.parseColor("#344955"));//primary color
+            button.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View view) {
@@ -308,9 +312,13 @@ public class BookDetailsFragment extends Fragment {
         } else if(isBorrowed && mBook.getStatus().equals(BookStatus.ACCEPTED) && mBook.isInTransaction()){
             //borrwer ends transaction by receiving and scanning
             //Scan book to set borrowed
-            final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-            fab.setImageResource(R.drawable.round_done_black_18dp);
-            fab.setOnClickListener(new View.OnClickListener() {
+            //final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+            //fab.setImageResource(R.drawable.round_done_black_18dp);
+            final Button button = (Button) view.findViewById(R.id.user_specific_button);
+            //fab.setImageResource(R.drawable.pencil);
+            button.setText("END TRANSACTION");
+            button.setTextColor(Color.parseColor("#ff0000"));//red
+            button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
@@ -318,8 +326,10 @@ public class BookDetailsFragment extends Fragment {
                             == PackageManager.PERMISSION_GRANTED) {
                         // Permission has already been granted
                         new IntentIntegrator(getActivity()).initiateScan();
-                        fab.setEnabled(false);
-                        fab.setVisibility(View.GONE);
+                        //fab.setEnabled(false);
+                        //fab.setVisibility(View.GONE);
+                        button.setEnabled(false);
+                        button.setTextColor(Color.parseColor("#11000000"));
 
                     } else {
 
@@ -334,14 +344,39 @@ public class BookDetailsFragment extends Fragment {
                 }
             });
 
+        } else if(isBorrowed && mBook.getStatus().equals(BookStatus.ACCEPTED) && !mBook.isInTransaction()){
+
+            //get location
+            if (mBook.getBorrowLocation() != null){
+
+                //fab for get location.
+                final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+                fab.setImageResource(R.drawable.baseline_place_black_36dp);
+                fab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getContext(), GetLocationActivity.class);
+                        intent.putExtra("Book", mBook);
+                        startActivity(intent);
+                    }
+                });
+
+            }
+
+
         } else if(!mBook.getStatus().equals(BookStatus.ACCEPTED) && !mBook.getStatus().equals(BookStatus.BORROWED)){//!book.getStatus().equals(BookStatus.BORROWED)){
 
-            final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+            //final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
 
-            fab.setImageResource(R.drawable.ic_add);
+            //fab.setImageResource(R.drawable.ic_add);
+            final Button button = (Button) view.findViewById(R.id.user_specific_button);
+            //fab.setImageResource(R.drawable.pencil);
+            button.setText("ADD REQUEST");
+            button.setTextColor(Color.parseColor("#F9AA33"));
+            //gray equals #11000000
 
             if (!isRequested) {
-                fab.setOnClickListener(new View.OnClickListener() {
+                button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         //fireBaseController.addRequestToBookByBookId(book.getBookId());
@@ -358,8 +393,9 @@ public class BookDetailsFragment extends Fragment {
                                     databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
                                     databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);
                                     databaseReference.child("user-requested").child(currentUserId).child(mBook.getBookId()).setValue(mBook);
-                                    fab.setEnabled(false);
-                                    fab.setVisibility(View.GONE);
+                                    button.setEnabled(false);
+                                    button.setTextColor(Color.parseColor("#11000000"));
+                                    //fab.setVisibility(View.GONE);
 
                                 }
                                 @Override
@@ -367,23 +403,55 @@ public class BookDetailsFragment extends Fragment {
                             });
 
                         } else {
-                            fab.setEnabled(false);
-                            fab.setVisibility(View.GONE);
+                            button.setEnabled(false);
+                            button.setTextColor(Color.parseColor("#11000000"));
+                            //fab.setVisibility(View.GONE);
                         }
                     }
 
                 });
 
             } else {
-                fab.setEnabled(false);
-                fab.setVisibility(View.GONE);
+                button.setEnabled(false);
+                button.setTextColor(Color.parseColor("#11000000"));
+                //fab.setVisibility(View.GONE);
             }
 
         } else if(currentUserId.equals(mBook.getOwner()) && mBook.getStatus().equals(BookStatus.ACCEPTED) && !mBook.isInTransaction()){
             // owner starts transaction
             final  FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-            fab.setImageResource(R.drawable.round_done_black_18dp);
+            fab.setImageResource(R.drawable.baseline_add_location_black_36dp);
             fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    /*
+                    databaseReference.child("users").child(mBook.getOwner()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            final User user = dataSnapshot.getValue(User.class);
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });*/
+                    Intent intent = new Intent(getContext(), SetLocationActivity.class);
+                    intent.putExtra("User", mUser);
+                    intent.putExtra("Book", mBook);
+                    startActivity(intent);
+
+                }
+            });
+
+
+            final Button button = (Button) view.findViewById(R.id.user_specific_button);
+
+            button.setText("START TRANSACTION");
+            button.setTextColor(Color.parseColor("#008000"));//green
+
+            button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
@@ -391,8 +459,9 @@ public class BookDetailsFragment extends Fragment {
                             == PackageManager.PERMISSION_GRANTED) {
                         // Permission has already been granted
                         new IntentIntegrator(getActivity()).initiateScan();
-                        fab.setEnabled(false);
-                        fab.setVisibility(View.GONE);
+                        button.setEnabled(false);
+                        button.setTextColor(Color.parseColor("#11000000"));
+                        //fab.setVisibility(View.GONE);
 
                     } else {
 
@@ -410,9 +479,13 @@ public class BookDetailsFragment extends Fragment {
 
         } else if (currentUserId.equals(mBook.getCurrentBorrowerId()) && mBook.getStatus().equals(BookStatus.BORROWED) && !mBook.isInTransaction()){
 
-            final  FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-            fab.setImageResource(R.drawable.round_done_black_18dp);
-            fab.setOnClickListener(new View.OnClickListener() {
+            //final  FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+            //fab.setImageResource(R.drawable.round_done_black_18dp);
+            final Button button = (Button) view.findViewById(R.id.user_specific_button);
+            //fab.setImageResource(R.drawable.pencil);
+            button.setText("START RETURN");
+            button.setTextColor(Color.parseColor("#008000"));//green
+            button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
@@ -420,8 +493,9 @@ public class BookDetailsFragment extends Fragment {
                             == PackageManager.PERMISSION_GRANTED) {
                         // Permission has already been granted
                         new IntentIntegrator(getActivity()).initiateScan();
-                        fab.setEnabled(false);
-                        fab.setVisibility(View.GONE);
+                        button.setEnabled(false);
+                        button.setTextColor(Color.parseColor("#11000000"));
+                        //fab.setVisibility(View.GONE);
 
                     } else {
 
@@ -438,9 +512,13 @@ public class BookDetailsFragment extends Fragment {
 
         } else if (currentUserId.equals(mBook.getOwner()) && mBook.getStatus().equals(BookStatus.BORROWED) && mBook.isInTransaction()){
 
-            final  FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-            fab.setImageResource(R.drawable.round_done_black_18dp);
-            fab.setOnClickListener(new View.OnClickListener() {
+            //final  FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+            //fab.setImageResource(R.drawable.round_done_black_18dp);
+            final Button button = (Button) view.findViewById(R.id.user_specific_button);
+            //fab.setImageResource(R.drawable.pencil);
+            button.setText("FINISH RETURN");
+            button.setTextColor(Color.parseColor("#ff0000"));//red
+            button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
@@ -448,8 +526,9 @@ public class BookDetailsFragment extends Fragment {
                             == PackageManager.PERMISSION_GRANTED) {
                         // Permission has already been granted
                         new IntentIntegrator(getActivity()).initiateScan();
-                        fab.setEnabled(false);
-                        fab.setVisibility(View.GONE);
+                        button.setEnabled(false);
+                        button.setTextColor(Color.parseColor("#11000000"));
+                        //fab.setVisibility(View.GONE);
 
                     } else {
 

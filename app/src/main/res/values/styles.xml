@@ -21,4 +21,11 @@
         <item name="android:src">@drawable/ic_filter_list_24dp</item>
         <item name="android:background">?android:attr/actionBarItemBackground</item>
     </style>
+
+    <style name="PrimaryFlatButton" parent="Theme.AppCompat.Light">
+        <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Borderless.Colored</item>
+        <item name="colorControlHighlight">@color/colorAccent</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
 </resources>
