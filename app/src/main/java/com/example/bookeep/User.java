@@ -182,6 +182,16 @@ public class User implements Serializable {
         }
 
     }
+    public void removeFromBorrowed(String bookId){
+
+        for(int i = 0; i < borrowedIds.size(); i++){
+            if(borrowedIds.get(i).equals(bookId)){
+
+                borrowedIds.remove(i);
+            }
+        }
+
+    }
 
     /**
      * gets owned book ids

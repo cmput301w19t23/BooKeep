@@ -121,6 +121,9 @@
     <string name="save_marker">Save</string>
     <string name="title_activity_set_location">Map</string>
     <string name="title_activity_get_location">Map</string>
+    <string name="pending_requests">Pending Requests</string>
+    <string name="my_stand">My Stand</string>
+    <string name="my_shelf">My Shelf</string>
 
 
 </resources>

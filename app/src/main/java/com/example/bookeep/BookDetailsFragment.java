@@ -2,7 +2,6 @@ package com.example.bookeep;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,8 +17,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -57,17 +54,10 @@ import static com.example.bookeep.AddEditBookActivity.MY_PERMISSIONS_REQUEST_CAM
  * @verion 1.0.1
  */
 public class BookDetailsFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "book";
     private static final String ARG_PARAM2 = "current user";
 
-
-
-
-
-
-    // TODO: Rename and change types of parameters
     private Book mBook;
     private User mUser;
     private String currentUserId;
@@ -88,6 +78,9 @@ public class BookDetailsFragment extends Fragment {
     private boolean isResumed;
     private boolean testBool1;
     private boolean testBool2;
+    private BookStatus testStatus;
+    private String testOwner;
+    private String testBorrower;
 
 
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -312,10 +305,10 @@ public class BookDetailsFragment extends Fragment {
                 }
             });
 
-        } else if(isBorrowed && mBook.getStatus().equals(BookStatus.ACCEPTED) && /*mBook.isInTransaction().equals(true)*/mBook.isInTransaction()){
+        } else if(isBorrowed && mBook.getStatus().equals(BookStatus.ACCEPTED) && mBook.isInTransaction()){
             //borrwer ends transaction by receiving and scanning
             //Scan book to set borrowed
-            FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+            final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
             fab.setImageResource(R.drawable.round_done_black_18dp);
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -325,6 +318,8 @@ public class BookDetailsFragment extends Fragment {
                             == PackageManager.PERMISSION_GRANTED) {
                         // Permission has already been granted
                         new IntentIntegrator(getActivity()).initiateScan();
+                        fab.setEnabled(false);
+                        fab.setVisibility(View.GONE);
 
                     } else {
 
@@ -362,6 +357,7 @@ public class BookDetailsFragment extends Fragment {
                                     mBook.setNewRequest();
                                     databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
                                     databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);
+                                    databaseReference.child("user-requested").child(currentUserId).child(mBook.getBookId()).setValue(mBook);
                                     fab.setEnabled(false);
                                     fab.setVisibility(View.GONE);
 
@@ -371,8 +367,6 @@ public class BookDetailsFragment extends Fragment {
                             });
 
                         } else {
-                            //Toast.makeText(this, "Book not Available for borrowing", Toast.LENGTH_SHORT).show();
-                            //Toast.makeText(BookDetailsActivity.this, "Book not Available", Toast.LENGTH_SHORT);
                             fab.setEnabled(false);
                             fab.setVisibility(View.GONE);
                         }
@@ -385,7 +379,7 @@ public class BookDetailsFragment extends Fragment {
                 fab.setVisibility(View.GONE);
             }
 
-        } else if(currentUserId.equals(mBook.getOwner()) && mBook.getStatus().equals(BookStatus.ACCEPTED) && /*mBook.isInTransaction().equals(false)*/!mBook.isInTransaction()){
+        } else if(currentUserId.equals(mBook.getOwner()) && mBook.getStatus().equals(BookStatus.ACCEPTED) && !mBook.isInTransaction()){
             // owner starts transaction
             final  FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
             fab.setImageResource(R.drawable.round_done_black_18dp);
@@ -397,6 +391,8 @@ public class BookDetailsFragment extends Fragment {
                             == PackageManager.PERMISSION_GRANTED) {
                         // Permission has already been granted
                         new IntentIntegrator(getActivity()).initiateScan();
+                        fab.setEnabled(false);
+                        fab.setVisibility(View.GONE);
 
                     } else {
 
@@ -411,6 +407,62 @@ public class BookDetailsFragment extends Fragment {
                 }
             });
 
+
+        } else if (currentUserId.equals(mBook.getCurrentBorrowerId()) && mBook.getStatus().equals(BookStatus.BORROWED) && !mBook.isInTransaction()){
+
+            final  FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+            fab.setImageResource(R.drawable.round_done_black_18dp);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        // Permission has already been granted
+                        new IntentIntegrator(getActivity()).initiateScan();
+                        fab.setEnabled(false);
+                        fab.setVisibility(View.GONE);
+
+                    } else {
+
+                        // Permission is NOT granted
+                        // Prompt the user for permission
+                        ActivityCompat.requestPermissions(getActivity(),
+                                new String[]{Manifest.permission.CAMERA},
+                                MY_PERMISSIONS_REQUEST_CAMERA);
+                    }
+                    //fab.setEnabled(false);
+                    //fab.setVisibility(View.GONE);
+                }
+            });
+
+        } else if (currentUserId.equals(mBook.getOwner()) && mBook.getStatus().equals(BookStatus.BORROWED) && mBook.isInTransaction()){
+
+            final  FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+            fab.setImageResource(R.drawable.round_done_black_18dp);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        // Permission has already been granted
+                        new IntentIntegrator(getActivity()).initiateScan();
+                        fab.setEnabled(false);
+                        fab.setVisibility(View.GONE);
+
+                    } else {
+
+                        // Permission is NOT granted
+                        // Prompt the user for permission
+                        ActivityCompat.requestPermissions(getActivity(),
+                                new String[]{Manifest.permission.CAMERA},
+                                MY_PERMISSIONS_REQUEST_CAMERA);
+                    }
+                    //fab.setEnabled(false);
+                    //fab.setVisibility(View.GONE);
+                }
+            });
 
         }
 
@@ -434,8 +486,10 @@ public class BookDetailsFragment extends Fragment {
                 Toast.makeText(getContext(), "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
 
                 if(mBook.getISBN().equals(result.getContents())){
-
-                    if(mBook.getCurrentBorrowerId().equals(currentUserId)){
+                    //testStatus = mBook.getStatus();
+                    //testOwner = mBook.getOwner();
+                    //testBorrower = mBook.getCurrentBorrowerId();
+                    if(mBook.getCurrentBorrowerId().equals(currentUserId) && mBook.getStatus().equals(BookStatus.ACCEPTED)){
                         /*
                         databaseReference.child("books").child(book.getBookId()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -455,7 +509,38 @@ public class BookDetailsFragment extends Fragment {
                         databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);
                         databaseReference.child("user-borrowed").child(currentUserId).child(mBook.getBookId()).setValue(mBook);
 
-                    } else if (mBook.getOwner().equals(currentUserId)){
+                    } else if (mBook.getOwner().equals(currentUserId) && mBook.getStatus().equals(BookStatus.ACCEPTED)){
+
+                        mBook.startTransaction();
+                        databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
+                        databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);
+                        databaseReference.child("user-borrowed").child(mBook.getCurrentBorrowerId()).child(mBook.getBookId()).setValue(mBook);
+
+                    } else if (mBook.getOwner().equals(currentUserId) && mBook.getStatus().equals(BookStatus.BORROWED)){
+
+                        //end of transaction returning book
+                        mBook.setStatus(BookStatus.AVAILABLE);
+                        mBook.endTransaction();
+                        databaseReference.child("users").child(mBook.getCurrentBorrowerId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                User formerBorrower = dataSnapshot.getValue(User.class);
+                                formerBorrower.removeFromBorrowed(mBook.getBookId());
+                                databaseReference.child("users").child(formerBorrower.getUserId()).setValue(formerBorrower);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                        databaseReference.child("user-borrowed").child(mBook.getCurrentBorrowerId()).child(mBook.getBookId()).removeValue();
+                        mBook.setCurrentBorrower(null);
+                        databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
+                        databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);
+
+
+                    } else if (mBook.getCurrentBorrowerId().equals(currentUserId) && mBook.getStatus().equals(BookStatus.BORROWED)){
 
                         mBook.startTransaction();
                         databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);

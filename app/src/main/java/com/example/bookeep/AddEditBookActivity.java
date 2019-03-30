@@ -42,6 +42,7 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 /**
  * This activity will allow the user to add books to the database or edit a book already in it. It
@@ -250,6 +251,11 @@ public class AddEditBookActivity extends AppCompatActivity {
                 // Add book to "user-books" sorted by userID
                 databaseReference.child("user-books").child(currentUserID).child(book.getBookId()).setValue(book);
 
+
+
+
+
+
                 databaseReference.child("users").child(currentUserID).addListenerForSingleValueEvent(new ValueEventListener() {
 
                     @Override
@@ -283,6 +289,14 @@ public class AddEditBookActivity extends AppCompatActivity {
                 //book.setBookImage(drawable.getBitmap());
                 book.setBookImageURL(book.getBookImageURL());
 
+                //Replace all requested instances of the book with the edited version.
+                List<String> mRequesters = book.getRequesterIds();
+                for(int i = 0; i<mRequesters.size(); i++){
+                    databaseReference.child("user-requested")
+                            .child(mRequesters.get(i))
+                            .child(book.getBookId())
+                            .setValue(book);
+                }
 
                 databaseReference.child("user-books").child(currentUserID).child(book.getBookId()).setValue(book);
                 databaseReference.child("books").child(book.getBookId()).setValue(book);
@@ -476,13 +490,6 @@ public class AddEditBookActivity extends AppCompatActivity {
      * taken from https://stackoverflow.com/questions/6407324/how-to-display-image-from-url-on-android
      */
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-
-        //ImageView bmImage;
-        //public DownloadImageTask(ImageView bmImage) {
-
-        // AddEditBookActivity.this.bookImage = bmImage;
-        //}
-
         protected Bitmap doInBackground(String... urls) {
 
             String urldisplay = urls[0];
@@ -507,54 +514,3 @@ public class AddEditBookActivity extends AppCompatActivity {
 
     }
 }
-/*
-    public Bitmap setPicture(String ImageLink) {
-        if (ImageLink.startsWith("http")) {
-            if (isNetworkAvailable()) {
-                DownloadImageTask downloadImageTask = new DownloadImageTask();
-                Bitmap bookImageBitMap = null;
-                try {
-                    bookImageBitMap = downloadImageTask.execute(ImageLink).get();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                return bookImageBitMap;
-            }
-        } else if (ImageLink != null){
-            try {
-                Uri selectedImage = Uri.parse(ImageLink);
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                return bitmap;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }*/
-/*
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-
-        savedInstanceState.putString("Picture", bookLink);
-        savedInstanceState.putString("Status", bookStatus.getText().toString());
-
-        super.onSaveInstanceState(savedInstanceState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        bookLink = savedInstanceState.getString("Picture");
-        bookStatus.setText(savedInstanceState.getString("Status"));
-        if (bookLink != null) {
-            bookImage.setImageBitmap(setPicture(bookLink));
-        }
-    }
-    */
-
-
-
-

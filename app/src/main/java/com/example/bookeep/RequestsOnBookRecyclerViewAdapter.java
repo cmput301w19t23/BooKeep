@@ -17,7 +17,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-//import com.example.bookeep.dummy.DummyContent.DummyItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,15 +36,18 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference databaseReference = database.getReference();
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-    String currenUserId = firebaseUser.getUid();
+    String currentUserId = firebaseUser.getUid();
     private String mBookId;
     private Book mBook;
+    private List<String> mRequesters;
 
 
-    public RequestsOnBookRecyclerViewAdapter(ArrayList<User> items, String bookId, OnListFragmentInteractionListener listener) {
+
+    public RequestsOnBookRecyclerViewAdapter(ArrayList<User> items, String bookId, OnListFragmentInteractionListener listener, List<String> requesters) {
         mValues = items;
         mListener = listener;
         mBookId = bookId;
+        mRequesters = requesters;
     }
 
     @Override
@@ -65,7 +67,6 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
         holder.txtRequesterName.setText(mValues.get(position).getFirstname() + " " + mValues.get(position).getLastname() );
         holder.txtRequesterUsername.setText("@" + mValues.get(position).getUserName());
         holder.btnAcceptRequest.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 databaseReference.child("books").child(mBookId).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -79,8 +80,17 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
                         mBook.setStatus(BookStatus.ACCEPTED);
                         mBook.clearRequesters();
                         databaseReference.child("books").child(mBookId).setValue(mBook);
-                        databaseReference.child("user-books").child(currenUserId).child(mBookId).setValue(mBook);
+                        databaseReference.child("user-books").child(currentUserId).child(mBookId).setValue(mBook);
                         databaseReference.child("user-borrowed").child(holder.mItem.getUserId()).child(mBookId).setValue(mBook);
+
+                        for(int i = 0; i<mRequesters.size(); i++){
+                            databaseReference.child("user-requested")
+                                    .child(mRequesters.get(i))
+                                    .child(mBook.getBookId())
+                                    .removeValue();
+                        }
+
+
                         databaseReference.child("users").child(holder.mItem.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -117,12 +127,21 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                         mBook = dataSnapshot.getValue(Book.class);
+
                         mBook.removeRequester(mValues.get(position).getUserId());
                         if(mBook.getRequesterIds().size() == 0){
                             mBook.setStatus(BookStatus.AVAILABLE);
                         }
+
+                        for(int i = 0; i<mRequesters.size(); i++){
+                            databaseReference.child("user-requested")
+                                    .child(mRequesters.get(i))
+                                    .child(mBook.getBookId())
+                                    .setValue(mBook);
+                        }
+
                         databaseReference.child("books").child(mBookId).setValue(mBook);
-                        databaseReference.child("user-books").child(currenUserId).child(mBookId).setValue(mBook);
+                        databaseReference.child("user-books").child(currentUserId).child(mBookId).setValue(mBook);
                         removeRequester(position);
 
                     }
