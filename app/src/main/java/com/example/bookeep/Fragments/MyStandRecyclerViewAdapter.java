@@ -31,6 +31,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.InputStream;
 import java.util.List;
@@ -235,6 +237,16 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
      */
     public void removeBook(final int position) {
         if (mValues.get(position).getStatus() == AVAILABLE) {
+
+            String fireBaseUrl = mValues.get(position).getBookImageURL();
+            String[] strings = fireBaseUrl.split("\\?");
+            strings = strings[0].split("/");
+            String storageLink = strings[strings.length-1];
+            if (storageLink.startsWith("2019")) {
+                StorageReference storageReference = FirebaseStorage.getInstance()
+                        .getReferenceFromUrl("gs://bookeep-684ab.appspot.com").child(storageLink);
+                storageReference.delete();
+            }
 
             databaseReference.child("books").child(mValues.get(position).getBookId()).removeValue();
             databaseReference.child("user-books").child(currentUserId).child(mValues.get(position).getBookId()).removeValue();

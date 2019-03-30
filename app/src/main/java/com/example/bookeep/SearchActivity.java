@@ -73,13 +73,13 @@ public class SearchActivity extends AppCompatActivity implements SearchFragment.
 
             @Override
             public boolean onQueryTextChange(String s) {
-                Bundle bundle = new Bundle();
+                /*Bundle bundle = new Bundle();
                 bundle.putString("query", s);
                 fragment = new SearchKeyWordsFragment();
                 fragment.setArguments(bundle);
                 FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.search_fragment_container, fragment).commit();
-                return false;
+                fragmentManager.beginTransaction().replace(R.id.search_fragment_container, fragment).commit();*/
+                return true;
             }
         });
 
