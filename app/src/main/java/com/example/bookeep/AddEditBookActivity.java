@@ -251,6 +251,7 @@ public class AddEditBookActivity extends AppCompatActivity {
                 book.setAuthor(Authors);
                 book.setTitle(bookTitle.getText().toString().trim());
                 book.setDescription(bookDescription.getText().toString().trim());
+
                 if (imageURL == null) {
                     Bitmap bitmap;
                     bookImage.setDrawingCacheEnabled(true);
@@ -300,7 +301,8 @@ public class AddEditBookActivity extends AppCompatActivity {
                 Authors.add(bookAuthors.getText().toString().trim());
                 book.setAuthor(Authors);
                 book.setTitle(bookTitle.getText().toString().trim());
-                if (imageURL.isEmpty()) {
+                deleteImageFromFireBase(book.getBookImageURL());
+                if (imageURL == null) {
                     Bitmap bitmap;
                     bookImage.setDrawingCacheEnabled(true);
                     bookImage.buildDrawingCache();
@@ -592,5 +594,21 @@ public class AddEditBookActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void deleteImageFromFireBase (String fireBaseUrl) {
+        String[] strings = fireBaseUrl.split("\\?");
+        strings = strings[0].split("/");
+        String storageLink = strings[strings.length-1];
+        if (storageLink.startsWith("2019")) {
+            StorageReference storageReference = FirebaseStorage.getInstance()
+                    .getReferenceFromUrl("gs://bookeep-684ab.appspot.com").child(storageLink);
+            storageReference.delete();
+        }
+    }
+
+    public void onDeleteButtonClicked(View view) {
+        bookImage.setImageResource(R.drawable.common_full_open_on_phone);
+        imageURL = null;
     }
 }
