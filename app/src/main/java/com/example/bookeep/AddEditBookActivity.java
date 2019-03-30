@@ -562,7 +562,7 @@ public class AddEditBookActivity extends AppCompatActivity {
         StorageReference storageReference = storage.getReferenceFromUrl("gs://bookeep-684ab.appspot.com");
         final StorageReference imageRef = storageReference.child(strDate + ".jpg");
 
-        Bitmap resize = Bitmap.createScaledBitmap(bitmap, 300,300, false);
+        Bitmap resize = Bitmap.createScaledBitmap(bitmap, 270,270, false);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         resize.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
