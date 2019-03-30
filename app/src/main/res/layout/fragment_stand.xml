@@ -105,6 +105,30 @@
                 app:layout_constraintTop_toTopOf="@id/book_cover"
                 app:layout_constraintVertical_bias="1.0"
                 app:srcCompat="@mipmap/ic__request_banner_foreground" />
+            <ImageView
+                android:id="@+id/borrowed_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@id/book_cover"
+                app:layout_constraintEnd_toEndOf="@id/book_cover"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@id/book_cover"
+                app:layout_constraintTop_toTopOf="@id/book_cover"
+                app:layout_constraintVertical_bias="1.0"
+                app:srcCompat="@mipmap/ic__borrowed_banner_foreground" />
+            <ImageView
+                android:id="@+id/accepted_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@id/book_cover"
+                app:layout_constraintEnd_toEndOf="@id/book_cover"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@id/book_cover"
+                app:layout_constraintTop_toTopOf="@id/book_cover"
+                app:layout_constraintVertical_bias="1.0"
+                app:srcCompat="@mipmap/ic__accepted_banner_foreground" />
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>

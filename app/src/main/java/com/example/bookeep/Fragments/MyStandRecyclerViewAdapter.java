@@ -109,6 +109,22 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
         }
         if(mValues.get(position).getRequesterIds().size() == 0){
             holder.newRequestView.setVisibility(View.INVISIBLE);
+        }
+        if(mValues.get(position).getStatus().toString().equals("BORROWED")){
+            holder.borrowedView.setVisibility(View.VISIBLE);
+            holder.imageView.setAlpha(150);
+        }
+        if(!mValues.get(position).getStatus().toString().equals("BORROWED")){
+            holder.borrowedView.setVisibility(View.INVISIBLE);
+        }
+        if(mValues.get(position).getStatus().toString().equals("ACCEPTED")){
+            holder.acceptedView.setVisibility(View.VISIBLE);
+            holder.imageView.setAlpha(150);
+        }
+        if(!mValues.get(position).getStatus().toString().equals("ACCEPTED")){
+            holder.acceptedView.setVisibility(View.INVISIBLE);
+        }
+        if(mValues.get(position).getStatus().toString().equals("AVAILABLE")){
             holder.imageView.setAlpha(255);
         }
 
@@ -145,13 +161,15 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
      * displayed nad places them in appropriate views.
      */
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public Book mItem;
-        public final ImageButton overflow;
-        public final ImageView imageView;
-        public final ImageView newRequestView;
+        final View mView;
+        final TextView mIdView;
+        final TextView mContentView;
+        Book mItem;
+        final ImageButton overflow;
+        final ImageView imageView;
+        final ImageView newRequestView;
+        final ImageView borrowedView;
+        final ImageView acceptedView;
 
         public ViewHolder(View view) {
             super(view);
@@ -161,6 +179,8 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
             overflow = (ImageButton) view.findViewById(R.id.overflow_menu);
             imageView = view.findViewById(R.id.book_cover);
             newRequestView = view.findViewById(R.id.new_request_view);
+            borrowedView = view.findViewById(R.id.borrowed_view);
+            acceptedView = view.findViewById(R.id.accepted_view);
         }
 
         @Override

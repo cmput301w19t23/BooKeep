@@ -125,6 +125,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        String shelfFragment = getIntent().getStringExtra("shelfFragment");
+
         databaseReference.child("user-books").child(currentUserID)
                 .addChildEventListener(requestListener);
         databaseReference.child("user-borrowed").child(currentUserID)
@@ -138,7 +140,15 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         Fragment fragment = null;
-        fragmentClass = StandFragment.class;
+
+
+
+        if(shelfFragment != null){
+            fragmentClass = ShelfFragment.class;
+        } else {
+            fragmentClass = StandFragment.class;
+        }
+
         try {
             fragment = (Fragment) fragmentClass.newInstance();
         } catch (Exception e) {
@@ -366,7 +376,7 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
+        //pendingIntent.putExtra("menuFragment", "favoritesMenuItem");
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
                 .setSmallIcon(R.drawable.ic_notification_icon)
                 .setContentTitle("Request Accepted!")
