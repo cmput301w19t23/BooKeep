@@ -2,6 +2,7 @@ package com.example.bookeep.Fragments;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -73,6 +74,18 @@ public class MyShelfRecyclerViewAdapter extends RecyclerView.Adapter<MyShelfRecy
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        if(mValues.get(position).getStatus().toString().equals("ACCEPTED")){
+            holder.acceptedView.setVisibility(View.VISIBLE);
+            holder.mImageView.setAlpha(150);
+        }
+        if(!mValues.get(position).getStatus().toString().equals("ACCEPTED")){
+            holder.acceptedView.setVisibility(View.INVISIBLE);
+            holder.mImageView.setAlpha(255);
+        }
+
+
+
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,6 +117,7 @@ public class MyShelfRecyclerViewAdapter extends RecyclerView.Adapter<MyShelfRecy
         public final TextView mIdView;
         public final TextView mContentView;
         public Book mItem;
+        public final ImageView acceptedView;
 
         public ViewHolder(View view) {
             super(view);
@@ -111,6 +125,7 @@ public class MyShelfRecyclerViewAdapter extends RecyclerView.Adapter<MyShelfRecy
             mIdView = (TextView) view.findViewById(R.id.book_title);
             mContentView = (TextView) view.findViewById(R.id.book_author);
             mImageView = view.findViewById(R.id.book_cover);
+            acceptedView = view.findViewById(R.id.shelf_accepted_view);
         }
 
         @Override

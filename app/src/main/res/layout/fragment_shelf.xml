@@ -78,6 +78,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/book_author"
                 app:srcCompat="@mipmap/ic_foundation_foreground" />
+
+            <ImageView
+                android:id="@+id/shelf_accepted_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@id/book_cover"
+                app:layout_constraintEnd_toEndOf="@id/book_cover"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@id/book_cover"
+                app:layout_constraintTop_toTopOf="@id/book_cover"
+                app:layout_constraintVertical_bias="1.0"
+                app:srcCompat="@mipmap/ic__accepted_banner_foreground" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>
