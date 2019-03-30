@@ -516,7 +516,7 @@ public class AddEditBookActivity extends AppCompatActivity {
      * Downloads an image from a url and displays it as the book image
      * taken from https://stackoverflow.com/questions/6407324/how-to-display-image-from-url-on-android
      */
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+    /*private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         protected Bitmap doInBackground(String... urls) {
 
             String urldisplay = urls[0];
@@ -539,7 +539,7 @@ public class AddEditBookActivity extends AppCompatActivity {
         }
 
 
-    }
+    }*/
 
     // resources used for this method:
     // https://firebase.google.com/docs/storage/android/upload-files#get_a_download_url
