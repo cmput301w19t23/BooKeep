@@ -173,7 +173,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
 
                 if(book.getISBN().equals(result.getContents())){
 
-                    if(book.getCurrentBorrowerId().equals(currentUserId)){
+                    if(book.getCurrentBorrowerId().equals(currentUserId) && book.getStatus().equals(BookStatus.ACCEPTED)){
                         /*
                         databaseReference.child("books").child(book.getBookId()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -193,7 +193,38 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                         databaseReference.child("user-books").child(book.getOwner()).child(book.getBookId()).setValue(book);
                         databaseReference.child("user-borrowed").child(currentUserId).child(book.getBookId()).setValue(book);
 
-                    } else if (book.getOwner().equals(currentUserId)){
+                    } else if (book.getOwner().equals(currentUserId) && book.getStatus().equals(BookStatus.ACCEPTED)){
+
+                        book.startTransaction();
+                        databaseReference.child("books").child(book.getBookId()).setValue(book);
+                        databaseReference.child("user-books").child(book.getOwner()).child(book.getBookId()).setValue(book);
+                        databaseReference.child("user-borrowed").child(book.getCurrentBorrowerId()).child(book.getBookId()).setValue(book);
+
+                    } else if (book.getOwner().equals(currentUserId) && book.getStatus().equals(BookStatus.BORROWED)){
+
+                        //end of transaction returning book
+                        book.setStatus(BookStatus.AVAILABLE);
+                        book.endTransaction();
+                        databaseReference.child("users").child(book.getCurrentBorrowerId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                User formerBorrower = dataSnapshot.getValue(User.class);
+                                formerBorrower.removeFromBorrowed(book.getBookId());
+                                databaseReference.child("users").child(formerBorrower.getUserId()).setValue(formerBorrower);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                        databaseReference.child("user-borrowed").child(book.getCurrentBorrowerId()).child(book.getBookId()).removeValue();
+                        book.setCurrentBorrower(null);
+                        databaseReference.child("books").child(book.getBookId()).setValue(book);
+                        databaseReference.child("user-books").child(book.getOwner()).child(book.getBookId()).setValue(book);
+
+
+                    } else if (book.getCurrentBorrowerId().equals(currentUserId) && book.getStatus().equals(BookStatus.BORROWED)){
 
                         book.startTransaction();
                         databaseReference.child("books").child(book.getBookId()).setValue(book);

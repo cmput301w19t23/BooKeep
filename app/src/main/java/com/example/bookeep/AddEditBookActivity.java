@@ -7,9 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -30,8 +28,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -52,13 +48,10 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import static com.google.gson.internal.bind.util.ISO8601Utils.format;
 
 /**
  * This activity will allow the user to add books to the database or edit a book already in it. It
@@ -274,6 +267,11 @@ public class AddEditBookActivity extends AppCompatActivity {
                 // Add book to "user-books" sorted by userID
                 databaseReference.child("user-books").child(currentUserID).child(book.getBookId()).setValue(book);
 
+
+
+
+
+
                 databaseReference.child("users").child(currentUserID).addListenerForSingleValueEvent(new ValueEventListener() {
 
                     @Override
@@ -315,6 +313,14 @@ public class AddEditBookActivity extends AppCompatActivity {
                 //book.setBookImage(drawable.getBitmap());
                 book.setBookImageURL(book.getBookImageURL());
 
+                //Replace all requested instances of the book with the edited version.
+                List<String> mRequesters = book.getRequesterIds();
+                for(int i = 0; i<mRequesters.size(); i++){
+                    databaseReference.child("user-requested")
+                            .child(mRequesters.get(i))
+                            .child(book.getBookId())
+                            .setValue(book);
+                }
 
                 databaseReference.child("user-books").child(currentUserID).child(book.getBookId()).setValue(book);
                 databaseReference.child("books").child(book.getBookId()).setValue(book);
@@ -509,13 +515,6 @@ public class AddEditBookActivity extends AppCompatActivity {
      * taken from https://stackoverflow.com/questions/6407324/how-to-display-image-from-url-on-android
      */
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-
-        //ImageView bmImage;
-        //public DownloadImageTask(ImageView bmImage) {
-
-        // AddEditBookActivity.this.bookImage = bmImage;
-        //}
-
         protected Bitmap doInBackground(String... urls) {
 
             String urldisplay = urls[0];
@@ -595,7 +594,3 @@ public class AddEditBookActivity extends AppCompatActivity {
         });
     }
 }
-
-
-
-

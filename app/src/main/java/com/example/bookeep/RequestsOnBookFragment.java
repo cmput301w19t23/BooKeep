@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,8 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-//import com.example.bookeep.dummy.DummyContent;
-//import com.example.bookeep.dummy.DummyContent.DummyItem;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -25,7 +22,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -164,7 +160,7 @@ public class RequestsOnBookFragment extends Fragment {
         }*/
         //requests = new ArrayList<Request>();
         bookId = mBook.getBookId();
-        adapter = new RequestsOnBookRecyclerViewAdapter(requesters, bookId, mListener);
+        adapter = new RequestsOnBookRecyclerViewAdapter(requesters, bookId, mListener, mBook.getRequesterIds());
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(context, 1));
