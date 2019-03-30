@@ -12,6 +12,10 @@ import android.widget.ImageView;
 
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Fragment for downloading and displaying the Book images
+ * @author Kyle Fujishige
+ */
 public class ClickOnImageFragment extends Fragment {
 
     public ClickOnImageFragment() {}
@@ -21,6 +25,13 @@ public class ClickOnImageFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * Gets the ImageView and downloads the bitmap image for it
+     * @param inflater LayoutInflater
+     * @param container ViewGroup of the fragment
+     * @param savedInstanceState Bundle
+     * @return the completed fragment with ImageView
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,@Nullable ViewGroup container,@Nullable Bundle savedInstanceState) {
