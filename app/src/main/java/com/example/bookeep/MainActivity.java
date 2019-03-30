@@ -54,7 +54,13 @@ import static com.example.bookeep.NotificationHandler.CHANNEL_2_ID;
  * @version 1.0.1
  */
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, FirebaseAuth.AuthStateListener, StandFragment.OnListFragmentInteractionListener,PendingRequestFragment.OnListFragmentInteractionListener, ShelfFragment.OnListFragmentInteractionListener{
+        implements NavigationView.OnNavigationItemSelectedListener,
+        FirebaseAuth.AuthStateListener,
+        StandFragment.OnListFragmentInteractionListener,
+        PendingRequestFragment.OnListFragmentInteractionListener,
+        ShelfFragment.OnListFragmentInteractionListener{
+
+
     private FireBaseController fireBaseController = new FireBaseController(this);
 
     private NotificationManagerCompat notificationManager;
@@ -73,9 +79,7 @@ public class MainActivity extends AppCompatActivity
     // pushes notifications if a book is requested.
     private ChildEventListener requestListener = new ChildEventListener() {
         @Override
-        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-        }
+        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
 
         @Override
         public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -88,13 +92,10 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
-
         @Override
         public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {}
-
         @Override
         public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
-
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {}
     };
@@ -258,8 +259,6 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(MainActivity.this, SearchActivity.class);
             startActivity(intent);
         }
-
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -341,8 +340,10 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
+    /**
+     * This is the notification for when a book is requested.
+     * @param book
+     */
     public void sendOnChannel1(Book book){
 
         book.clearNewRequest();
@@ -365,6 +366,11 @@ public class MainActivity extends AppCompatActivity
 
         notificationManager.notify(1, notification);
     }
+
+    /**
+     * This is the notification for when a book request is accepted.
+     * @param book
+     */
     public void sendOnChannel2(Book book){
 
 

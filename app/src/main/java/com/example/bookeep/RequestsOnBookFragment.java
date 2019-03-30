@@ -83,10 +83,6 @@ public class RequestsOnBookFragment extends Fragment {
                             });
                         }
                     }
-                    //android.support.v7.widget.Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-                    //CollapsingToolbarLayout toolbarLayout = getActivity().findViewById(R.id.toolbar_layout);
-                    //toolbar.setTitle(mBook.getTitle());
-                    //toolbarLayout.setTitle(mBook.getTitle());
                 }
 
 
