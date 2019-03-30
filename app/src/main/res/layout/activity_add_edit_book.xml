@@ -1,29 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".AddEditBookActivity">
 
-        <ImageView
-            android:id="@+id/bookImage"
+        <FrameLayout
+            android:id="@+id/imageLayout"
             android:layout_width="147dp"
             android:layout_height="150dp"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/bookImage"
+                android:layout_width="147dp"
+                android:layout_height="150dp"
+                android:onClick="ImageUpload"
+                app:layout_constraintEnd_toStartOf="@+id/editBookTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/common_full_open_on_phone" />
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/deleteImage"
+            android:layout_width="23dp"
+            android:layout_height="23dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            android:onClick="ImageUpload"
+            android:background="@color/zxing_viewfinder_laser"
+            android:onClick="onDeleteButtonClicked"
             app:layout_constraintEnd_toStartOf="@+id/editBookTitle"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageLayout"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/common_full_open_on_phone" />
+            app:srcCompat="@android:drawable/ic_menu_delete" />
+
 
         <EditText
             android:id="@+id/editBookTitle"
@@ -36,7 +57,7 @@
             android:hint="@string/book_title"
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/bookImage"
+            app:layout_constraintStart_toEndOf="@+id/deleteImage"
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
@@ -52,7 +73,7 @@
             android:hint="@string/book_authors"
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/bookImage"
+            app:layout_constraintStart_toEndOf="@+id/deleteImage"
             app:layout_constraintTop_toBottomOf="@+id/editBookTitle" />
 
         <EditText
@@ -68,7 +89,7 @@
             android:hint="@string/isbn"
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/bookImage"
+            app:layout_constraintStart_toEndOf="@+id/deleteImage"
             app:layout_constraintTop_toBottomOf="@+id/editBookAuthor" />
 
         <EditText
@@ -127,13 +148,13 @@
             android:layout_height="41dp"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:text="Book Status"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bookImage" />
+            app:layout_constraintTop_toBottomOf="@+id/imageLayout" />
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

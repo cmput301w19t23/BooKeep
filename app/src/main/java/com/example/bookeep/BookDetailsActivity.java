@@ -250,9 +250,28 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        Intent received = getIntent();
         this.menu = menu;
-        getMenuInflater().inflate(R.menu.menu_book_details, menu);
-        //hideOption(R.id.action_edit);
+        final Menu finalMenu = menu;
+        final String bookId = received.getStringExtra("Book ID");
+
+        databaseReference.child("books").child(bookId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                book = dataSnapshot.getValue(Book.class);
+                if (currentUserId.equals(book.getOwner())) {
+                    getMenuInflater().inflate(R.menu.menu_book_details, finalMenu);
+                } else {
+                    getMenuInflater().inflate(R.menu.menu_book_details_non_owner, finalMenu);
+                }
+                //hideOption(R.id.action_edit);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         return true;
     }
 
@@ -293,12 +312,10 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                 fragmentManager.beginTransaction().replace(R.id.book_details_fragment_container, fragment).commit();
             }
         } else {//noinspection SimplifiableIfStatement
-            if (id == R.id.action_edit) {
-                return true;
-            } else if (id == R.id.action_requesters) {
-                return true;
-            } else if (id == R.id.action_book_details) {
-                return true;
+            if (id == R.id.book_details) {
+                fragment = BookDetailsFragment.newInstance(book, currentUser);
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.book_details_fragment_container, fragment).commit();
             }
         }
 
@@ -361,7 +378,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
 
     /**
      * goes back to book details when pressed back
-     */
+     *//*
     @Override
     public void onBackPressed(){
 
@@ -370,7 +387,15 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
         startActivity(intent);
         finish();
 
-    }
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+
+        if (count == 0) {
+            super.onBackPressed();
+        } else {
+            getSupportFragmentManager().popBackStack();
+        }
+
+    }*/
 
     /*
     public Book getBook() {
@@ -410,6 +435,15 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
 
         }
 
+    }
+
+    public void onImageViewClick(View view) {
+        Bundle bundle = new Bundle();
+        bundle.putString("image", book.getBookImageURL());
+        ClickOnImageFragment fragment = new ClickOnImageFragment();
+        fragment.setArguments(bundle);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.book_details_fragment_container, fragment).commit();
     }
 
 }

@@ -26,6 +26,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -33,6 +36,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -40,10 +46,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
 /**
  * This activity will allow the user to add books to the database or edit a book already in it. It
  * allows the user to manually enter all the fields or to scan the isbn of the book to auto-populate
@@ -242,10 +251,18 @@ public class AddEditBookActivity extends AppCompatActivity {
                 book.setAuthor(Authors);
                 book.setTitle(bookTitle.getText().toString().trim());
                 book.setDescription(bookDescription.getText().toString().trim());
-                BitmapDrawable drawable = (BitmapDrawable) bookImage.getDrawable();
+
+                if (imageURL == null) {
+                    Bitmap bitmap;
+                    bookImage.setDrawingCacheEnabled(true);
+                    bookImage.buildDrawingCache();
+                    bitmap = ((BitmapDrawable) bookImage.getDrawable()).getBitmap();
+                    uploadImageToFireBase(bitmap);
+                } else {
+                    book.setBookImageURL(imageURL);
+                }
                 //book.setBookImage(drawable.getBitmap());
                 book.setStatus(BookStatus.AVAILABLE);
-                book.setBookImageURL(imageURL);
                 book.setISBN(isbn.getText().toString());
 
                 // Add book to "user-books" sorted by userID
@@ -284,7 +301,16 @@ public class AddEditBookActivity extends AppCompatActivity {
                 Authors.add(bookAuthors.getText().toString().trim());
                 book.setAuthor(Authors);
                 book.setTitle(bookTitle.getText().toString().trim());
-                BitmapDrawable drawable = (BitmapDrawable) bookImage.getDrawable();
+                deleteImageFromFireBase(book.getBookImageURL());
+                if (imageURL == null) {
+                    Bitmap bitmap;
+                    bookImage.setDrawingCacheEnabled(true);
+                    bookImage.buildDrawingCache();
+                    bitmap = ((BitmapDrawable) bookImage.getDrawable()).getBitmap();
+                    uploadImageToFireBase(bitmap);
+                } else {
+                    book.setBookImageURL(imageURL);
+                }
                 book.setDescription(bookDescription.getText().toString().trim());
                 //book.setBookImage(drawable.getBitmap());
                 book.setBookImageURL(book.getBookImageURL());
@@ -317,6 +343,7 @@ public class AddEditBookActivity extends AppCompatActivity {
         startActivityForResult(intent,69);
 
     }
+
 
 
 
@@ -442,8 +469,8 @@ public class AddEditBookActivity extends AppCompatActivity {
                 //bookImage.setImageBitmap(setPicture(bookLink));
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),selectedImage);
-                    bitmap = Bitmap.createScaledBitmap(bitmap,147,150,true);
                     bookImage.setImageBitmap(bitmap);
+                    imageURL = null;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -489,7 +516,7 @@ public class AddEditBookActivity extends AppCompatActivity {
      * Downloads an image from a url and displays it as the book image
      * taken from https://stackoverflow.com/questions/6407324/how-to-display-image-from-url-on-android
      */
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+    /*private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         protected Bitmap doInBackground(String... urls) {
 
             String urldisplay = urls[0];
@@ -512,5 +539,76 @@ public class AddEditBookActivity extends AppCompatActivity {
         }
 
 
+    }*/
+
+    // resources used for this method:
+    // https://firebase.google.com/docs/storage/android/upload-files#get_a_download_url
+
+    /**
+     * Upload an image bitmap taken from the imageview, and place it into firebase.
+     * @param bitmap
+     */
+    public void uploadImageToFireBase (Bitmap bitmap) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        Calendar now = Calendar.getInstance();
+        String strDate = Integer.toString(now.get(Calendar.YEAR)) +
+                Integer.toString(now.get(Calendar.MONTH)) +
+                Integer.toString(now.get(Calendar.DAY_OF_MONTH)) +
+                Integer.toString(now.get(Calendar.HOUR_OF_DAY)) +
+                Integer.toString(now.get(Calendar.MINUTE)) +
+                Integer.toString(now.get(Calendar.SECOND)) +
+                Integer.toString(now.get(Calendar.MILLISECOND));
+
+        StorageReference storageReference = storage.getReferenceFromUrl("gs://bookeep-684ab.appspot.com");
+        final StorageReference imageRef = storageReference.child(strDate + ".jpg");
+
+        Bitmap resize = Bitmap.createScaledBitmap(bitmap, 270,270, false);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        resize.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+        UploadTask uploadTask = imageRef.putBytes(data);
+
+        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+
+                // Continue with the task to get the download URL
+                return imageRef.getDownloadUrl();
+
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    imageURL = task.getResult().toString();
+                    book.setBookImageURL(imageURL);
+                    databaseReference.child("user-books").child(currentUserID).child(book.getBookId()).setValue(book);
+                    databaseReference.child("books").child(book.getBookId()).setValue(book);
+                }
+                else {
+                    return;
+                }
+            }
+        });
+    }
+
+    public void deleteImageFromFireBase (String fireBaseUrl) {
+        String[] strings = fireBaseUrl.split("\\?");
+        strings = strings[0].split("/");
+        String storageLink = strings[strings.length-1];
+        if (storageLink.startsWith("2019")) {
+            StorageReference storageReference = FirebaseStorage.getInstance()
+                    .getReferenceFromUrl("gs://bookeep-684ab.appspot.com").child(storageLink);
+            storageReference.delete();
+        }
+    }
+
+    public void onDeleteButtonClicked(View view) {
+        bookImage.setImageResource(R.drawable.common_full_open_on_phone);
+        imageURL = null;
     }
 }
