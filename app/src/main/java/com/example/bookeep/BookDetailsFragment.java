@@ -17,6 +17,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -65,6 +67,8 @@ public class BookDetailsFragment extends Fragment {
 
     private boolean isRequested;
     private boolean isBorrowed;
+    private boolean isAccepted;
+    private boolean isOwned;
 
     private OnFragmentInteractionListener mListener;
 
@@ -89,6 +93,14 @@ public class BookDetailsFragment extends Fragment {
     DatabaseReference databaseReference = database.getReference();
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
+    Button editButton;
+    Button requestButton;
+    Button cancelRequestButton;
+    Button abortButton;
+    Button handOverButton;
+    Button recieveButton;
+    //FloatingActionButton geoFAB;
+
     private ChildEventListener updateListener = new ChildEventListener() {
         @Override
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -106,37 +118,14 @@ public class BookDetailsFragment extends Fragment {
                     BookStatus prevStatus = changedBook.getStatus();
                     if(isResumed) {
                         mBook = changedBook;
+
+
+
                         if (mListener != null) {
                             mListener.onBookUpdate(mBook);
                         }
-                        bookTitle = (TextView) getView().findViewById(R.id.book_title);
-                        bookAuthors = (TextView) getView().findViewById(R.id.book_authors);
-                        bookISBN = (TextView) getView().findViewById(R.id.book_isbn);
-                        bookStatus = getView().findViewById(R.id.book_status);
-                        bookDescription = getView().findViewById(R.id.book_description);
-                        bookOwner = getView().findViewById(R.id.book_owner);
-                        bookCover = getView().findViewById(R.id.book_cover);
+                        refresh();
 
-                        bookTitle.setText(mBook.getTitle());
-                        DownloadImageTask downloadImageTask = new DownloadImageTask();
-                        try {
-                            Bitmap bitmap = downloadImageTask.execute(mBook.getBookImageURL()).get();//"http://books.google.com/books/content?id=H8sdBgAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api").get();
-                            bookCover.setImageBitmap(bitmap);
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        bookAuthors.setText(mBook.getAuthorsString());
-                        //bookISBN.setText(mBook.getISBN());
-                        bookStatus.setText(mBook.getStatus().toString());
-                        bookDescription.setText(mBook.getDescription());
-                        /*
-                        if (currentUserId.equals(mBook.getCurrentBorrowerId())
-                                && mBook.getStatus().equals(BookStatus.ACCEPTED)
-                                && !prevStatus.equals(BookStatus.ACCEPTED)){
-
-                        }*/
 
                     }
 
@@ -209,6 +198,7 @@ public class BookDetailsFragment extends Fragment {
         bookOwner = view.findViewById(R.id.book_owner);
         bookCover = view.findViewById(R.id.book_cover);
         //isResumed = true;
+        currentUserId = firebaseUser.getUid();
         databaseReference.child("books").child(mBook.getBookId()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -252,178 +242,111 @@ public class BookDetailsFragment extends Fragment {
                     e.printStackTrace();
                 }
                 bookTitle.setText(mBook.getTitle());
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                if(mBook.getStatus().equals(BookStatus.REQUESTED)) {
 
-            }
-        });
+                    for (String requesterId : mBook.getRequesterIds()) {
 
-        databaseReference.child("books").addChildEventListener(updateListener);
-        currentUserId = firebaseUser.getUid();
+                        if (requesterId.equals(currentUserId)) {
 
-        if(mBook.getStatus().equals(BookStatus.REQUESTED)) {
+                            isRequested = true;
+                            break;
 
-            for (String requesterId : mBook.getRequesterIds()) {
+                        }
 
-                if (requesterId.equals(currentUserId)) {
-
-                    isRequested = true;
-                    break;
-
-                }
-
-            }
-
-        }
-
-        if(mBook.getStatus().equals(BookStatus.ACCEPTED) || mBook.getStatus().equals(BookStatus.BORROWED)) {
-
-            if (mBook.getCurrentBorrowerId().equals(currentUserId)) {
-
-                isBorrowed = true;
-
-            }
-
-        }
- // = currentUserId.equals(mBook.getCurrentBorrowerId());
-        testBool1 = mBook.isInTransaction();
-
-        if (currentUserId.equals(mBook.getOwner()) && !mBook.getStatus().equals(BookStatus.BORROWED) && !mBook.getStatus().equals(BookStatus.ACCEPTED)) {
-            //FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-            //edit book button for owner
-            Button button = (Button) view.findViewById(R.id.user_specific_button);
-            //fab.setImageResource(R.drawable.pencil);
-            button.setText("EDIT BOOK");
-            button.setTextColor(Color.parseColor("#344955"));//primary color
-            button.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View view) {
-                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-
-                    Intent intent = new Intent(getContext(), AddEditBookActivity.class);
-                    intent.putExtra("Book to edit", mBook);
-                    startActivity(intent);
-                }
-            });
-
-        } else if(isBorrowed && mBook.getStatus().equals(BookStatus.ACCEPTED) && mBook.isInTransaction()){
-            //borrwer ends transaction by receiving and scanning
-            //Scan book to set borrowed
-            //final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-            //fab.setImageResource(R.drawable.round_done_black_18dp);
-            final Button button = (Button) view.findViewById(R.id.user_specific_button);
-            //fab.setImageResource(R.drawable.pencil);
-            button.setText("END TRANSACTION");
-            button.setTextColor(Color.parseColor("#ff0000"));//red
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
-                            == PackageManager.PERMISSION_GRANTED) {
-                        // Permission has already been granted
-                        new IntentIntegrator(getActivity()).initiateScan();
-                        //fab.setEnabled(false);
-                        //fab.setVisibility(View.GONE);
-                        button.setEnabled(false);
-                        button.setTextColor(Color.parseColor("#11000000"));
-
-                    } else {
-
-                        // Permission is NOT granted
-                        // Prompt the user for permission
-                        ActivityCompat.requestPermissions(getActivity(),
-                                new String[]{Manifest.permission.CAMERA},
-                                MY_PERMISSIONS_REQUEST_CAMERA);
                     }
-                    //fab.setEnabled(false);
-                    //fab.setVisibility(View.GONE);
+
                 }
-            });
 
-        } else if(isBorrowed && mBook.getStatus().equals(BookStatus.ACCEPTED) && !mBook.isInTransaction()){
+                if(mBook.getStatus().equals(BookStatus.ACCEPTED)) {
 
-            //get location
-            if (mBook.getBorrowLocation() != null){
+                    if (mBook.getCurrentBorrowerId().equals(currentUserId)) {
 
-                //fab for get location.
-                final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-                fab.setImageResource(R.drawable.baseline_place_black_36dp);
-                fab.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(getContext(), GetLocationActivity.class);
-                        intent.putExtra("Book", mBook);
-                        startActivity(intent);
+                        isAccepted = true;
+
                     }
-                });
 
-            }
+                }
 
 
-        } else if(!mBook.getStatus().equals(BookStatus.ACCEPTED) && !mBook.getStatus().equals(BookStatus.BORROWED)){//!book.getStatus().equals(BookStatus.BORROWED)){
+                if(mBook.getStatus().equals(BookStatus.BORROWED)) {
 
-            //final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+                    if (mBook.getCurrentBorrowerId().equals(currentUserId)) {
 
-            //fab.setImageResource(R.drawable.ic_add);
-            final Button button = (Button) view.findViewById(R.id.user_specific_button);
-            //fab.setImageResource(R.drawable.pencil);
-            button.setText("ADD REQUEST");
-            button.setTextColor(Color.parseColor("#F9AA33"));
-            //gray equals #11000000
+                        isBorrowed = true;
 
-            if (!isRequested) {
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //fireBaseController.addRequestToBookByBookId(book.getBookId());
-                        if (mBook.getStatus().equals(BookStatus.AVAILABLE) || mBook.getStatus().equals(BookStatus.REQUESTED)) {
+                    }
 
-                            databaseReference.child("books").child(mBook.getBookId()).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                }
 
-                                    mBook = dataSnapshot.getValue(Book.class);
-                                    mBook.addRequest(currentUserId);
-                                    mBook.setStatus(BookStatus.REQUESTED);
-                                    mBook.setNewRequest();
-                                    databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
-                                    databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);
-                                    databaseReference.child("user-requested").child(currentUserId).child(mBook.getBookId()).setValue(mBook);
-                                    button.setEnabled(false);
-                                    button.setTextColor(Color.parseColor("#11000000"));
+                if(mBook.getOwner().equals(currentUserId)) {
+                    isOwned = true;
+                }
+//"#344955" primary
+                //"#ff0000" red
+                // "#F9AA33" yellow
+                // //gray equals #11000000
+                //"#008000" green
+                if (isOwned) {
+                    //you are the owner
+                    instantiateOwnerButtonBar(view);
+                    final FloatingActionButton geoFAB = (FloatingActionButton) view.findViewById(R.id.fab);
+
+                    if(mBook.getStatus().equals(BookStatus.AVAILABLE) || mBook.getStatus().equals(BookStatus.REQUESTED)){
+                        //Button button = (Button) view.findViewById(R.id.user_specific_button);
+                        //fab.setImageResource(R.drawable.pencil);
+                        //button.setText("EDIT BOOK");
+                        //owner + accepted or requested
+                        editButton.setTextColor(Color.parseColor("#344955"));//primary color
+                        editButton.setEnabled(true);
+                        editButton.setOnClickListener(new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View view) {
+                                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+
+                                Intent intent = new Intent(getContext(), AddEditBookActivity.class);
+                                intent.putExtra("Book to edit", mBook);
+                                startActivity(intent);
+                            }
+                        });
+
+                    } else if (mBook.getStatus().equals(BookStatus.ACCEPTED) && !mBook.isInTransaction()){
+                        //owner + accepted + not in transaction means handover, abort and fab is in play
+                        handOverButton.setTextColor(Color.parseColor("#008000"));
+                        abortButton.setTextColor(Color.parseColor("#000000"));//black
+                        geoFAB.setImageResource(R.drawable.baseline_add_location_black_36dp);
+
+                        handOverButton.setEnabled(true);
+                        abortButton.setEnabled(true);
+                        geoFAB.setEnabled(true);
+
+                        handOverButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                                        == PackageManager.PERMISSION_GRANTED) {
+                                    // Permission has already been granted
+                                    new IntentIntegrator(getActivity()).initiateScan();
+                                    handOverButton.setEnabled(false);
+                                    handOverButton.setTextColor(Color.parseColor("#11000000"));
                                     //fab.setVisibility(View.GONE);
 
+                                } else {
+
+                                    // Permission is NOT granted
+                                    // Prompt the user for permission
+                                    ActivityCompat.requestPermissions(getActivity(),
+                                            new String[]{Manifest.permission.CAMERA},
+                                            MY_PERMISSIONS_REQUEST_CAMERA);
                                 }
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {}
-                            });
 
-                        } else {
-                            button.setEnabled(false);
-                            button.setTextColor(Color.parseColor("#11000000"));
-                            //fab.setVisibility(View.GONE);
-                        }
-                    }
-
-                });
-
-            } else {
-                button.setEnabled(false);
-                button.setTextColor(Color.parseColor("#11000000"));
-                //fab.setVisibility(View.GONE);
-            }
-
-        } else if(currentUserId.equals(mBook.getOwner()) && mBook.getStatus().equals(BookStatus.ACCEPTED) && !mBook.isInTransaction()){
-            // owner starts transaction
-            final  FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-            fab.setImageResource(R.drawable.baseline_add_location_black_36dp);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+                            }
+                        });
+                        geoFAB.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
                     /*
                     databaseReference.child("users").child(mBook.getOwner()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -437,114 +360,294 @@ public class BookDetailsFragment extends Fragment {
 
                         }
                     });*/
-                    Intent intent = new Intent(getContext(), SetLocationActivity.class);
-                    intent.putExtra("User", mUser);
-                    intent.putExtra("Book", mBook);
-                    startActivity(intent);
+                                Intent intent = new Intent(getContext(), SetLocationActivity.class);
+                                intent.putExtra("User", mUser);
+                                intent.putExtra("Book", mBook);
+                                startActivity(intent);
 
-                }
-            });
+                            }
+                        });
+                        abortButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                mBook.setStatus(BookStatus.AVAILABLE);
+                                mBook.endTransaction();
+                                databaseReference.child("users").child(mBook.getCurrentBorrowerId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        User formerBorrower = dataSnapshot.getValue(User.class);
+                                        formerBorrower.removeFromBorrowed(mBook.getBookId());
+                                        databaseReference.child("users").child(formerBorrower.getUserId()).setValue(formerBorrower);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                                databaseReference.child("user-borrowed").child(mBook.getCurrentBorrowerId()).child(mBook.getBookId()).removeValue();
+                                mBook.setCurrentBorrower(null);
+                                databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
+                                databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);
+                            }
+                        });
 
 
-            final Button button = (Button) view.findViewById(R.id.user_specific_button);
+                    } else if (mBook.getStatus().equals(BookStatus.ACCEPTED) && mBook.isInTransaction()){
 
-            button.setText("START TRANSACTION");
-            button.setTextColor(Color.parseColor("#008000"));//green
+                        abortButton.setTextColor(Color.parseColor("#000000"));//black
+                        abortButton.setEnabled(true);
+                        abortButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
 
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+                                mBook.setStatus(BookStatus.AVAILABLE);
+                                mBook.endTransaction();
+                                databaseReference.child("users").child(mBook.getCurrentBorrowerId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        User formerBorrower = dataSnapshot.getValue(User.class);
+                                        formerBorrower.removeFromBorrowed(mBook.getBookId());
+                                        databaseReference.child("users").child(formerBorrower.getUserId()).setValue(formerBorrower);
+                                    }
 
-                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
-                            == PackageManager.PERMISSION_GRANTED) {
-                        // Permission has already been granted
-                        new IntentIntegrator(getActivity()).initiateScan();
-                        button.setEnabled(false);
-                        button.setTextColor(Color.parseColor("#11000000"));
-                        //fab.setVisibility(View.GONE);
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                    } else {
+                                    }
+                                });
+                                databaseReference.child("user-borrowed").child(mBook.getCurrentBorrowerId()).child(mBook.getBookId()).removeValue();
+                                mBook.setCurrentBorrower(null);
+                                databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
+                                databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);
+                            }
+                        });
 
-                        // Permission is NOT granted
-                        // Prompt the user for permission
-                        ActivityCompat.requestPermissions(getActivity(),
-                                new String[]{Manifest.permission.CAMERA},
-                                MY_PERMISSIONS_REQUEST_CAMERA);
+                    } else if (mBook.getStatus().equals(BookStatus.BORROWED) && mBook.isInTransaction()){
+
+                        recieveButton.setEnabled(true);
+                        recieveButton.setTextColor(Color.parseColor("#ff0000"));
+                        recieveButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                                        == PackageManager.PERMISSION_GRANTED) {
+                                    // Permission has already been granted
+                                    new IntentIntegrator(getActivity()).initiateScan();
+                                    recieveButton.setEnabled(false);
+                                    recieveButton.setTextColor(Color.parseColor("#11000000"));
+
+                                } else {
+
+                                    // Permission is NOT granted
+                                    // Prompt the user for permission
+                                    ActivityCompat.requestPermissions(getActivity(),
+                                            new String[]{Manifest.permission.CAMERA},
+                                            MY_PERMISSIONS_REQUEST_CAMERA);
+                                }
+                                //fab.setEnabled(false);
+                                //fab.setVisibility(View.GONE);
+                            }
+                        });
+
                     }
-                    //fab.setEnabled(false);
-                    //fab.setVisibility(View.GONE);
-                }
-            });
+                } else if (isRequested) {
+                    //you are the requester
+                    instantiateRequesterButtonBar(view);
+                    final FloatingActionButton geoFAB = (FloatingActionButton) view.findViewById(R.id.fab);
+                    cancelRequestButton.setEnabled(true);
+                    geoFAB.setEnabled(false);
+                    cancelRequestButton.setTextColor(Color.parseColor("#344955"));//primary color
 
 
-        } else if (currentUserId.equals(mBook.getCurrentBorrowerId()) && mBook.getStatus().equals(BookStatus.BORROWED) && !mBook.isInTransaction()){
+                    cancelRequestButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mBook.removeRequester(currentUserId);
+                            if(mBook.getRequesterIds().size() == 0){
+                                mBook.setStatus(BookStatus.AVAILABLE);
+                            }
+                            databaseReference.child("user-requested")
+                                    .child(currentUserId)
+                                    .child(mBook.getBookId())
+                                    .removeValue();
+                            for(String requester: mBook.getRequesterIds()){
 
-            //final  FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-            //fab.setImageResource(R.drawable.round_done_black_18dp);
-            final Button button = (Button) view.findViewById(R.id.user_specific_button);
-            //fab.setImageResource(R.drawable.pencil);
-            button.setText("START RETURN");
-            button.setTextColor(Color.parseColor("#008000"));//green
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+                                databaseReference.child("user-requested")
+                                        .child(requester)
+                                        .child(mBook.getBookId())
+                                        .setValue(mBook);
 
-                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
-                            == PackageManager.PERMISSION_GRANTED) {
-                        // Permission has already been granted
-                        new IntentIntegrator(getActivity()).initiateScan();
-                        button.setEnabled(false);
-                        button.setTextColor(Color.parseColor("#11000000"));
-                        //fab.setVisibility(View.GONE);
+                            }
 
-                    } else {
+                            databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
+                            databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);
+                            //removeRequester(position);
+                            cancelRequestButton.setEnabled(false);
+                            cancelRequestButton.setTextColor(Color.parseColor("#11000000"));
+                            cancelRequestButton.setTextColor(Color.parseColor("#11000000"));
+                        }
 
-                        // Permission is NOT granted
-                        // Prompt the user for permission
-                        ActivityCompat.requestPermissions(getActivity(),
-                                new String[]{Manifest.permission.CAMERA},
-                                MY_PERMISSIONS_REQUEST_CAMERA);
+                    });
+
+                } else if (isAccepted) {
+
+
+                    instantiateRequesterButtonBar(view);
+                    final FloatingActionButton geoFAB = (FloatingActionButton) view.findViewById(R.id.fab);
+
+
+                    geoFAB.setEnabled(true);
+
+                    geoFAB.setImageResource(R.drawable.baseline_place_black_36dp);
+
+
+                    abortButton.setTextColor(Color.parseColor("#000000"));//black
+                    abortButton.setEnabled(true);
+                    abortButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            mBook.setStatus(BookStatus.AVAILABLE);
+                            mBook.endTransaction();
+                            databaseReference.child("users").child(mBook.getCurrentBorrowerId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    User formerBorrower = dataSnapshot.getValue(User.class);
+                                    formerBorrower.removeFromBorrowed(mBook.getBookId());
+                                    databaseReference.child("users").child(formerBorrower.getUserId()).setValue(formerBorrower);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                            databaseReference.child("user-borrowed").child(mBook.getCurrentBorrowerId()).child(mBook.getBookId()).removeValue();
+                            mBook.setCurrentBorrower(null);
+                            databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
+                            databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);
+                        }
+                    });
+                    geoFAB.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getContext(), GetLocationActivity.class);
+                            intent.putExtra("Book", mBook);
+                            startActivity(intent);
+                        }
+                    });
+                    if(mBook.isInTransaction()){
+                        recieveButton.setEnabled(true);
+                        recieveButton.setTextColor(Color.parseColor("#ff0000"));
+                        recieveButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                                        == PackageManager.PERMISSION_GRANTED) {
+                                    // Permission has already been granted
+                                    new IntentIntegrator(getActivity()).initiateScan();
+                                    //fab.setEnabled(false);
+                                    //fab.setVisibility(View.GONE);
+                                    recieveButton.setEnabled(false);
+                                    recieveButton.setTextColor(Color.parseColor("#11000000"));
+
+                                } else {
+
+                                    // Permission is NOT granted
+                                    // Prompt the user for permission
+                                    ActivityCompat.requestPermissions(getActivity(),
+                                            new String[]{Manifest.permission.CAMERA},
+                                            MY_PERMISSIONS_REQUEST_CAMERA);
+                                }
+                            }
+                        });
                     }
-                    //fab.setEnabled(false);
-                    //fab.setVisibility(View.GONE);
-                }
-            });
 
-        } else if (currentUserId.equals(mBook.getOwner()) && mBook.getStatus().equals(BookStatus.BORROWED) && mBook.isInTransaction()){
+                } else if (isBorrowed) {
+                    //you are the borrower
+                    instantiateRequesterButtonBar(view);
+                    final FloatingActionButton geoFAB = (FloatingActionButton) view.findViewById(R.id.fab);
 
-            //final  FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-            //fab.setImageResource(R.drawable.round_done_black_18dp);
-            final Button button = (Button) view.findViewById(R.id.user_specific_button);
-            //fab.setImageResource(R.drawable.pencil);
-            button.setText("FINISH RETURN");
-            button.setTextColor(Color.parseColor("#ff0000"));//red
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+                    geoFAB.setEnabled(false);
+                    //geoFAB.setImageResource(R.drawable.baseline_place_black_36dp);
 
-                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
-                            == PackageManager.PERMISSION_GRANTED) {
-                        // Permission has already been granted
-                        new IntentIntegrator(getActivity()).initiateScan();
-                        button.setEnabled(false);
-                        button.setTextColor(Color.parseColor("#11000000"));
-                        //fab.setVisibility(View.GONE);
+                    if(!mBook.isInTransaction()){
 
-                    } else {
+                        handOverButton.setEnabled(true);
+                        handOverButton.setTextColor(Color.parseColor("#008000"));
+                        handOverButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
 
-                        // Permission is NOT granted
-                        // Prompt the user for permission
-                        ActivityCompat.requestPermissions(getActivity(),
-                                new String[]{Manifest.permission.CAMERA},
-                                MY_PERMISSIONS_REQUEST_CAMERA);
+                                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                                        == PackageManager.PERMISSION_GRANTED) {
+                                    // Permission has already been granted
+                                    new IntentIntegrator(getActivity()).initiateScan();
+                                    handOverButton.setEnabled(false);
+                                    handOverButton.setTextColor(Color.parseColor("#11000000"));
+                                    //fab.setVisibility(View.GONE);
+
+                                } else {
+
+                                    // Permission is NOT granted
+                                    // Prompt the user for permission
+                                    ActivityCompat.requestPermissions(getActivity(),
+                                            new String[]{Manifest.permission.CAMERA},
+                                            MY_PERMISSIONS_REQUEST_CAMERA);
+                                }
+
+                            }
+                        });
+
                     }
-                    //fab.setEnabled(false);
-                    //fab.setVisibility(View.GONE);
+
+                } else {
+                    //you are neither
+
+                    instantiateNonRequesterButtonBar(view);
+                    final FloatingActionButton geoFAB = (FloatingActionButton) view.findViewById(R.id.fab);
+
+                    geoFAB.setEnabled(false);
+
+                    if (mBook.getStatus().equals(BookStatus.AVAILABLE) || mBook.getStatus().equals(BookStatus.REQUESTED)) {
+                        requestButton.setEnabled(true);
+                        requestButton.setTextColor(Color.parseColor("#F9AA33"));
+
+                        requestButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                mBook.addRequest(currentUserId);
+                                mBook.setStatus(BookStatus.REQUESTED);
+                                mBook.setNewRequest();
+                                databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
+                                databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);
+                                databaseReference.child("user-requested").child(currentUserId).child(mBook.getBookId()).setValue(mBook);
+                                requestButton.setEnabled(false);
+                                requestButton.setTextColor(Color.parseColor("#11000000"));
+                                //fab.setVisibility(View.GONE);
+
+
+                            }
+                        });
+
+
+                    }
+
                 }
-            });
 
-        }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        databaseReference.child("books").addChildEventListener(updateListener);
         return view;
 
     }
@@ -565,22 +668,9 @@ public class BookDetailsFragment extends Fragment {
                 Toast.makeText(getContext(), "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
 
                 if(mBook.getISBN().equals(result.getContents())){
-                    //testStatus = mBook.getStatus();
-                    //testOwner = mBook.getOwner();
-                    //testBorrower = mBook.getCurrentBorrowerId();
+
                     if(mBook.getCurrentBorrowerId().equals(currentUserId) && mBook.getStatus().equals(BookStatus.ACCEPTED)){
-                        /*
-                        databaseReference.child("books").child(book.getBookId()).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                book =
-                            }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });*/
 
                         mBook.setStatus(BookStatus.BORROWED);
                         mBook.endTransaction();
@@ -682,6 +772,85 @@ public class BookDetailsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void refresh(){
+        //BookDetailsFragment fragment = (BookDetailsFragment) BookDetailsFragment.newInstance(mBook, mUser);
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        //ft.detach(BookDetailsFragment.this).attach(fragment).commit();
+        ft.detach(BookDetailsFragment.this).attach(BookDetailsFragment.this).commit();
+    }
+
+    public void instantiateOwnerButtonBar(View view){
+        editButton = (Button) view.findViewById(R.id.edit_req_btn);
+        handOverButton = (Button) view.findViewById(R.id.hand_over_btn);
+        recieveButton = (Button) view.findViewById(R.id.recieve_btn);
+        abortButton = (Button) view.findViewById(R.id.abort_btn);
+        //geoFAB = (FloatingActionButton) view.findViewById(R.id.fab);
+
+        editButton.setEnabled(false);
+        handOverButton.setEnabled(false);
+        recieveButton.setEnabled(false);
+        abortButton.setEnabled(false);
+        //geoFAB.setEnabled(false);
+
+        editButton.setText(getResources().getString(R.string.edit_btn_txt));
+        handOverButton.setText(getResources().getString(R.string.hand_over_btn_txt));
+        recieveButton.setText(getResources().getString(R.string.receive_btn_txt));
+        abortButton.setText(getResources().getString(R.string.abort_btn_txt));
+
+        editButton.setTextColor(Color.parseColor("#11000000"));
+        handOverButton.setTextColor(Color.parseColor("#11000000"));
+        recieveButton.setTextColor(Color.parseColor("#11000000"));
+        abortButton.setTextColor(Color.parseColor("#11000000"));
+    }
+
+    public void instantiateNonRequesterButtonBar(View view){
+        requestButton = (Button) view.findViewById(R.id.edit_req_btn);
+        handOverButton = (Button) view.findViewById(R.id.hand_over_btn);
+        recieveButton = (Button) view.findViewById(R.id.recieve_btn);
+        abortButton = (Button) view.findViewById(R.id.abort_btn);
+
+        requestButton.setEnabled(false);
+        handOverButton.setEnabled(false);
+        recieveButton.setEnabled(false);
+        abortButton.setEnabled(false);
+
+        requestButton.setText(getResources().getString(R.string.request_btn_txt));
+        handOverButton.setText(getResources().getString(R.string.hand_over_btn_txt));
+        recieveButton.setText(getResources().getString(R.string.receive_btn_txt));
+        abortButton.setText(getResources().getString(R.string.abort_btn_txt));
+
+        requestButton.setTextColor(Color.parseColor("#11000000"));
+        handOverButton.setTextColor(Color.parseColor("#11000000"));
+        recieveButton.setTextColor(Color.parseColor("#11000000"));
+        abortButton.setTextColor(Color.parseColor("#11000000"));
+    }
+
+    public void instantiateRequesterButtonBar(View view) {
+
+        cancelRequestButton = (Button) view.findViewById(R.id.edit_req_btn);
+        handOverButton = (Button) view.findViewById(R.id.hand_over_btn);
+        recieveButton = (Button) view.findViewById(R.id.recieve_btn);
+        abortButton = (Button) view.findViewById(R.id.abort_btn);
+        //final FloatingActionButton geoFAB = (FloatingActionButton) view.findViewById(R.id.fab);
+
+        cancelRequestButton.setEnabled(false);
+        handOverButton.setEnabled(false);
+        recieveButton.setEnabled(false);
+        abortButton.setEnabled(false);
+        //geoFAB.setEnabled(false);
+
+        cancelRequestButton.setText(getResources().getString(R.string.cancel_request_btn_txt));
+        handOverButton.setText(getResources().getString(R.string.hand_over_btn_txt));
+        recieveButton.setText(getResources().getString(R.string.receive_btn_txt));
+        abortButton.setText(getResources().getString(R.string.abort_btn_txt));
+
+        cancelRequestButton.setTextColor(Color.parseColor("#11000000"));
+        handOverButton.setTextColor(Color.parseColor("#11000000"));
+        recieveButton.setTextColor(Color.parseColor("#11000000"));
+        abortButton.setTextColor(Color.parseColor("#11000000"));
+
     }
 
     /**
