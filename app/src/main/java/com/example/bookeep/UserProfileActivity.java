@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -21,8 +22,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 /**
- * Displays the users profile
- * not currently used
+ * Displays a users profile, will allow editing that profile if it is the current user's
+ * Needs to be passed the user profile to be displayed in the intent through uuid
+ * @author Nolan Brost
+ * @see User
+ * @version 1.0.1
  */
 public class UserProfileActivity extends AppCompatActivity {
     private ImageView profilePicture;
@@ -37,6 +41,8 @@ public class UserProfileActivity extends AppCompatActivity {
     private String userId;
     private FirebaseDatabase database;
     private DatabaseReference myRef;
+    private DatabaseReference lenderRef;
+    private DatabaseReference borrowerRef;
     private FirebaseUser firebaseUser;
     private FirebaseAuth firebaseAuth;
 
@@ -50,7 +56,7 @@ public class UserProfileActivity extends AppCompatActivity {
         } else{
             userId = "";
         }
-
+        Button button = findViewById(R.id.button4);
         usernameView = findViewById(R.id.username_Profile);
         profilePicture = findViewById(R.id.profile_pic);
         nameView = findViewById(R.id.name_Profile);
@@ -63,21 +69,76 @@ public class UserProfileActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
+        lenderRef = database.getReference("lenderRatings").child(userId);
+        borrowerRef = database.getReference("borrowerRatings").child(userId);
         myRef = database.getReference("users").child(userId);
+
+        lenderRef.addValueEventListener(new ValueEventListener() {                      //updates the lender review info
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Rating rating = dataSnapshot.getValue(LenderRating.class);
+                if (rating == null){
+                    rating = new LenderRating(userId);
+                } else {
+                    rating.recalculateRating();
+                }
+                Float overallRating = rating.getRating();
+                int numRatings = rating.getNumRatings();
+                lenderRatingBar.setRating(overallRating);
+                String numRatingString = numRatings + " Lender Reviews";
+                numLenderReveiewsView.setText(numRatingString);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        borrowerRef.addValueEventListener(new ValueEventListener() {                    //updates the borrower review info
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Rating rating = dataSnapshot.getValue(BorrowerRating.class);
+                if (rating == null){
+                    rating = new BorrowerRating(userId);
+                } else {
+                    rating.recalculateRating();
+                }
+                Float overallRating = rating.getRating();
+                int numRatings = rating.getNumRatings();
+                borrowerRatingBar.setRating(overallRating);
+                String numRatingString = numRatings + " Borrower Reviews";
+                numBorrowerReviewsView.setText(numRatingString);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                String name = user.getFirstname() + " " + user.getLastname();
-                nameView.setText(name);
+                String userFirstname = user.getFirstname();
+                String userLastname = user.getLastname();
                 String username = user.getUserName();
-                if (username.length() > 22) {
-                    username = username.replace(" ","\n");
+                PhoneNumber userPhoneNumber = user.getPhoneNumber();
+                String userEmail = user.getEmail();
+                if (userFirstname != null && userLastname != null) {
+                    String name = userFirstname + " " + userLastname;
+                    nameView.setText(name);
                 }
-                usernameView.setText(username);
-                phoneNumberView.setText(user.getPhoneNumber().toString());
-                emailAddressView.setText(user.getEmail());
-
+                if (username != null) {
+                    usernameView.setText(username);
+                }
+                if (userPhoneNumber != null) {
+                    phoneNumberView.setText(userPhoneNumber.toString());
+                }
+                if (userEmail != null) {
+                    emailAddressView.setText(userEmail);
+                }
             }
 
             @Override
@@ -106,4 +167,12 @@ public class UserProfileActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    public void onPopup(View view){
+        Intent intent = new Intent(this, RatingPopupActivity.class);
+        intent.putExtra("uuid",userId);
+        intent.putExtra("lender", true);
+        startActivity(intent);
+    }
+
 }

@@ -229,7 +229,7 @@ public class BookDetailsFragment extends Fragment {
                             @Override
                             public void onClick(View v) {
                                 Intent intent = new Intent(getActivity(), UserProfileActivity.class);
-                                intent.putExtra("Current User", user);
+                                intent.putExtra("uuid", user.getUserId());
                                 startActivity(intent);
                             }
                         });
