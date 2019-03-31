@@ -38,8 +38,8 @@ public class UserProfileActivity extends AppCompatActivity {
     private TextView phoneNumberView;
     private TextView emailAddressView;
     private String userId;
-    private FirebaseDatabase database;
-    private DatabaseReference myRef;
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference databaseReference = database.getReference();
     private FirebaseUser firebaseUser;
     private FirebaseAuth firebaseAuth;
     private User user;
@@ -64,11 +64,10 @@ public class UserProfileActivity extends AppCompatActivity {
         lenderRatingBar = findViewById(R.id.lender_ratingbar);
         numBorrowerReviewsView = findViewById(R.id.borrower_number_reviews);
         numLenderReveiewsView = findViewById(R.id.lender_number_reviews);
-        database = FirebaseDatabase.getInstance();
+
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
-        myRef = database.getReference("users").child(userId);
-        myRef.addValueEventListener(new ValueEventListener() {
+        databaseReference.child("users").child(userId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
