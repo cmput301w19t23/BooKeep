@@ -190,103 +190,6 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
         }
     }
 
-//    /** TODO: Get rid of this options menu.
-//     * creates the options menu
-//     * @param menu menu to be created
-//     * @return boolean of if menu is displayed
-//     */
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        Intent received = getIntent();
-//        this.menu = menu;
-//        final Menu finalMenu = menu;
-//        final String bookId = received.getStringExtra("Book ID");
-//
-//        databaseReference.child("books").child(bookId).addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                book = dataSnapshot.getValue(Book.class);
-//                if (currentUserId.equals(book.getOwner())) {
-//                    getMenuInflater().inflate(R.menu.menu_book_details, finalMenu);
-//                } else {
-//                    getMenuInflater().inflate(R.menu.menu_book_details_non_owner, finalMenu);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-//        return true;
-//    }
-//
-//    /** TODO: Get rid of this too.
-//     * Handle action bar item clicks here. The action bar will
-//     * automatically handle clicks on the Home/Up button, so long
-//     * as you specify a parent activity in AndroidManifest.xml.
-//     * @param item item in menu
-//     * @return boolean
-//     */
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//
-//        int id = item.getItemId();
-//        Fragment fragment = null;
-//        Class fragmentClass = null;
-//
-//        if (currentUserId.equals(book.getOwner())){
-//
-//            //BookDetailsFragment bookDetailsFragment;
-//            //RequestsOnBookFragment requestsOnBookFragment;
-//
-//            if (id == R.id.action_edit) {
-//
-//                Intent intent = new Intent(BookDetailsActivity.this, AddEditBookActivity.class);
-//                intent.putExtra("Book to edit", book);
-//                startActivity(intent);
-//
-//            } else if (id == R.id.action_requesters) {
-//                //return true;
-//                fragment = RequestsOnBookFragment.newInstance(book);
-//                FragmentManager fragmentManager = getSupportFragmentManager();
-//                fragmentManager.beginTransaction().replace(R.id.book_details_fragment_container, fragment).commit();
-//            }
-//            else if (id == R.id.action_book_details) {
-//                fragment = BookDetailsFragment.newInstance(book);
-//                FragmentManager fragmentManager = getSupportFragmentManager();
-//                fragmentManager.beginTransaction().replace(R.id.book_details_fragment_container, fragment).commit();
-//            }
-//        } else {//noinspection SimplifiableIfStatement
-//            if (id == R.id.book_details) {
-//                fragment = BookDetailsFragment.newInstance(book);
-//                FragmentManager fragmentManager = getSupportFragmentManager();
-//                fragmentManager.beginTransaction().replace(R.id.book_details_fragment_container, fragment).commit();
-//            }
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
-//
-//    /** TODO: Get rid of this too
-//     * hides an option
-//     * @param id id of option to be hid
-//     */
-//    private void hideOption(int id) {
-//        MenuItem item = menu.findItem(id);
-//        item.setVisible(false);
-//    }
-//
-//    /** TODO: Get rid of this too
-//     * shows an option
-//     * @param id of option to be shown
-//     */
-//    private void showOption(int id) {
-//        MenuItem item = menu.findItem(id);
-//        item.setVisible(true);
-//    }
-
     @Override
     public void onFragmentInteraction(Uri uri) {
     }
@@ -350,21 +253,6 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
         }
 
     }
-
-    public void onImageViewClick(View view) {
-        Bundle bundle = new Bundle();
-        Log.d("bookURL: ", book.getBookImageURL());
-        bundle.putString("image", book.getBookImageURL());
-
-        ClickOnImageFragment imageFragment = new ClickOnImageFragment();
-        imageFragment.setArguments(bundle);
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().remove(requestsFragment).commit();
-        fragmentManager.beginTransaction().remove(fragment).commit();
-        fragmentManager.beginTransaction().replace(R.id.image_fragment_container, imageFragment).commit();
-
-    }
-
 }
 
 
