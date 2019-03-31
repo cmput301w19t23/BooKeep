@@ -456,6 +456,9 @@ public class BookDetailsFragment extends Fragment {
                 } else if (isRequested) {
                     //you are the requester
                     instantiateRequesterButtonBar(view);
+                    cancelRequestButton = (Button) view.findViewById(R.id.edit_req_btn);
+                    //cancelRequestButton.setEnabled(true);
+                    //cancelRequestButton.setTextColor(Color.parseColor("11000000"))
                     final FloatingActionButton geoFAB = (FloatingActionButton) view.findViewById(R.id.fab);
                     cancelRequestButton.setEnabled(true);
                     geoFAB.setEnabled(false);
@@ -485,9 +488,13 @@ public class BookDetailsFragment extends Fragment {
                             databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
                             databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);
                             //removeRequester(position);
+                            databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
+
                             cancelRequestButton.setEnabled(false);
                             cancelRequestButton.setTextColor(Color.parseColor("#11000000"));
-                            cancelRequestButton.setTextColor(Color.parseColor("#11000000"));
+                            //cancelRequestButton.setTextColor(Color.parseColor("#11000000"));
+                            //databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
+                            //refresh();
                         }
 
                     });
@@ -553,6 +560,7 @@ public class BookDetailsFragment extends Fragment {
                                     //fab.setVisibility(View.GONE);
                                     recieveButton.setEnabled(false);
                                     recieveButton.setTextColor(Color.parseColor("#11000000"));
+                                    refresh();
 
                                 } else {
 
@@ -829,24 +837,24 @@ public class BookDetailsFragment extends Fragment {
 
     public void instantiateRequesterButtonBar(View view) {
 
-        cancelRequestButton = (Button) view.findViewById(R.id.edit_req_btn);
+        //cancelRequestButton = (Button) view.findViewById(R.id.edit_req_btn);
         handOverButton = (Button) view.findViewById(R.id.hand_over_btn);
         recieveButton = (Button) view.findViewById(R.id.recieve_btn);
         abortButton = (Button) view.findViewById(R.id.abort_btn);
         //final FloatingActionButton geoFAB = (FloatingActionButton) view.findViewById(R.id.fab);
 
-        cancelRequestButton.setEnabled(false);
+        //cancelRequestButton.setEnabled(false);
         handOverButton.setEnabled(false);
         recieveButton.setEnabled(false);
         abortButton.setEnabled(false);
         //geoFAB.setEnabled(false);
 
-        cancelRequestButton.setText(getResources().getString(R.string.cancel_request_btn_txt));
+        //cancelRequestButton.setText(getResources().getString(R.string.cancel_request_btn_txt));
         handOverButton.setText(getResources().getString(R.string.hand_over_btn_txt));
         recieveButton.setText(getResources().getString(R.string.receive_btn_txt));
         abortButton.setText(getResources().getString(R.string.abort_btn_txt));
 
-        cancelRequestButton.setTextColor(Color.parseColor("#11000000"));
+        //cancelRequestButton.setTextColor(Color.parseColor("#11000000"));
         handOverButton.setTextColor(Color.parseColor("#11000000"));
         recieveButton.setTextColor(Color.parseColor("#11000000"));
         abortButton.setTextColor(Color.parseColor("#11000000"));
