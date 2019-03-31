@@ -51,6 +51,9 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
     DatabaseReference databaseReference = database.getReference();
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
+    FragmentManager fragmentManager = getSupportFragmentManager();
+    BookDetailsFragment fragment = null;
+    RequestsOnBookFragment requestsFragment = null;
     public BookDetailsActivity() {
     }
 
@@ -88,15 +91,13 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
 
                 currentUserId = firebaseUser.getUid();
                 // Launch BookDetailsFragment
-                BookDetailsFragment fragment = null;
-                RequestsOnBookFragment requestsFragment = null;
+
                 try {
                     fragment = (BookDetailsFragment) BookDetailsFragment.newInstance(book);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                FragmentManager fragmentManager = getSupportFragmentManager();
                 fragmentManager.beginTransaction().replace(R.id.book_details_fragment_container, fragment).commit();
 
                 if(book.getOwner().equals(currentUserId)){
@@ -352,11 +353,16 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
 
     public void onImageViewClick(View view) {
         Bundle bundle = new Bundle();
+        Log.d("bookURL: ", book.getBookImageURL());
         bundle.putString("image", book.getBookImageURL());
-        ClickOnImageFragment fragment = new ClickOnImageFragment();
-        fragment.setArguments(bundle);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.book_details_fragment_container, fragment).commit();
+
+        ClickOnImageFragment imageFragment = new ClickOnImageFragment();
+        imageFragment.setArguments(bundle);
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().remove(requestsFragment).commit();
+        fragmentManager.beginTransaction().remove(fragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.image_fragment_container, imageFragment).commit();
+
     }
 
 }

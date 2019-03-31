@@ -19,6 +19,14 @@
             app:layout_collapseMode="pin"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
     </android.support.design.widget.AppBarLayout>
+
+    <FrameLayout
+        android:id="@+id/image_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
     <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
