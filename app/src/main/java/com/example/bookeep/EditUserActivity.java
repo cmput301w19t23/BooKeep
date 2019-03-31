@@ -1,8 +1,12 @@
 package com.example.bookeep;
 
-import android.content.ContentValues;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Patterns;
@@ -12,6 +16,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -21,8 +28,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.concurrent.ExecutionException;
 
 /**
  * This activity will display the users information (username, first name, lastname,
@@ -54,6 +67,7 @@ public class EditUserActivity extends AppCompatActivity {
     private ArrayList<String> users;
     private ArrayList<String> emails;
     private String userId;
+    private String imageURL;
     private ArrayList<String> currentUsername;
     private ArrayList<String> currentEmail;
 
@@ -70,15 +84,105 @@ public class EditUserActivity extends AppCompatActivity {
         lastName = findViewById(R.id.EditLastName);
         firstName = findViewById(R.id.EditFirstName);
         userName = findViewById(R.id.EditUserName);
-        userPicture = findViewById(R.id.UserPhoto);
+        userPicture = findViewById(R.id.UserPhoto2);
         updateButton = findViewById(R.id.SaveProfile);
         errorTextView = findViewById(R.id.ErrorText);
         editUserText = findViewById(R.id.EditUserInfoView);
 
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        currentEmail = new ArrayList<>();                               //will contain all emails to check for uniqueness
+        currentUsername = new ArrayList<>();                            //will contain all users to check for uniqueness
+        errorTextView.setVisibility(View.INVISIBLE);                    //sets error text to invisible
+        errorTextView.setTextColor(Color.RED);                          //sets error texts colour to red
+        editUserText.setTextColor(Color.BLACK);
+        editUserText.setTextSize(22);
+
+
+        userId = firebaseUser.getUid();
+        database = FirebaseDatabase.getInstance();
+        DatabaseReference userNameRef = database.getReference("users");
+        Query query = userNameRef.orderByChild("userName");
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("users").child(userId);
+
+        //This will query the data base for all users and store their usernames and email in lists to check for uniqueness
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren() ){
+                    if (data != null) {
+                        try {
+                            User userFromDatabase = data.getValue(User.class);
+                            users.add(userFromDatabase.getUserName());
+                            emails.add(userFromDatabase.getEmail());
+                        } catch (DatabaseException exc) {
+
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        //this will get the users info from the database to prefill editing fields and to check if username/email haven't changed
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User currentUser = dataSnapshot.getValue(User.class);
+                if (currentUser != null) {
+                    userName.setText(currentUser.getUserName());
+                    currentUsername.add(currentUser.getUserName());
+                    firstName.setText(currentUser.getFirstname());
+                    lastName.setText(currentUser.getLastname());
+                    email.setText(currentUser.getEmail());
+                    currentEmail.add(currentUser.getEmail());
+                    phoneNumber.setText(currentUser.getPhoneNumber().toString());
+                    imageURL = currentUser.getImageURL();
+                    DownloadImageTask downloadImageTask = new DownloadImageTask();
+                    try {
+
+                        Bitmap bitmap = downloadImageTask.execute(currentUser.getImageURL()).get();
+                        userPicture.setImageBitmap(bitmap);
+
+                    } catch (ExecutionException e) {
+                        userPicture.setImageResource(R.drawable.profile_pic);
+                    } catch (InterruptedException e) {
+                        userPicture.setImageResource(R.drawable.profile_pic);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        //will check if enter values are correct and updates the user if so
+        updateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (validation()){
+                    try {
+                        firebaseUser.updateEmail(email.getText().toString());           //changes log in email, but causes exceptions not yet caught.
+                        updateUser();
+                    } catch (Exception e){
+                        String error = e.toString();                                    //catches any exceptions and displays error to be fixed later
+                        displayErrorText(error);
+                    }
+                }
+            }
+        });
+
 
     }
 
-    @Override
+    /*@Override
     public void onResume(){
         super.onResume();
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -134,6 +238,17 @@ public class EditUserActivity extends AppCompatActivity {
                     email.setText(currentUser.getEmail());
                     currentEmail.add(currentUser.getEmail());
                     phoneNumber.setText(currentUser.getPhoneNumber().toString());
+                    DownloadImageTask downloadImageTask = new DownloadImageTask();
+                    try {
+
+                        Bitmap bitmap = downloadImageTask.execute(currentUser.getImageURL()).get();
+                        userPicture.setImageBitmap(bitmap);
+
+                    } catch (ExecutionException e) {
+                        userPicture.setImageResource(R.drawable.profile_pic);
+                    } catch (InterruptedException e) {
+                        userPicture.setImageResource(R.drawable.profile_pic);
+                    }
                 }
             }
 
@@ -158,7 +273,7 @@ public class EditUserActivity extends AppCompatActivity {
                 }
             }
         });
-    }
+    }*/
 
     /**
      * will push changes to user to the firebase database
@@ -176,6 +291,12 @@ public class EditUserActivity extends AppCompatActivity {
         user.setLastname(lastNameString);
         user.setFirstname(firstNameString);
         user.setUserName(userNameString);
+        deleteImageFromFireBase(imageURL);
+        Bitmap bitmap;
+        userPicture.setDrawingCacheEnabled(true);
+        userPicture.buildDrawingCache();
+        bitmap = ((BitmapDrawable) userPicture.getDrawable()).getBitmap();
+        uploadImageToFireBase(bitmap);
         myRef.setValue(user);
         finish();//closes the activity after firebase is updated
     }
@@ -252,6 +373,93 @@ public class EditUserActivity extends AppCompatActivity {
     public void displayErrorText(String errorMessage){
         errorTextView.setVisibility(View.VISIBLE);
         errorTextView.setText(errorMessage);
+    }
+
+    public void onDeleteButtonPressed(View view) {
+        userPicture.setImageResource(R.drawable.profile_pic);
+    }
+
+    public void uploadImageToFireBase (Bitmap bitmap) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        Calendar now = Calendar.getInstance();
+        String strDate = Integer.toString(now.get(Calendar.YEAR)) +
+                Integer.toString(now.get(Calendar.MONTH)) +
+                Integer.toString(now.get(Calendar.DAY_OF_MONTH)) +
+                Integer.toString(now.get(Calendar.HOUR_OF_DAY)) +
+                Integer.toString(now.get(Calendar.MINUTE)) +
+                Integer.toString(now.get(Calendar.SECOND)) +
+                Integer.toString(now.get(Calendar.MILLISECOND));
+
+        StorageReference storageReference = storage.getReferenceFromUrl("gs://bookeep-684ab.appspot.com");
+        final StorageReference imageRef = storageReference.child(strDate + ".jpg");
+
+        Bitmap resize = Bitmap.createScaledBitmap(bitmap,270,270,false);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        resize.compress(Bitmap.CompressFormat.JPEG,100,baos);
+        byte[] data = baos.toByteArray();
+        UploadTask uploadTask = imageRef.putBytes(data);
+
+        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+
+                // Continue with the task to get the download URL
+                return imageRef.getDownloadUrl();
+
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    user.setImageURL(task.getResult().toString());
+                    myRef.setValue(user);
+                } else {
+                    return;
+                }
+            }
+        });
+    }
+
+    public void deleteImageFromFireBase (String fireBaseUrl) {
+        if (fireBaseUrl != null) {
+            String[] strings = fireBaseUrl.split("\\?");
+            strings = strings[0].split("/");
+            String storageLink = strings[strings.length - 1];
+            if (storageLink.startsWith("2019")) {
+                StorageReference storageReference = FirebaseStorage.getInstance()
+                        .getReferenceFromUrl("gs://bookeep-684ab.appspot.com").child(storageLink);
+                storageReference.delete();
+            }
+        }
+    }
+
+    public void UploadImage(View view) {
+        Intent intent = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        startActivityForResult(intent,69);
+
+    }
+
+    public void onActivityResult(int requestCode,int resultCode,Intent data) {
+
+        if (requestCode == 69 && resultCode == RESULT_OK) {
+            if (data != null) {
+                super.onActivityResult(requestCode,resultCode,data);
+                Uri selectedImage = data.getData();
+                //bookLink = selectedImage.toString();
+                //bookImage.setImageBitmap(setPicture(bookLink));
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),selectedImage);
+                    userPicture.setImageBitmap(bitmap);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 }

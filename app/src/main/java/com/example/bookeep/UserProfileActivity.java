@@ -1,6 +1,7 @@
 package com.example.bookeep;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.concurrent.ExecutionException;
 
 /**
  * Displays the users profile
@@ -39,6 +42,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private DatabaseReference myRef;
     private FirebaseUser firebaseUser;
     private FirebaseAuth firebaseAuth;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +71,7 @@ public class UserProfileActivity extends AppCompatActivity {
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
+                user = dataSnapshot.getValue(User.class);
                 String name = user.getFirstname() + " " + user.getLastname();
                 nameView.setText(name);
                 String username = user.getUserName();
@@ -77,6 +81,16 @@ public class UserProfileActivity extends AppCompatActivity {
                 usernameView.setText(username);
                 phoneNumberView.setText(user.getPhoneNumber().toString());
                 emailAddressView.setText(user.getEmail());
+                DownloadImageTask downloadImageTask = new DownloadImageTask();
+                try {
+                    Bitmap bitmap = downloadImageTask.execute(user.getImageURL()).get();
+                    profilePicture.setImageBitmap(bitmap);
+
+                } catch (ExecutionException e) {
+                    profilePicture.setImageResource(R.drawable.profile_pic);
+                } catch (InterruptedException e) {
+                    profilePicture.setImageResource(R.drawable.profile_pic);
+                }
 
             }
 
@@ -105,5 +119,11 @@ public class UserProfileActivity extends AppCompatActivity {
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onImageClick(View view) {
+        Intent intent = new Intent(this, ImageViewActivity.class);
+        intent.putExtra("image", user.getImageURL());
+        startActivity(intent);
     }
 }

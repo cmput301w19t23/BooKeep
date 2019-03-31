@@ -334,7 +334,7 @@ public class AddEditBookActivity extends AppCompatActivity {
     }
 
     /**
-     * uploads the image to firebase
+     * Gets a user uploaded image
      * @param view View
      */
     public void ImageUpload(View view) {

@@ -438,12 +438,9 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
     }
 
     public void onImageViewClick(View view) {
-        Bundle bundle = new Bundle();
-        bundle.putString("image", book.getBookImageURL());
-        ClickOnImageFragment fragment = new ClickOnImageFragment();
-        fragment.setArguments(bundle);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.book_details_fragment_container, fragment).commit();
+        Intent intent = new Intent(this, ImageViewActivity.class);
+        intent.putExtra("image", book.getBookImageURL());
+        startActivity(intent);
     }
 
 }
