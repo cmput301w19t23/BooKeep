@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -45,6 +46,9 @@ import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.concurrent.ExecutionException;
+
 import static com.example.bookeep.NotificationHandler.CHANNEL_1_ID;
 import static com.example.bookeep.NotificationHandler.CHANNEL_2_ID;
 
@@ -184,10 +188,22 @@ public class MainActivity extends AppCompatActivity
                     View headerView = navigationView.getHeaderView(0);
                     TextView nameView = headerView.findViewById(R.id.name);
                     TextView emailView = headerView.findViewById(R.id.email);
+                    ImageButton imageButton = headerView.findViewById(R.id.UserProfileButton);
                     String nameString = user.getFirstname() + " " + user.getLastname();
                     String emailString = user.getEmail();
                     nameView.setText(nameString);
                     emailView.setText(emailString);
+                    DownloadImageTask downloadImageTask = new DownloadImageTask();
+                    try {
+
+                        Bitmap bitmap = downloadImageTask.execute(user.getImageURL()).get();
+                        imageButton.setImageBitmap(bitmap);
+
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
