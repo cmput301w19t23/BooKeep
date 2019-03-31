@@ -76,9 +76,9 @@ public class SearchKeyWordsFragment extends Fragment {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot,@Nullable String s) {
                 Book book = dataSnapshot.getValue(Book.class);
-                if ((book.getStatus() == BookStatus.AVAILABLE ||
-                     book.getStatus() == BookStatus.REQUESTED)) {
-                    for (String keyword:keyWords) {
+                if (((book.getStatus() == BookStatus.AVAILABLE ||
+                     book.getStatus() == BookStatus.REQUESTED)) && !book.getOwner().equals(firebaseUser.getUid())) {
+                    for (String keyword : keyWords) {
                         if ((!book.getTitle().toLowerCase().contains(keyword.toLowerCase()) &&
                                 !book.getAuthorsString().toLowerCase().contains(keyword.toLowerCase()))) {
                             return;

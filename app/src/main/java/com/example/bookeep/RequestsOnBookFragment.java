@@ -55,38 +55,32 @@ public class RequestsOnBookFragment extends Fragment {
         public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
             Book changedBook = dataSnapshot.getValue(Book.class);
             if (changedBook.getBookId().equals(mBook.getBookId())){
-                if(changedBook != null) {
-                    if(isResumed) {
+                if(isResumed) {
 
-                        mBook = changedBook;
+                    mBook = changedBook;
 
-                        if (mListener != null) {
-                            mListener.onBookUpdate(mBook);
-                        }
-
-                        ArrayList<String> newRequesterIds = changedBook.getRequesterIds();
-                        requesters.clear();
-                        adapter.notifyDataSetChanged();
-                        for (String requesterId : newRequesterIds) {
-                            databaseReference.child("users").child(requesterId).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                                    requesters.add(dataSnapshot.getValue(User.class));
-                                    adapter.notifyDataSetChanged();
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                }
-                            });
-                        }
+                    if (mListener != null) {
+                        mListener.onBookUpdate(mBook);
                     }
-                    //android.support.v7.widget.Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-                    //CollapsingToolbarLayout toolbarLayout = getActivity().findViewById(R.id.toolbar_layout);
-                    //toolbar.setTitle(mBook.getTitle());
-                    //toolbarLayout.setTitle(mBook.getTitle());
+
+                    ArrayList<String> newRequesterIds = changedBook.getRequesterIds();
+                    requesters.clear();
+                    adapter.notifyDataSetChanged();
+                    for (String requesterId : newRequesterIds) {
+                        databaseReference.child("users").child(requesterId).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                requesters.add(dataSnapshot.getValue(User.class));
+                                adapter.notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
                 }
 
 

@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
@@ -44,6 +46,9 @@ import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.concurrent.ExecutionException;
+
 import static com.example.bookeep.NotificationHandler.CHANNEL_1_ID;
 import static com.example.bookeep.NotificationHandler.CHANNEL_2_ID;
 
@@ -53,7 +58,13 @@ import static com.example.bookeep.NotificationHandler.CHANNEL_2_ID;
  * @version 1.0.1
  */
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, FirebaseAuth.AuthStateListener, StandFragment.OnListFragmentInteractionListener,PendingRequestFragment.OnListFragmentInteractionListener, ShelfFragment.OnListFragmentInteractionListener{
+        implements NavigationView.OnNavigationItemSelectedListener,
+        FirebaseAuth.AuthStateListener,
+        StandFragment.OnListFragmentInteractionListener,
+        PendingRequestFragment.OnListFragmentInteractionListener,
+        ShelfFragment.OnListFragmentInteractionListener{
+
+
     private FireBaseController fireBaseController = new FireBaseController(this);
 
     private NotificationManagerCompat notificationManager;
@@ -72,9 +83,7 @@ public class MainActivity extends AppCompatActivity
     // pushes notifications if a book is requested.
     private ChildEventListener requestListener = new ChildEventListener() {
         @Override
-        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-        }
+        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
 
         @Override
         public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -87,13 +96,10 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
-
         @Override
         public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {}
-
         @Override
         public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
-
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {}
     };
@@ -124,6 +130,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        String shelfFragment = getIntent().getStringExtra("shelfFragment");
+
         databaseReference.child("user-books").child(currentUserID)
                 .addChildEventListener(requestListener);
         databaseReference.child("user-borrowed").child(currentUserID)
@@ -137,7 +145,15 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         Fragment fragment = null;
-        fragmentClass = StandFragment.class;
+
+
+
+        if(shelfFragment != null){
+            fragmentClass = ShelfFragment.class;
+        } else {
+            fragmentClass = StandFragment.class;
+        }
+
         try {
             fragment = (Fragment) fragmentClass.newInstance();
         } catch (Exception e) {
@@ -172,10 +188,22 @@ public class MainActivity extends AppCompatActivity
                     View headerView = navigationView.getHeaderView(0);
                     TextView nameView = headerView.findViewById(R.id.name);
                     TextView emailView = headerView.findViewById(R.id.email);
+                    ImageButton imageButton = headerView.findViewById(R.id.UserProfileButton);
                     String nameString = user.getFirstname() + " " + user.getLastname();
                     String emailString = user.getEmail();
                     nameView.setText(nameString);
                     emailView.setText(emailString);
+                    DownloadImageTask downloadImageTask = new DownloadImageTask();
+                    try {
+
+                        Bitmap bitmap = downloadImageTask.execute(user.getImageURL()).get();
+                        imageButton.setImageBitmap(bitmap);
+
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
@@ -213,6 +241,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
         getMenuInflater().inflate(R.menu.main, menu);
+        menu.getItem(0).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_search_black_24dp));
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         final String userId = firebaseUser.getUid();
@@ -246,8 +275,6 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(MainActivity.this, SearchActivity.class);
             startActivity(intent);
         }
-
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -329,8 +356,10 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
+    /**
+     * This is the notification for when a book is requested.
+     * @param book
+     */
     public void sendOnChannel1(Book book){
 
         book.clearNewRequest();
@@ -353,6 +382,11 @@ public class MainActivity extends AppCompatActivity
 
         notificationManager.notify(1, notification);
     }
+
+    /**
+     * This is the notification for when a book request is accepted.
+     * @param book
+     */
     public void sendOnChannel2(Book book){
 
 
@@ -364,7 +398,7 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
+        //pendingIntent.putExtra("menuFragment", "favoritesMenuItem");
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
                 .setSmallIcon(R.drawable.ic_notification_icon)
                 .setContentTitle("Request Accepted!")

@@ -124,12 +124,18 @@
     <string name="pending_requests">Pending Requests</string>
     <string name="my_stand">My Stand</string>
     <string name="my_shelf">My Shelf</string>
+<<<<<<< HEAD
     <string name="request_btn_txt">REQUEST</string>
     <string name="cancel_request_btn_txt">CANCEL\nREQUEST</string>
     <string name="edit_btn_txt">EDIT</string>
     <string name="hand_over_btn_txt">HAND\nOVER</string>
     <string name="receive_btn_txt">RECIEVE</string>
     <string name="abort_btn_txt">ABORT\nTRANSACTION</string>
+=======
+    <string name="requests_to_borrow">Requests to Borrow</string>
+    <string name="decline">DECLINE</string>
+    <string name="accept">ACCEPT</string>
+>>>>>>> 45e67844d2c1aaec6010057dd9fecd4f5471ff65
 
 
 </resources>
