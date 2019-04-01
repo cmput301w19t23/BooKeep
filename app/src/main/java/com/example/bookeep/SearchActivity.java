@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
@@ -38,6 +39,11 @@ public class SearchActivity extends AppCompatActivity implements SearchFragment.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
+        final ActionBar actionBar = getSupportActionBar();
+
+        actionBar.setTitle("Search For Books");
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         fragment = SearchFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -83,6 +89,16 @@ public class SearchActivity extends AppCompatActivity implements SearchFragment.
             }
         });
 
+        return true;
+    }
+
+    /**
+     * This function supports back navigation.
+     * @return
+     */
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
         return true;
     }
 
