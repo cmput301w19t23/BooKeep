@@ -12,6 +12,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+
+//Ensure LoginActivityTest, AddEditBookTest, and SignUpActivityTest have been done
 @RunWith(AndroidJUnit4.class)
 public class BookDetailsActivityTest extends ActivityTestRule<LoginActivity>{
 
@@ -38,9 +40,6 @@ public class BookDetailsActivityTest extends ActivityTestRule<LoginActivity>{
     @Test
     public void testOwned() {
         solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        solo.enterText(0, "test72@gmail.com");
-        solo.enterText(1, "123456");
-        solo.clickOnButton("Sign In");
         solo.sleep(1000);
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         solo.clickOnImage(2);
@@ -54,9 +53,6 @@ public class BookDetailsActivityTest extends ActivityTestRule<LoginActivity>{
     @Test
     public void testSearched() {
         solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        solo.enterText(0, "test73@gmail.com");
-        solo.enterText(1, "123456");
-        solo.clickOnButton("Sign In");
         solo.sleep(1000);
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         solo.clickOnView(solo.getView(R.id.search_button));

@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Patterns;
 import android.view.View;
@@ -44,7 +45,7 @@ import java.util.concurrent.ExecutionException;
  * correctness, specifically the username and email will be checked for uniqueness.
  * If any given info is not correct an error will be displayed when the user attempts
  * to save their changes.
- * @author Nolan Brost
+ * @author Nolan Brost, Jkirker
  * @see User
  * @see PhoneNumber
  * @see SignUpActivity
@@ -77,6 +78,11 @@ public class EditUserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_user);
 
+        final ActionBar actionBar = getSupportActionBar();
+
+        actionBar.setTitle("Edit User Profile");
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         users = new ArrayList<>();
         emails = new ArrayList<>();
         phoneNumber = findViewById(R.id.EditPhoneNumber);
@@ -87,7 +93,6 @@ public class EditUserActivity extends AppCompatActivity {
         userPicture = findViewById(R.id.UserPhoto2);
         updateButton = findViewById(R.id.SaveProfile);
         errorTextView = findViewById(R.id.ErrorText);
-        editUserText = findViewById(R.id.EditUserInfoView);
 
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
@@ -95,9 +100,6 @@ public class EditUserActivity extends AppCompatActivity {
         currentUsername = new ArrayList<>();                            //will contain all users to check for uniqueness
         errorTextView.setVisibility(View.INVISIBLE);                    //sets error text to invisible
         errorTextView.setTextColor(Color.RED);                          //sets error texts colour to red
-        editUserText.setTextColor(Color.BLACK);
-        editUserText.setTextSize(22);
-
 
         userId = firebaseUser.getUid();
         database = FirebaseDatabase.getInstance();
@@ -182,98 +184,16 @@ public class EditUserActivity extends AppCompatActivity {
 
     }
 
-    /*@Override
-    public void onResume(){
-        super.onResume();
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        currentEmail = new ArrayList<>();                               //will contain all emails to check for uniqueness
-        currentUsername = new ArrayList<>();                            //will contain all users to check for uniqueness
-        errorTextView.setVisibility(View.INVISIBLE);                    //sets error text to invisible
-        errorTextView.setTextColor(Color.RED);                          //sets error texts colour to red
-        editUserText.setTextColor(Color.BLACK);
-        editUserText.setTextSize(22);
 
-
-        userId = firebaseUser.getUid();
-        database = FirebaseDatabase.getInstance();
-        DatabaseReference userNameRef = database.getReference("users");
-        Query query = userNameRef.orderByChild("userName");
-        database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("users").child(userId);
-
-        //This will query the data base for all users and store their usernames and email in lists to check for uniqueness
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot data : dataSnapshot.getChildren() ){
-                    if (data != null) {
-                        try {
-                            User userFromDatabase = data.getValue(User.class);
-                            users.add(userFromDatabase.getUserName());
-                            emails.add(userFromDatabase.getEmail());
-                        } catch (DatabaseException exc) {
-
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        //this will get the users info from the database to prefill editing fields and to check if username/email haven't changed
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User currentUser = dataSnapshot.getValue(User.class);
-                if (currentUser != null) {
-                    userName.setText(currentUser.getUserName());
-                    currentUsername.add(currentUser.getUserName());
-                    firstName.setText(currentUser.getFirstname());
-                    lastName.setText(currentUser.getLastname());
-                    email.setText(currentUser.getEmail());
-                    currentEmail.add(currentUser.getEmail());
-                    phoneNumber.setText(currentUser.getPhoneNumber().toString());
-                    DownloadImageTask downloadImageTask = new DownloadImageTask();
-                    try {
-
-                        Bitmap bitmap = downloadImageTask.execute(currentUser.getImageURL()).get();
-                        userPicture.setImageBitmap(bitmap);
-
-                    } catch (ExecutionException e) {
-                        userPicture.setImageResource(R.drawable.profile_pic);
-                    } catch (InterruptedException e) {
-                        userPicture.setImageResource(R.drawable.profile_pic);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        //will check if enter values are correct and updates the user if so
-        updateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (validation()){
-                    try {
-                        firebaseUser.updateEmail(email.getText().toString());           //changes log in email, but causes exceptions not yet caught.
-                        updateUser();
-                    } catch (Exception e){
-                        String error = e.toString();                                    //catches any exceptions and displays error to be fixed later
-                        displayErrorText(error);
-                    }
-                }
-            }
-        });
-    }*/
+    /**
+     * This function supports back navigation.
+     * @return
+     */
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
+    }
 
     /**
      * will push changes to user to the firebase database
@@ -320,7 +240,7 @@ public class EditUserActivity extends AppCompatActivity {
                           || currentEmail.contains(email.getText().toString()));
         }
         String phone = phoneNumber.getText().toString().replace("-","");
-        //Checks to make sure a proper phone numebr is given and sets phoneValid accordingly
+        //Checks to make sure a proper phone number is given and sets phoneValid accordingly
         if (Patterns.PHONE.matcher(phone).matches() && phone.length() == 10) {
             phoneValid = true;
         }
@@ -450,8 +370,6 @@ public class EditUserActivity extends AppCompatActivity {
             if (data != null) {
                 super.onActivityResult(requestCode,resultCode,data);
                 Uri selectedImage = data.getData();
-                //bookLink = selectedImage.toString();
-                //bookImage.setImageBitmap(setPicture(bookLink));
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),selectedImage);
                     userPicture.setImageBitmap(bitmap);
@@ -461,5 +379,4 @@ public class EditUserActivity extends AppCompatActivity {
             }
         }
     }
-
 }

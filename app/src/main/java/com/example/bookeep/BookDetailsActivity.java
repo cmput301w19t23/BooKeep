@@ -246,6 +246,10 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
 
         String uuid = item.getUserId();
         Intent intent = new Intent(BookDetailsActivity.this, UserProfileActivity.class);
+//<<<<<<< HEAD
+//=======
+        //String uuid = item.getUserId();
+//>>>>>>> baae088a0e87184069a421034f44ecca541803d0
         intent.putExtra("uuid", uuid);
         startActivity(intent);
 

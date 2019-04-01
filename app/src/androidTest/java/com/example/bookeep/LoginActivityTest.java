@@ -46,7 +46,7 @@ public class LoginActivityTest extends ActivityTestRule<LoginActivity> {
     @Test
     public void checkEmailOnly(){
         solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.edit_email), "ownerTest@mail.com");
+        solo.enterText((EditText) solo.getView(R.id.edit_email), "kyletest@gmail.com");
         solo.clickOnButton("Sign In");
     }
 
@@ -59,7 +59,7 @@ public class LoginActivityTest extends ActivityTestRule<LoginActivity> {
     @Test
     public void validLogin(){
         solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.edit_email), "ownerTest@mail.com");
+        solo.enterText((EditText) solo.getView(R.id.edit_email), "kyletest@gmail.com");
         solo.enterText((EditText) solo.getView(R.id.edit_password), "123456");
         solo.clickOnButton("Sign In");
         solo.assertCurrentActivity("Success", MainActivity.class);

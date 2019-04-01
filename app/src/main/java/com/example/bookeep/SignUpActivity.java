@@ -7,6 +7,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -51,11 +52,19 @@ public class SignUpActivity extends AppCompatActivity{
     private ArrayList<String> users;
     private ArrayList<String> emails;
 
+    /**
+     * onCreate method initializes the activity.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+        final ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Create a New Account");
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         edtUserName = (EditText) findViewById(R.id.user_name);
         edtFirstName = (EditText) findViewById(R.id.first_name);
@@ -76,7 +85,6 @@ public class SignUpActivity extends AppCompatActivity{
             }
         });
 
-
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,12 +102,7 @@ public class SignUpActivity extends AppCompatActivity{
                             edtFirstName.getText().toString(),
                             edtLastName.getText().toString(),
                             phoneNumber, bitmap);
-
-                    //Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-                    //startActivity(intent);
-
                 }
-
             }
 
         });
@@ -125,17 +128,22 @@ public class SignUpActivity extends AppCompatActivity{
                     }
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
-
-
-
-
     }
+
+    /**
+     * This function supports back navigation.
+     * @return
+     */
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
+    }
+
 
     /**
      * validates that the user entered info is valid
@@ -194,8 +202,6 @@ public class SignUpActivity extends AppCompatActivity{
             userNameValid = false;
             edtUserName.setError("Username exists already");
         }
-
-
         return (emailValid && passwordValid && phoneValid && firstNameValid && lastNameValid && userNameValid);
     }
 
@@ -210,13 +216,8 @@ public class SignUpActivity extends AppCompatActivity{
         String exchangeString = phoneString.substring(3,6);
         String extensionString = phoneString.substring(6,10);
 
-
-
         PhoneNumber phoneNumber = new PhoneNumber(areaString, exchangeString, extensionString);
         return phoneNumber;
-
-
-
     }
 
     /**
@@ -227,17 +228,13 @@ public class SignUpActivity extends AppCompatActivity{
         Intent intent = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
         startActivityForResult(intent,69);
-
     }
 
     public void onActivityResult(int requestCode,int resultCode,Intent data) {
-
         if (requestCode == 69 && resultCode == RESULT_OK) {
             if (data != null) {
                 super.onActivityResult(requestCode,resultCode,data);
                 Uri selectedImage = data.getData();
-                //bookLink = selectedImage.toString();
-                //bookImage.setImageBitmap(setPicture(bookLink));
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),selectedImage);
                     userPhoto.setImageBitmap(bitmap);
@@ -248,9 +245,11 @@ public class SignUpActivity extends AppCompatActivity{
         }
     }
 
+    /**
+     * Deletes the user's profile image.
+     * @param view
+     */
     public void onDeleteButtonClicked(View view) {
         userPhoto.setImageResource(R.drawable.profile_pic);
     }
-
-
 }

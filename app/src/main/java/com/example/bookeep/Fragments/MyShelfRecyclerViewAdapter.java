@@ -1,11 +1,7 @@
 package com.example.bookeep.Fragments;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.Image;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.bookeep.Book;
+import com.example.bookeep.DownloadImageTask;
 import com.example.bookeep.Fragments.ShelfFragment.OnListFragmentInteractionListener;
 import com.example.bookeep.R;
 
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -84,8 +79,6 @@ public class MyShelfRecyclerViewAdapter extends RecyclerView.Adapter<MyShelfRecy
             holder.mImageView.setAlpha(255);
         }
 
-
-
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,28 +125,5 @@ public class MyShelfRecyclerViewAdapter extends RecyclerView.Adapter<MyShelfRecy
         public String toString() {
             return super.toString() + " '" + mContentView.getText() + "'";
         }
-    }
-
-    /**
-     * This class downloads the images when passed a URL.
-     * TODO: Create a full class that can be called by the various methods that
-     * use this. Super redundant.
-     */
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        protected Bitmap doInBackground(String... urls) {
-
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-        protected void onPostExecute(Bitmap result) {}
     }
 }

@@ -28,14 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
+ * A fragment representing a list of Books that were requested by the user.
+ * @author jkirker
  */
 public class PendingRequestFragment extends Fragment {
-
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
 
 
@@ -70,13 +66,6 @@ public class PendingRequestFragment extends Fragment {
         public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
             Book changedBook = dataSnapshot.getValue(Book.class);
-
-//            for(Book book : BookList){
-//                if(changedBook.getBookId().equals(book.getBookId())){
-//                    changedBook.
-//                }
-//            }
-
             Boolean changed = false;
             for(Book book : BookList) {
                 if (book.getBookId().equals(changedBook.getBookId())) {
