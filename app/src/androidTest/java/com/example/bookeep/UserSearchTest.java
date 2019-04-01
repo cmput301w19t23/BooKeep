@@ -38,37 +38,20 @@ public class UserSearchTest extends ActivityTestRule<SearchUserPopupActivity>{
     }
 
     @Test
-    public void clickBook() {
-        solo.assertCurrentActivity("Wrong Activity", SearchActivity.class);
-        solo.clickOnImage(0);
-        solo.sleep(1000);
-    }
-
-    @Test
-    public void searchBook1() {
-        solo.assertCurrentActivity("Wrong Activity", SearchActivity.class);
-        solo.clickOnView(solo.getView(R.id.search_action));
-        solo.typeText(0, "Harry");
-        solo.sendKey(Solo.ENTER);
-        solo.clickOnImage(0);
-        solo.sleep(1000);
-    }
-    @Test
-    public void searchBook2() {
-        solo.assertCurrentActivity("Wrong Activity", SearchActivity.class);
-        solo.clickOnView(solo.getView(R.id.search_action));
-        solo.typeText(0, "Lord");
-        solo.sendKey(Solo.ENTER);
-        solo.clickOnImage(0);
-        solo.sleep(1000);
+    public void search() {
+        solo.assertCurrentActivity("Wrong Activity", SearchUserPopupActivity.class);
+        solo.typeText(0, "kyletest");
+        solo.clickOnView(solo.getView(R.id.SearchButton));
+        solo.sleep(5000);
+        solo.assertCurrentActivity("Wrong Activity", UserProfileActivity.class);
     }
 
     @Test
     public void searchInvalidBook() {
-        solo.assertCurrentActivity("Wrong Activity", SearchActivity.class);
-        solo.clickOnView(solo.getView(R.id.search_action));
-        solo.typeText(0, "zxyzxy");
-        solo.sendKey(Solo.ENTER);
+        solo.assertCurrentActivity("Wrong Activity", SearchUserPopupActivity.class);
+        solo.typeText(0, "zddfaf");
+        solo.clickOnView(solo.getView(R.id.SearchButton));
+        solo.assertCurrentActivity("Wrong Activity", SearchUserPopupActivity.class);
     }
 
     @After
