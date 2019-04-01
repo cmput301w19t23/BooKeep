@@ -27,7 +27,6 @@ import java.util.concurrent.ExecutionException;
 /**
  * {@link RecyclerView.Adapter} that can display a  makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
  * @author Nafee Khan, Jeff Kirker
  * @version 1.0.1
  */
@@ -43,8 +42,6 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
     private String mBookId;
     private Book mBook;
     private List<String> mRequesters;
-
-
 
     public RequestsOnBookRecyclerViewAdapter(ArrayList<User> items, String bookId, OnListFragmentInteractionListener listener, List<String> requesters) {
         mValues = items;
@@ -62,12 +59,10 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        //mItem is the requester.
         holder.mItem = mValues.get(position);
         if(holder.mItem != null) {
             String borrowerId = holder.mItem.getUserId();
-            //holder.mIdView.setText(mValues.get(position).id);
-            //holder.mContentView.setText(mValues.get(position).content);
+
             holder.txtRequesterName.setText(mValues.get(position).getFirstname() + " " + mValues.get(position).getLastname());
             holder.txtRequesterUsername.setText("@" + mValues.get(position).getUserName());
             FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -228,9 +223,6 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        //public final TextView mIdView;
-        //public final TextView mContentView;
-        //public DummyItem mItem;
         public final TextView txtRequesterName;
         public final TextView txtRequesterUsername;
         public final Button btnAcceptRequest;
@@ -244,8 +236,6 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
 
             super(view);
             mView = view;
-            //mIdView = (TextView) view.findViewById(R.id.item_number);
-            //mContentView = (TextView) view.findViewById(R.id.content);
             txtRequesterName = view.findViewById(R.id.requester_name);
             txtRequesterUsername = view.findViewById(R.id.requester_username);
             btnAcceptRequest = view.findViewById(R.id.accept_request);
@@ -274,8 +264,6 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
         if(mValues.get(position) != null ){
 
             mValues.remove(position);
-            //notifyItemRemoved(position);
-            //notifyItemRangeChanged(position, mValues.size());
             notifyDataSetChanged();
         }
     }

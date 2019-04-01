@@ -120,7 +120,5 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
             return mIcon11;
 
         }
-
-
     }
 }

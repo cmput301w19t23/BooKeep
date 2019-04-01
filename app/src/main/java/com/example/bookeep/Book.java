@@ -1,10 +1,7 @@
 package com.example.bookeep;
 
-import android.location.Location;
-
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.UUID;
 
 /**
@@ -15,7 +12,6 @@ import java.util.UUID;
  */
 public class Book implements Serializable {
 
-    //private String authors;
     private ArrayList<String> authors;
     private String title;
     private String description;
@@ -25,7 +21,6 @@ public class Book implements Serializable {
     private BookStatus status;
     private String currentBorrowerId;
     private ArrayList<String> requesterIds = new ArrayList<String>();
-    //private Bitmap bookImage;
     private String bookImageURL;
     private Boolean newRequest;
     private Boolean newAccepted;
@@ -63,10 +58,6 @@ public class Book implements Serializable {
         this.newAccepted = false;
         this.inTransaction = false;
     }
-
-    //public Bitmap getBookImage() { return bookImage; }
-
-    //public void setBookImage(Bitmap bookImage) { this.bookImage = bookImage; }
 
     /**
      * gets the requester ids

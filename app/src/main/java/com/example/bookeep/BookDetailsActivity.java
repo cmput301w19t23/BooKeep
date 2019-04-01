@@ -2,19 +2,13 @@ package com.example.bookeep;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -27,8 +21,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
-import java.io.InputStream;
 
 /**
  * Displays the books details when a book is clicked
@@ -252,37 +244,6 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
 //>>>>>>> baae088a0e87184069a421034f44ecca541803d0
         intent.putExtra("uuid", uuid);
         startActivity(intent);
-
-    }
-
-    /**
-     * goes back to book details when pressed back
-     */
-
-    /** TODO: Redundant.
-     * downloads the image task
-     */
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-
-        protected Bitmap doInBackground(String... urls) {
-
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-
-            return mIcon11;
-
-        }
-
-        protected void onPostExecute(Bitmap result) {
-        }
 
     }
 }

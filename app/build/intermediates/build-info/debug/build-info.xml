@@ -5,28 +5,23 @@
     build-mode="COLD"
     density="xxhdpi"
     format="10"
-    ir-eligibility="COMPATIBLE"
     plugin-version="3.3.2"
-    timestamp="1554154949837"
+    timestamp="1554155723634"
     token="6615144515658119942"
     verifier="COLD_SWAP_REQUESTED" >
 
     <task
         name="javac"
-        duration="408" />
+        duration="0" />
     <task
         name="instant-run-dex"
         duration="0" />
     <task
         name="instant-run-transform"
-        duration="74" />
+        duration="0" />
     <task
         name="verifier"
-        duration="104" />
-
-    <artifact
-        location="/home/nafee/AndroidStudioProjects/BooKeep/app/build/intermediates/split-apk/debug/slices/slice_1.apk"
-        type="SPLIT" />
+        duration="0" />
 
     <build
         build-mode="FULL"
@@ -79,5 +74,9 @@
             location="/home/nafee/AndroidStudioProjects/BooKeep/app/build/intermediates/split-apk/debug/slices/slice_1.apk"
             type="SPLIT" />
     </build>
+    <build
+        build-mode="COLD"
+        timestamp="1554155723634"
+        verifier="COLD_SWAP_REQUESTED" />
 
 </instant-run>
