@@ -23,6 +23,10 @@ import org.w3c.dom.Text;
 
 import java.sql.Time;
 
+/**
+ * Search for BooKeep users. Reached via the Navigation drawer
+ * @see MainActivity
+ */
 public class SearchUserPopupActivity extends Activity {
     private EditText emailText;
     private ImageButton searchButton;

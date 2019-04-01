@@ -98,13 +98,9 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".RatingPopupActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PopupWindow"></activity>
         <activity
             android:name=".SearchUserPopupActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PopupWindow"></activity>
     </application>
 
