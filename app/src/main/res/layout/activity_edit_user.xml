@@ -5,141 +5,304 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
   <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-					       xmlns:app="http://schemas.android.com/apk/res-auto"
-					       xmlns:tools="http://schemas.android.com/tools"
-					       android:layout_width="match_parent"
-					       android:layout_height="match_parent">
+       xmlns:app="http://schemas.android.com/apk/res-auto"
+       xmlns:tools="http://schemas.android.com/tools"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
 
-      <ImageView
-          android:id="@+id/UserPhoto2"
-          android:layout_width="123dp"
-          android:layout_height="126dp"
-          android:layout_marginStart="40dp"
-          android:layout_marginLeft="40dp"
-          android:layout_marginTop="44dp"
-          android:onClick="UploadImage"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/EditUserInfoView"
-          app:srcCompat="@drawable/profile_pic"
-          tools:srcCompat="@drawable/profile_pic" />
 
       <ImageView
           android:id="@+id/deleteImage"
           android:layout_width="23dp"
           android:layout_height="23dp"
-          android:background="@color/zxing_viewfinder_laser"
+          android:background="@drawable/circle_accent"
           android:onClick="onDeleteButtonPressed"
-          app:layout_constraintBottom_toTopOf="@+id/UserPhoto2"
-          app:layout_constraintStart_toStartOf="@+id/EditUserName"
+          app:layout_constraintTop_toTopOf="@id/UserPhoto2"
+          app:layout_constraintStart_toStartOf="@id/UserPhoto2"
           app:srcCompat="@android:drawable/ic_menu_delete" />
 
-    <EditText
-        android:id="@+id/EditUserName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="42dp"
-        android:layout_marginRight="42dp"
-        android:ems="10"
-        android:hint="User Name"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toBottomOf="@+id/UserPhoto2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/UserPhoto2"
-        app:layout_constraintTop_toTopOf="@+id/UserPhoto2" />
 
-    <EditText
-        android:id="@+id/EditFirstName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="42dp"
-        android:layout_marginRight="42dp"
-        android:ems="10"
-        android:hint="First Name"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/UserPhoto2"
-        app:layout_constraintTop_toBottomOf="@+id/UserPhoto2" />
+      <ImageView
+          android:id="@+id/UserPhoto2"
+          android:layout_width="138dp"
+          android:layout_height="117dp"
+          android:layout_marginStart="32dp"
+          android:layout_marginLeft="32dp"
+          android:layout_marginTop="32dp"
+          android:onClick="UploadImage"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:srcCompat="@drawable/profile_pic" />
 
-    <EditText
-        android:id="@+id/EditLastName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="42dp"
-        android:layout_marginRight="42dp"
-        android:ems="10"
-        android:hint="Last Name"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/EditFirstName"
-        app:layout_constraintTop_toBottomOf="@+id/EditFirstName" />
 
-    <EditText
-        android:id="@+id/EditEmail"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="42dp"
-        android:layout_marginRight="42dp"
-        android:ems="10"
-        android:hint="Email"
-        android:inputType="textEmailAddress"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/EditLastName"
-        app:layout_constraintTop_toBottomOf="@+id/EditLastName" />
 
-    <EditText
-        android:id="@+id/EditPhoneNumber"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="42dp"
-        android:layout_marginRight="42dp"
-        android:ems="10"
-        android:hint="PhoneNumber"
-        android:inputType="phone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/EditEmail"
-        app:layout_constraintTop_toBottomOf="@+id/EditEmail" />
+      <!--<EditText-->
+          <!--android:id="@+id/EditUserName"-->
+          <!--android:layout_width="0dp"-->
+          <!--android:layout_height="wrap_content"-->
+          <!--android:layout_marginEnd="42dp"-->
+          <!--android:layout_marginRight="42dp"-->
+          <!--android:ems="10"-->
+          <!--android:hint="User Name"-->
+          <!--android:inputType="textPersonName"-->
+          <!--app:layout_constraintBottom_toBottomOf="@+id/UserPhoto2"-->
+          <!--app:layout_constraintEnd_toEndOf="parent"-->
+          <!--app:layout_constraintStart_toEndOf="@+id/UserPhoto2"-->
+          <!--app:layout_constraintTop_toTopOf="@+id/UserPhoto2" />-->
 
-    <Button
-        android:id="@+id/SaveProfile"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="42dp"
-        android:layout_marginRight="42dp"
-        android:text="Save Profile"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/EditPhoneNumber"
-        app:layout_constraintTop_toBottomOf="@+id/ErrorText" />
+      <android.support.design.widget.TextInputLayout
+          android:id="@+id/username_layout"
+          style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="16dp"
+          android:layout_marginLeft="16dp"
+          android:layout_marginTop="16dp"
+          android:layout_marginEnd="16dp"
+          android:layout_marginRight="16dp"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/UserPhoto2">
 
-    <TextView
-        android:id="@+id/ErrorText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="TextView"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="@+id/EditPhoneNumber"
-        app:layout_constraintStart_toStartOf="@+id/EditPhoneNumber"
-        app:layout_constraintTop_toBottomOf="@+id/EditPhoneNumber" />
+          <android.support.design.widget.TextInputEditText
+              android:id="@+id/EditUserName"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:hint="Unique UserName"
+              android:maxLines="1" />
+      </android.support.design.widget.TextInputLayout>
 
-    <TextView
-        android:id="@+id/EditUserInfoView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="Edit User Information"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
+
+
+      <!--<EditText-->
+          <!--android:id="@+id/EditFirstName"-->
+          <!--android:layout_width="0dp"-->
+          <!--android:layout_height="wrap_content"-->
+          <!--android:layout_marginTop="48dp"-->
+          <!--android:layout_marginEnd="42dp"-->
+          <!--android:layout_marginRight="42dp"-->
+          <!--android:ems="10"-->
+          <!--android:hint="First Name"-->
+          <!--android:inputType="textPersonName"-->
+          <!--app:layout_constraintEnd_toEndOf="parent"-->
+          <!--app:layout_constraintStart_toStartOf="@+id/UserPhoto2"-->
+          <!--app:layout_constraintTop_toBottomOf="@+id/UserPhoto2" />-->
+
+      <!--<EditText-->
+          <!--android:id="@+id/EditLastName"-->
+          <!--android:layout_width="0dp"-->
+          <!--android:layout_height="wrap_content"-->
+          <!--android:layout_marginTop="24dp"-->
+          <!--android:layout_marginEnd="42dp"-->
+          <!--android:layout_marginRight="42dp"-->
+          <!--android:ems="10"-->
+          <!--android:hint="Last Name"-->
+          <!--android:inputType="textPersonName"-->
+          <!--app:layout_constraintEnd_toEndOf="parent"-->
+          <!--app:layout_constraintStart_toStartOf="@+id/EditFirstName"-->
+          <!--app:layout_constraintTop_toBottomOf="@+id/EditFirstName" />-->
+
+      <android.support.design.widget.TextInputLayout
+          android:id="@+id/first_layout"
+          style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+          android:layout_width="160dp"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="16dp"
+          android:layout_marginLeft="16dp"
+          android:layout_marginTop="8dp"
+          android:layout_marginRight="16dp"
+          app:layout_constraintHorizontal_chainStyle="packed"
+          app:layout_constraintRight_toLeftOf="@id/last_layout"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/username_layout">
+
+          <android.support.design.widget.TextInputEditText
+              android:id="@+id/EditFirstName"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:hint="First Name"
+              android:maxLines="1" />
+      </android.support.design.widget.TextInputLayout>
+
+      <android.support.design.widget.TextInputLayout
+          android:id="@+id/last_layout"
+          style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+          android:layout_width="160dp"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="16dp"
+          android:layout_marginTop="8dp"
+          android:layout_marginEnd="16dp"
+          android:layout_marginRight="16dp"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintHorizontal_chainStyle="packed"
+          app:layout_constraintLeft_toRightOf="@id/first_layout"
+          app:layout_constraintTop_toBottomOf="@id/username_layout">
+
+          <android.support.design.widget.TextInputEditText
+              android:id="@+id/EditLastName"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:hint="Last Name"
+              android:maxLines="1" />
+      </android.support.design.widget.TextInputLayout>
+
+
+      <!--<EditText-->
+          <!--android:id="@+id/EditEmail"-->
+          <!--android:layout_width="0dp"-->
+          <!--android:layout_height="wrap_content"-->
+          <!--android:layout_marginTop="24dp"-->
+          <!--android:layout_marginEnd="42dp"-->
+          <!--android:layout_marginRight="42dp"-->
+          <!--android:ems="10"-->
+          <!--android:hint="Email"-->
+          <!--android:inputType="textEmailAddress"-->
+          <!--app:layout_constraintEnd_toEndOf="parent"-->
+          <!--app:layout_constraintStart_toStartOf="@+id/EditLastName"-->
+          <!--app:layout_constraintTop_toBottomOf="@+id/EditLastName" />-->
+
+
+      <android.support.design.widget.TextInputLayout
+      android:id="@+id/email_layout"
+      style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="16dp"
+      android:layout_marginLeft="16dp"
+      android:layout_marginTop="8dp"
+      android:layout_marginEnd="16dp"
+      android:layout_marginRight="16dp"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/last_layout">
+
+      <android.support.design.widget.TextInputEditText
+      android:id="@+id/EditEmail"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:hint="Enter Email"
+      android:inputType="textEmailAddress"
+      android:maxLines="1" />
+      </android.support.design.widget.TextInputLayout>
+
+
+      <!--<EditText-->
+          <!--android:id="@+id/EditPhoneNumber"-->
+          <!--android:layout_width="0dp"-->
+          <!--android:layout_height="wrap_content"-->
+          <!--android:layout_marginTop="24dp"-->
+          <!--android:layout_marginEnd="42dp"-->
+          <!--android:layout_marginRight="42dp"-->
+          <!--android:ems="10"-->
+          <!--android:hint="PhoneNumber"-->
+          <!--android:inputType="phone"-->
+          <!--app:layout_constraintEnd_toEndOf="parent"-->
+          <!--app:layout_constraintStart_toStartOf="@+id/EditEmail"-->
+          <!--app:layout_constraintTop_toBottomOf="@+id/EditEmail" />-->
+
+      <android.support.design.widget.TextInputLayout
+          android:id="@+id/phone_layout"
+          style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="16dp"
+          android:layout_marginLeft="16dp"
+          android:layout_marginTop="8dp"
+          android:layout_marginEnd="16dp"
+          android:layout_marginRight="16dp"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/email_layout">
+
+          <android.support.design.widget.TextInputEditText
+              android:id="@+id/EditPhoneNumber"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:hint="Phone Number"
+              android:inputType="phone"
+              android:maxLines="1" />
+      </android.support.design.widget.TextInputLayout>
+
+      <!--<android.support.design.widget.TextInputLayout-->
+          <!--android:id="@+id/password_layout"-->
+          <!--style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
+          <!--android:layout_width="match_parent"-->
+          <!--android:layout_height="wrap_content"-->
+          <!--android:layout_marginStart="16dp"-->
+          <!--android:layout_marginLeft="16dp"-->
+          <!--android:layout_marginTop="8dp"-->
+          <!--android:layout_marginEnd="16dp"-->
+          <!--android:layout_marginRight="16dp"-->
+          <!--app:layout_constraintEnd_toEndOf="parent"-->
+          <!--app:layout_constraintStart_toStartOf="parent"-->
+          <!--app:layout_constraintTop_toBottomOf="@id/phone_layout">-->
+
+          <!--<android.support.design.widget.TextInputEditText-->
+              <!--android:id="@+id/signup_password"-->
+              <!--android:layout_width="match_parent"-->
+              <!--android:layout_height="match_parent"-->
+              <!--android:hint="Enter Password"-->
+              <!--android:inputType="textPassword"-->
+              <!--android:maxLines="1" />-->
+      <!--</android.support.design.widget.TextInputLayout>-->
+
+
+
+
+      <!--<Button-->
+          <!--android:id="@+id/create_user"-->
+          <!--style="@style/Widget.AppCompat.Button.Colored"-->
+          <!--android:layout_width="wrap_content"-->
+          <!--android:layout_height="wrap_content"-->
+          <!--android:layout_marginStart="123dp"-->
+          <!--android:layout_marginLeft="123dp"-->
+          <!--android:layout_marginTop="8dp"-->
+          <!--android:layout_marginEnd="123dp"-->
+          <!--android:layout_marginRight="123dp"-->
+          <!--android:text="Create User"-->
+          <!--app:layout_constraintEnd_toEndOf="parent"-->
+          <!--app:layout_constraintStart_toStartOf="parent"-->
+          <!--app:layout_constraintTop_toBottomOf="@+id/email_layout" />-->
+
+
+
+
+
+
+
+      <Button
+          android:id="@+id/SaveProfile"
+          style="@style/Widget.AppCompat.Button.Colored"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="64dp"
+          android:layout_marginLeft="64dp"
+          android:layout_marginTop="16dp"
+          android:layout_marginEnd="64dp"
+          android:layout_marginRight="64dp"
+          android:text="Save Profile"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintHorizontal_bias="0.0"
+          app:layout_constraintStart_toStartOf="@+id/phone_layout"
+          app:layout_constraintTop_toBottomOf="@+id/ErrorText" />
+
+      <TextView
+          android:id="@+id/ErrorText"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="16dp"
+          android:layout_marginLeft="16dp"
+          android:layout_marginTop="16dp"
+          android:layout_marginEnd="16dp"
+          android:layout_marginRight="16dp"
+          android:text="TextView"
+          android:visibility="visible"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/phone_layout" />
+
 
   </android.support.constraint.ConstraintLayout>
 </ScrollView>
