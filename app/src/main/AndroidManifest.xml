@@ -74,8 +74,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UserProfileActivity" />
+        <activity android:name=".UserProfileActivity"/>
         <activity android:name=".EditUserActivity" />
+        <activity android:name=".RatingPopupActivity"
+            android:theme="@style/AppTheme.PopupWindow"></activity>
+        <activity android:name=".SearchUserPopupActivity"
+            android:theme="@style/AppTheme.PopupWindow"></activity>
     </application>
 
 </manifest>

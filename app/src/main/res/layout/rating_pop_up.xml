@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#DCDCDC">
+
+    <TextView
+        android:id="@+id/rate_user_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="27dp"
+        android:text="How would you rate this User?"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp" />
+
+    <RatingBar
+        android:id="@+id/addRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rate_user_text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
+
+    <Button
+        android:id="@+id/rating_cancel"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/addRatingBar"
+        android:layout_alignLeft="@+id/addRatingBar"
+        android:layout_alignTop="@+id/rating_add"
+        android:layout_marginStart="-1dp"
+        android:layout_marginLeft="-1dp"
+        android:layout_marginTop="0dp"
+        android:text="Cancel" />
+
+    <Button
+        android:id="@+id/rating_add"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/addRatingBar"
+        android:layout_alignEnd="@+id/addRatingBar"
+        android:layout_alignRight="@+id/addRatingBar"
+        android:layout_marginTop="21dp"
+        android:layout_marginEnd="-1dp"
+        android:layout_marginRight="-1dp"
+        android:text="Add Rating" />
+</RelativeLayout>

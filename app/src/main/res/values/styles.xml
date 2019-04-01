@@ -28,4 +28,9 @@
         <item name="colorAccent">@color/colorPrimary</item>
     </style>
 
+
+    <style name="AppTheme.PopupWindow">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="windowActionBar">false</item>
+    </style>
 </resources>

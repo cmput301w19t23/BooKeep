@@ -214,7 +214,11 @@ public class BookDetailsFragment extends Fragment {
                             @Override
                             public void onClick(View v) {
                                 Intent intent = new Intent(getActivity(), UserProfileActivity.class);
+//<<<<<<< HEAD
                                 intent.putExtra("Current User", mUser);
+
+                                intent.putExtra("uuid", mUser.getUserId());
+//>>>>>>> 31c4089b98632e213f9dc473010bd1208985d425
                                 startActivity(intent);
                             }
                         });
