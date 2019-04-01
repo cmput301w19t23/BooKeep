@@ -1,3 +1,9 @@
+/**
+ * sets and displays images assigned to books and users
+ * @author jkirker, fujishig
+ * @version 1.0.1
+ */
+
 package com.example.bookeep;
 
 import android.content.Intent;
