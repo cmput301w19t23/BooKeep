@@ -47,7 +47,7 @@ public class SearchUserPopupActivity extends Activity {
     }
 
     public void searchUser(View view){
-        final String userEmail = emailText.getText().toString().trim();
+        final String userEmail = emailText.getText().toString().trim().toLowerCase();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("users/");
         myRef.addValueEventListener(new ValueEventListener() {
@@ -56,7 +56,8 @@ public class SearchUserPopupActivity extends Activity {
                 for (DataSnapshot userDataSnapshot: dataSnapshot.getChildren()){
                     User user = userDataSnapshot.getValue(User.class);
                     if (user != null) {
-                        if (user.getEmail().equals(userEmail) || user.getUserName().equals(userEmail)) {
+                        String email = user.getEmail().toLowerCase();
+                        if (email.equals(userEmail) || user.getUserName().equals(userEmail)) {
                             Intent intent = new Intent(SearchUserPopupActivity.this, UserProfileActivity.class);
                             intent.putExtra("uuid", user.getUserId());
                             startActivity(intent);
