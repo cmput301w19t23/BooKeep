@@ -168,11 +168,11 @@ public class UserProfileActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onPopup(View view){
+    /*public void onPopup(View view){
         Intent intent = new Intent(this, RatingPopupActivity.class);
         intent.putExtra("uuid",userId);
         intent.putExtra("lender", true);
         startActivity(intent);
-    }
+    }*/
 
 }

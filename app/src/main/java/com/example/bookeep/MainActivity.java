@@ -273,6 +273,10 @@ public class MainActivity extends AppCompatActivity
             fragmentClass = ShelfFragment.class;
         } else if(id == R.id.nav_pending){
             fragmentClass = PendingRequestFragment.class;
+        } else if(id == R.id.search_users){
+            Intent intent = new Intent(this,SearchUserPopupActivity.class);
+            startActivity(intent);
+            return true;
         }
 
         try {
