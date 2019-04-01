@@ -667,6 +667,7 @@ public class BookDetailsFragment extends Fragment {
                                     new IntentIntegrator(getActivity()).initiateScan();
                                     handOverButton.setEnabled(false);
                                     handOverButton.setTextColor(Color.parseColor("#11000000"));
+
                                     //fab.setVisibility(View.GONE);
                                     //refresh();
 
@@ -736,6 +737,9 @@ public class BookDetailsFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 
+
+
+
         if(result != null) {
 
             if(result.getContents() == null) {
@@ -751,8 +755,6 @@ public class BookDetailsFragment extends Fragment {
                 if(mBook.getISBN().equals(result.getContents())){
 
                     if(mBook.getCurrentBorrowerId().equals(currentUserId) && mBook.getStatus().equals(BookStatus.ACCEPTED)){
-
-
                         mBook.setStatus(BookStatus.BORROWED);
                         mBook.endTransaction();
                         databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
@@ -769,6 +771,7 @@ public class BookDetailsFragment extends Fragment {
                     } else if (mBook.getOwner().equals(currentUserId) && mBook.getStatus().equals(BookStatus.BORROWED)){
 
                         //end of transaction returning book
+
                         mBook.setStatus(BookStatus.AVAILABLE);
                         mBook.endTransaction();
                         databaseReference.child("users").child(mBook.getCurrentBorrowerId()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -791,7 +794,6 @@ public class BookDetailsFragment extends Fragment {
 
 
                     } else if (mBook.getCurrentBorrowerId().equals(currentUserId) && mBook.getStatus().equals(BookStatus.BORROWED)){
-
                         mBook.startTransaction();
                         databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
                         databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);

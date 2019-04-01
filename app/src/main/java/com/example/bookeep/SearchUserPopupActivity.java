@@ -18,6 +18,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 import java.sql.Time;
 
 public class SearchUserPopupActivity extends Activity {
@@ -48,7 +50,9 @@ public class SearchUserPopupActivity extends Activity {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                  User user = dataSnapshot.getValue(User.class);
                  if (user != null) {
-                     if (user.getEmail().equals(userEmail) || user.getUserName().equals(userEmail)) {
+
+                     String userEmail1 = user.getEmail().toLowerCase();
+                     if (userEmail1.equals(userEmail.toLowerCase()) || user.getUserName().equals(userEmail)) {
                         Intent intent = new Intent(SearchUserPopupActivity.this, UserProfileActivity.class);
                         intent.putExtra("uuid", user.getUserId());
                         startActivity(intent);

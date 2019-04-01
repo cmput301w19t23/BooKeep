@@ -9,6 +9,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RatingBar;
+import android.widget.TextView;
 
 import com.example.bookeep.R;
 import com.google.firebase.FirebaseApp;
@@ -32,6 +33,7 @@ public class RatingPopupActivity extends Activity {
     private String uuid;
     private boolean lender; //will be true if lender rating, false if  borrower
     private Rating userRating;
+    private TextView rateUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +51,17 @@ public class RatingPopupActivity extends Activity {
         cancel = findViewById(R.id.rating_cancel);
         addRating = findViewById(R.id.rating_add);
         Intent intent = getIntent();
+        rateUser = findViewById(R.id.rate_user_text);
 
 
 
         if (intent != null){
             uuid = intent.getStringExtra("uuid");
             lender = intent.getBooleanExtra("lender",false);
+            if (lender){
+                String text = "Rate this Lender";
+                rateUser.setText(text);
+            }
             if (uuid == null){
                 finish();
             }
@@ -72,6 +79,7 @@ public class RatingPopupActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (lender){
+
                     final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("lenderRatings/" + uuid);
                     ref.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override

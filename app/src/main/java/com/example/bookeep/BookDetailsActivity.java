@@ -153,10 +153,15 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
 
 
                     } else if (book.getOwner().equals(currentUserId) && book.getStatus().equals(BookStatus.BORROWED)){
-
+                        Intent intent = new Intent(BookDetailsActivity.this,RatingPopupActivity.class);
+                        intent.putExtra("uuid",book.getCurrentBorrowerId());
+                        intent.putExtra("lender",false);
+                        startActivity(intent);
                         //end of transaction returning book
                         book.setStatus(BookStatus.AVAILABLE);
                         book.endTransaction();
+
+
                         databaseReference.child("users").child(book.getCurrentBorrowerId()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -178,6 +183,10 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
 
 
                     } else if (book.getCurrentBorrowerId().equals(currentUserId) && book.getStatus().equals(BookStatus.BORROWED)){
+                        Intent intent = new Intent(BookDetailsActivity.this,RatingPopupActivity.class);
+                        intent.putExtra("uuid",book.getOwner());
+                        intent.putExtra("lender",true);
+                        startActivity(intent);
 
                         book.startTransaction();
                         databaseReference.child("books").child(book.getBookId()).setValue(book);
