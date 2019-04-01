@@ -16,16 +16,16 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
-public class SearchActivityTest extends ActivityTestRule<SearchActivity>{
+public class UserSearchTest extends ActivityTestRule<SearchUserPopupActivity>{
     private Solo solo;
 
-    public SearchActivityTest() {
-        super(SearchActivity.class, true, true);
+    public UserSearchTest() {
+        super(SearchUserPopupActivity.class, true, true);
     }
 
     @Rule
     public ActivityTestRule<SearchActivity> rule
-            = new ActivityTestRule(SearchActivity.class, true, true);
+            = new ActivityTestRule(SearchUserPopupActivity.class, true, true);
 
     @Before
     public void setUp() throws Exception {
