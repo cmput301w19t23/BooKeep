@@ -64,149 +64,151 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         //mItem is the requester.
         holder.mItem = mValues.get(position);
-        String borrowerId = holder.mItem.getUserId();
-        //holder.mIdView.setText(mValues.get(position).id);
-        //holder.mContentView.setText(mValues.get(position).content);
-        holder.txtRequesterName.setText(mValues.get(position).getFirstname() + " " + mValues.get(position).getLastname() );
-        holder.txtRequesterUsername.setText("@" + mValues.get(position).getUserName());
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DownloadImageTask downloadImageTask = new DownloadImageTask();
-        try {
-            Bitmap bitmap = downloadImageTask.execute(holder.mItem.getImageURL()).get();
-            holder.imVRequesterPic.setImageBitmap(bitmap);
+        if(holder.mItem != null) {
+            String borrowerId = holder.mItem.getUserId();
+            //holder.mIdView.setText(mValues.get(position).id);
+            //holder.mContentView.setText(mValues.get(position).content);
+            holder.txtRequesterName.setText(mValues.get(position).getFirstname() + " " + mValues.get(position).getLastname());
+            holder.txtRequesterUsername.setText("@" + mValues.get(position).getUserName());
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DownloadImageTask downloadImageTask = new DownloadImageTask();
+            try {
+                Bitmap bitmap = downloadImageTask.execute(holder.mItem.getImageURL()).get();
+                holder.imVRequesterPic.setImageBitmap(bitmap);
 
-        } catch (ExecutionException e) {
-            holder.imVRequesterPic.setImageResource(R.drawable.profile_pic);
-        } catch (InterruptedException e) {
-            holder.imVRequesterPic.setImageResource(R.drawable.profile_pic);
-        }
-        DatabaseReference ratingRef = database.getReference("borrowerRatings").child(holder.mItem.getUserId());
-        ratingRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Rating rating = dataSnapshot.getValue(LenderRating.class);
-                if (rating == null){
-                    rating = new LenderRating(holder.mItem.getUserId());
-                } else {
-                    rating.recalculateRating();
+            } catch (ExecutionException e) {
+                holder.imVRequesterPic.setImageResource(R.drawable.profile_pic);
+            } catch (InterruptedException e) {
+                holder.imVRequesterPic.setImageResource(R.drawable.profile_pic);
+            }
+            DatabaseReference ratingRef = database.getReference("borrowerRatings").child(holder.mItem.getUserId());
+            ratingRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Rating rating = dataSnapshot.getValue(LenderRating.class);
+                    if (rating == null) {
+                        rating = new LenderRating(holder.mItem.getUserId());
+                    } else {
+                        rating.recalculateRating();
+                    }
+                    Float overallRating = rating.getRating();
+                    int numRatings = rating.getNumRatings();
+                    holder.borrowerRatingBar.setRating(overallRating);
+                    String numReviewsString = "(" + numRatings + ")";
+                    holder.numReviews.setText(numReviewsString);
+
                 }
-                Float overallRating = rating.getRating();
-                int numRatings = rating.getNumRatings();
-                holder.borrowerRatingBar.setRating(overallRating);
-                String numReviewsString = "(" + numRatings +")";
-                holder.numReviews.setText(numReviewsString);
 
-            }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            });
 
-            }
-        });
+            holder.btnAcceptRequest.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    databaseReference.child("books").child(mBookId).addListenerForSingleValueEvent(new ValueEventListener() {
 
-        holder.btnAcceptRequest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                databaseReference.child("books").child(mBookId).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            mBook = dataSnapshot.getValue(Book.class);
+                            mBook.setNewAccepted();
+                            mBook.setCurrentBorrower(holder.mItem.getUserId());
+                            mBook.setStatus(BookStatus.ACCEPTED);
+                            mBook.clearRequesters();
+                            databaseReference.child("books").child(mBookId).setValue(mBook);
+                            databaseReference.child("user-books").child(currentUserId).child(mBookId).setValue(mBook);
+                            databaseReference.child("user-borrowed").child(holder.mItem.getUserId()).child(mBookId).setValue(mBook);
 
-                        mBook = dataSnapshot.getValue(Book.class);
-                        mBook.setNewAccepted();
-                        mBook.setCurrentBorrower(holder.mItem.getUserId());
-                        mBook.setStatus(BookStatus.ACCEPTED);
-                        mBook.clearRequesters();
-                        databaseReference.child("books").child(mBookId).setValue(mBook);
-                        databaseReference.child("user-books").child(currentUserId).child(mBookId).setValue(mBook);
-                        databaseReference.child("user-borrowed").child(holder.mItem.getUserId()).child(mBookId).setValue(mBook);
+                            for (int i = 0; i < mRequesters.size(); i++) {
+                                databaseReference.child("user-requested")
+                                        .child(mRequesters.get(i))
+                                        .child(mBook.getBookId())
+                                        .removeValue();
+                            }
 
-                        for(int i = 0; i<mRequesters.size(); i++){
+
+                            databaseReference.child("users").child(holder.mItem.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                    User confirmedRequester = dataSnapshot.getValue(User.class);
+                                    confirmedRequester.addToBorrowed(mBookId);
+                                    databaseReference.child("users").child(confirmedRequester.getUserId()).setValue(confirmedRequester);
+                                    mValues.clear();
+                                    notifyItemRangeRemoved(0, mValues.size());
+
+
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            });
+            holder.btnDeclineRequest.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    databaseReference.child("books").child(mBookId).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            mBook = dataSnapshot.getValue(Book.class);
+
+                            mBook.removeRequester(mValues.get(position).getUserId());
+                            if (mBook.getRequesterIds().size() == 0) {
+                                mBook.setStatus(BookStatus.AVAILABLE);
+                            }
                             databaseReference.child("user-requested")
-                                    .child(mRequesters.get(i))
+                                    .child(holder.mItem.getUserId())
                                     .child(mBook.getBookId())
                                     .removeValue();
-                        }
 
-
-                        databaseReference.child("users").child(holder.mItem.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                                User confirmedRequester = dataSnapshot.getValue(User.class);
-                                confirmedRequester.addToBorrowed(mBookId);
-                                databaseReference.child("users").child(confirmedRequester.getUserId()).setValue(confirmedRequester);
-                                mValues.clear();
-                                notifyItemRangeRemoved(0,mValues.size());
-
-
+                            for (int i = 0; i < mRequesters.size(); i++) {
+                                databaseReference.child("user-requested")
+                                        .child(mRequesters.get(i))
+                                        .child(mBook.getBookId())
+                                        .setValue(mBook);
                             }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                            }
-                        });
+                            databaseReference.child("books").child(mBookId).setValue(mBook);
+                            databaseReference.child("user-books").child(currentUserId).child(mBookId).setValue(mBook);
+                            removeRequester(position);
 
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-            }
-        });
-        holder.btnDeclineRequest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                databaseReference.child("books").child(mBookId).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                        mBook = dataSnapshot.getValue(Book.class);
-
-                        mBook.removeRequester(mValues.get(position).getUserId());
-                        if(mBook.getRequesterIds().size() == 0){
-                            mBook.setStatus(BookStatus.AVAILABLE);
-                        }
-                        databaseReference.child("user-requested")
-                                .child(holder.mItem.getUserId())
-                                .child(mBook.getBookId())
-                                .removeValue();
-
-                        for(int i = 0; i<mRequesters.size(); i++){
-                            databaseReference.child("user-requested")
-                                    .child(mRequesters.get(i))
-                                    .child(mBook.getBookId())
-                                    .setValue(mBook);
                         }
 
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                        databaseReference.child("books").child(mBookId).setValue(mBook);
-                        databaseReference.child("user-books").child(currentUserId).child(mBookId).setValue(mBook);
-                        removeRequester(position);
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-            }
-        });
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-
+                        }
+                    });
                 }
-            }
-        });
+            });
+            holder.mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (null != mListener) {
+                        // Notify the active callbacks interface (the activity, if the
+                        // fragment is attached to one) that an item has been selected.
+                        mListener.onListFragmentInteraction(holder.mItem);
+
+                    }
+                }
+            });
+        }
     }
 
     /**
