@@ -120,9 +120,9 @@ public class BookDetailsFragment extends Fragment {
                         mBook = changedBook;
 
 
-
-                        refresh();
-
+                        if(mBook != null) {
+                            refresh(mBook);
+                        }
 
                     }
 
@@ -857,12 +857,12 @@ public class BookDetailsFragment extends Fragment {
         mListener = null;
     }
 
-    public void refresh(){
+    public void refresh( Book book){
         //BookDetailsFragment fragment = null;
         //fragment = (BookDetailsFragment) BookDetailsFragment.newInstance(mBook);
 
         if (mListener != null) {
-            mListener.onBookUpdate(mBook);
+            mListener.onBookUpdate(book);
         }
         if (abortButton != null) {
             abortButton.setEnabled(false);
@@ -886,9 +886,11 @@ public class BookDetailsFragment extends Fragment {
             recieveButton.setEnabled(false);
             recieveButton.setTextColor(Color.parseColor("#11000000"));
         }
-        BookDetailsFragment fragment = (BookDetailsFragment) BookDetailsFragment.newInstance(mBook);
+        //if(mBook != null) {
+        BookDetailsFragment fragment = (BookDetailsFragment) BookDetailsFragment.newInstance(book);
         FragmentManager manager = getFragmentManager();
-        manager.beginTransaction().replace(R.id.book_details_fragment_container,fragment).commit();
+        manager.beginTransaction().replace(R.id.book_details_fragment_container, fragment).commit();
+        //}
         //FragmentTransaction ft = getFragmentManager().beginTransaction();
         //ft.setReorderingAllowed(false);
         //ft.setAllowOptimization(false);
