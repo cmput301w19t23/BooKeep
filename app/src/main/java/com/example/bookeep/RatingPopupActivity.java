@@ -56,10 +56,10 @@ public class RatingPopupActivity extends Activity {
             uuid = intent.getStringExtra("uuid");
             lender = intent.getBooleanExtra("lender",false);
             if (uuid == null){
-                finish();
+                return;
             }
         } else{
-             finish();
+             return;
         }
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override

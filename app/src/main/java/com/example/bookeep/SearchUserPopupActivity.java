@@ -44,20 +44,36 @@ public class SearchUserPopupActivity extends Activity {
         final String userEmail = emailText.getText().toString().trim();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("users/");
-        myRef.addChildEventListener(new ChildEventListener() {
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot userDataSnapshot: dataSnapshot.getChildren()){
+                    User user = userDataSnapshot.getValue(User.class);
+                    if (user != null) {
+                        if (user.getEmail().equals(userEmail) || user.getUserName().equals(userEmail)) {
+                            Intent intent = new Intent(SearchUserPopupActivity.this, UserProfileActivity.class);
+                            intent.putExtra("uuid", user.getUserId());
+                            startActivity(intent);
+                            finish();
+
+                        }
+
+                    }
+                }
+                String error = "Please Enter an existing email or username";
+
+                emailText.setError(error);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        /*myRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                 User user = dataSnapshot.getValue(User.class);
-                 if (user != null) {
-                     if (user.getEmail().equals(userEmail) || user.getUserName().equals(userEmail)) {
-                        Intent intent = new Intent(SearchUserPopupActivity.this, UserProfileActivity.class);
-                        intent.putExtra("uuid", user.getUserId());
-                        startActivity(intent);
-                        finish();
 
-                     }
-
-                 }
 
             }
 
@@ -80,9 +96,7 @@ public class SearchUserPopupActivity extends Activity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
-        String error = "Please Enter an existing email or username";
+        });*/
 
-        emailText.setError(error);
     }
 }
