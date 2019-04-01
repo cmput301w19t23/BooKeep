@@ -49,6 +49,9 @@ public class UserProfileActivity extends AppCompatActivity {
     private FirebaseUser firebaseUser;
     private FirebaseAuth firebaseAuth;
     private User user;
+    private DatabaseReference myRef;
+    private DatabaseReference lenderRef;
+    private DatabaseReference borrowerRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +93,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 Float overallRating = rating.getRating();
                 int numRatings = rating.getNumRatings();
                 lenderRatingBar.setRating(overallRating);
-                String numRatingString = numRatings + " Lender Reviews";
+                String numRatingString ="(" + numRatings + ")";
                 numLenderReveiewsView.setText(numRatingString);
             }
 
@@ -112,7 +115,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 Float overallRating = rating.getRating();
                 int numRatings = rating.getNumRatings();
                 borrowerRatingBar.setRating(overallRating);
-                String numRatingString = numRatings + " Borrower Reviews";
+                String numRatingString = "(" + numRatings + ")";
                 numBorrowerReviewsView.setText(numRatingString);
             }
 
