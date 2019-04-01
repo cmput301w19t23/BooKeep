@@ -11,9 +11,9 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="27dp"
-        android:text="How would you rate this User?"
+        android:text="Rate this Borrower"
         android:textColor="@color/colorPrimaryDark"
-        android:textSize="18sp" />
+        android:textSize="24sp" />
 
     <RatingBar
         android:id="@+id/addRatingBar"

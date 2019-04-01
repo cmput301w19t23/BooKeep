@@ -19,6 +19,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 import java.sql.Time;
 
 public class SearchUserPopupActivity extends Activity {
@@ -67,6 +69,7 @@ public class SearchUserPopupActivity extends Activity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+
 
             }
         });
