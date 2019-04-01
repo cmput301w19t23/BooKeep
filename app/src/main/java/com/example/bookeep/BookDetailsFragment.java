@@ -205,15 +205,16 @@ public class BookDetailsFragment extends Fragment {
                 databaseReference.child("users").child(mBook.getOwner()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        final User user = dataSnapshot.getValue(User.class);
-                        bookOwner.setText(user.getEmail());
+                        //final User user = dataSnapshot.getValue(User.class);
+                        mUser = dataSnapshot.getValue(User.class);
+                        bookOwner.setText(mUser.getEmail());
                         bookOwner.setTextColor(Color.BLUE);
                         bookOwner.setClickable(true);
                         bookOwner.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Intent intent = new Intent(getActivity(), UserProfileActivity.class);
-                                intent.putExtra("Current User", user);
+                                intent.putExtra("Current User", mUser);
                                 startActivity(intent);
                             }
                         });
