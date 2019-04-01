@@ -12,10 +12,12 @@ import java.util.ArrayList;
  * @version 1.0.1
  */
 public class BorrowerRating implements Rating, Serializable {
-    private ArrayList<Integer> reviews;
+    private ArrayList<Float> reviews;
     private float overallRating;
     private String uuid;                                    //is same as user for which the rating represents
 
+
+    public BorrowerRating(){}
     /**
      * Construct a new BorrowerRating
      * @param uuid The UUID for the BorrowerRating, converted to String
@@ -30,12 +32,14 @@ public class BorrowerRating implements Rating, Serializable {
     /**
      * Calculate the average rating across all reviews and save it
      */
-    private void recalculateRating(){
-        int total = 0;
-        for (int i = 0; i < reviews.size() ; i++) {
-            total += reviews.get(i);
+    public void recalculateRating(){
+        if (reviews != null) {
+            float total = 0;
+            for (int i = 0; i < reviews.size(); i++) {
+                total += reviews.get(i);
+            }
+            overallRating = total / reviews.size();
         }
-        overallRating = ((float) total)/ reviews.size();
 
     }
 
@@ -43,7 +47,10 @@ public class BorrowerRating implements Rating, Serializable {
      * Add a new rating to all of the reviews. Then recalculate the average rating.
      * @param rating The new rating to add.
      */
-    public void addRating(Integer rating){
+    public void addRating(float rating){
+        if (reviews == null){
+            reviews = new ArrayList<>();
+        }
         reviews.add(rating);
         this.recalculateRating();
     }
@@ -61,6 +68,11 @@ public class BorrowerRating implements Rating, Serializable {
      * @return The size of the list of reviews/ratings.
      */
     public Integer getNumRatings(){
+        if (reviews == null){
+            return 0;
+        }
         return reviews.size();
     }
+
+    public ArrayList<Float> getReviews(){return reviews;}
 }

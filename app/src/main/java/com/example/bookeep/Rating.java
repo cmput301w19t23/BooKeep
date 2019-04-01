@@ -8,7 +8,8 @@ package com.example.bookeep;
  * @version 1.0.1
  */
 public interface Rating {
-    void addRating(Integer rating);
+    void addRating(float rating);
     float getRating();
     Integer getNumRatings();
+    void recalculateRating();
 }
