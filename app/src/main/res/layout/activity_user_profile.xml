@@ -36,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="18dp"
         android:layout_marginTop="16dp"
-        android:text="TextView"
+        android:text="Username"
         app:layout_constraintStart_toStartOf="@+id/linearLayout"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
@@ -93,7 +93,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:text="TextView"
         app:layout_constraintStart_toEndOf="@+id/profile_phone_number"
         app:layout_constraintTop_toTopOf="@+id/profile_phone_number" />
 
@@ -111,7 +110,6 @@
         android:id="@+id/profile_users_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
         app:layout_constraintStart_toStartOf="@+id/profile_users_phone"
         app:layout_constraintTop_toTopOf="@+id/profile_email" />
 
@@ -174,7 +172,7 @@
             android:id="@+id/name_Profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text="User's Name"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="18sp"
             tools:layout_editor_absoluteX="176dp"
