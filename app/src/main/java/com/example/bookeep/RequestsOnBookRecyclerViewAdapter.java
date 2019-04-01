@@ -44,8 +44,6 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
     private Book mBook;
     private List<String> mRequesters;
 
-
-
     public RequestsOnBookRecyclerViewAdapter(ArrayList<User> items, String bookId, OnListFragmentInteractionListener listener, List<String> requesters) {
         mValues = items;
         mListener = listener;
@@ -62,11 +60,8 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        //mItem is the requester.
         holder.mItem = mValues.get(position);
         String borrowerId = holder.mItem.getUserId();
-        //holder.mIdView.setText(mValues.get(position).id);
-        //holder.mContentView.setText(mValues.get(position).content);
         holder.txtRequesterName.setText(mValues.get(position).getFirstname() + " " + mValues.get(position).getLastname() );
         holder.txtRequesterUsername.setText("@" + mValues.get(position).getUserName());
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -108,7 +103,6 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
             @Override
             public void onClick(View v) {
                 databaseReference.child("books").child(mBookId).addListenerForSingleValueEvent(new ValueEventListener() {
-
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -139,15 +133,11 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
                                 mValues.clear();
                                 notifyItemRangeRemoved(0,mValues.size());
 
-
                             }
-
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
-
                             }
                         });
-
                     }
 
                     @Override
@@ -181,7 +171,6 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
                                     .child(mBook.getBookId())
                                     .setValue(mBook);
                         }
-
 
                         databaseReference.child("books").child(mBookId).setValue(mBook);
                         databaseReference.child("user-books").child(currentUserId).child(mBookId).setValue(mBook);
@@ -220,9 +209,6 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        //public final TextView mIdView;
-        //public final TextView mContentView;
-        //public DummyItem mItem;
         public final TextView txtRequesterName;
         public final TextView txtRequesterUsername;
         public final Button btnAcceptRequest;
@@ -236,8 +222,6 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
 
             super(view);
             mView = view;
-            //mIdView = (TextView) view.findViewById(R.id.item_number);
-            //mContentView = (TextView) view.findViewById(R.id.content);
             txtRequesterName = view.findViewById(R.id.requester_name);
             txtRequesterUsername = view.findViewById(R.id.requester_username);
             btnAcceptRequest = view.findViewById(R.id.accept_request);
@@ -266,8 +250,6 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
         if(mValues.get(position) != null ){
 
             mValues.remove(position);
-            //notifyItemRemoved(position);
-            //notifyItemRangeChanged(position, mValues.size());
             notifyDataSetChanged();
         }
     }

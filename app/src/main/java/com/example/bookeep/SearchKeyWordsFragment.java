@@ -41,7 +41,6 @@ public class SearchKeyWordsFragment extends Fragment {
     ArrayList<Book> BookList;
     SearchRecyclerViewAdapter adapter;
 
-    // TODO: Customize parameters
     private SearchFragment.OnListFragmentInteractionListener mListener;
 
     public SearchKeyWordsFragment() {}
@@ -68,8 +67,6 @@ public class SearchKeyWordsFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
-
-
 
         databaseReference = database.getReference("books/");
         databaseReference.addChildEventListener(new ChildEventListener() {

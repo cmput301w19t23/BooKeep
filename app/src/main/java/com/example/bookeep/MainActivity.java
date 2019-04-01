@@ -1,39 +1,30 @@
 package com.example.bookeep;
 
 import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
-import android.view.MenuInflater;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-
+import android.view.View;
 import android.widget.ImageButton;
-import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.bookeep.Fragments.MyStandRecyclerViewAdapter;
 import com.example.bookeep.Fragments.PendingRequestFragment;
 import com.example.bookeep.Fragments.ShelfFragment;
 import com.example.bookeep.Fragments.StandFragment;
@@ -42,7 +33,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -63,9 +53,6 @@ public class MainActivity extends AppCompatActivity
         StandFragment.OnListFragmentInteractionListener,
         PendingRequestFragment.OnListFragmentInteractionListener,
         ShelfFragment.OnListFragmentInteractionListener{
-
-
-    private FireBaseController fireBaseController = new FireBaseController(this);
 
     private NotificationManagerCompat notificationManager;
 
@@ -228,8 +215,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-        //moveTaskToBack(true);
-
     }
 
     /**
@@ -245,8 +230,6 @@ public class MainActivity extends AppCompatActivity
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         final String userId = firebaseUser.getUid();
-        //User user = fireBaseController.getCurrentUser();
-        //userText.setText(user.getFirstName() + " " + user.getLastName());
         ImageButton updateProfile = findViewById(R.id.UserProfileButton);
         updateProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -277,7 +260,6 @@ public class MainActivity extends AppCompatActivity
         }
         return super.onOptionsItemSelected(item);
     }
-
 
 
     /**
@@ -402,7 +384,6 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-        //pendingIntent.putExtra("menuFragment", "favoritesMenuItem");
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
                 .setSmallIcon(R.drawable.ic_notification_icon)
                 .setContentTitle("Request Accepted!")

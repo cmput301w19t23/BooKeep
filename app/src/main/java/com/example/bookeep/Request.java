@@ -15,7 +15,6 @@ public class Request implements Serializable {
     private String requesterName;
     private String requesterUsername;
 
-
     public Request(){
 
     }

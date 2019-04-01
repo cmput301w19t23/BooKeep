@@ -16,7 +16,6 @@ public class BorrowerRating implements Rating, Serializable {
     private float overallRating;
     private String uuid;                                    //is same as user for which the rating represents
 
-
     public BorrowerRating(){}
     /**
      * Construct a new BorrowerRating

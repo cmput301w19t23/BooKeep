@@ -104,8 +104,7 @@
         <activity
             android:name=".SearchUserPopupActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.PopupWindow"></activity>
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

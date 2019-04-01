@@ -1,8 +1,5 @@
 package com.example.bookeep;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -87,9 +84,7 @@ class GoogleApiRequest extends AsyncTask<String, Object, JSONObject> {
     protected void onPostExecute(JSONObject responseJson) {
         if (isCancelled()) {
             // Request was cancelled due to no network connection.
-            //showNetworkDialog();
         } else if (responseJson == null) {
-            //showSimpleDialog(getResources().getString(R.string.dialog_null_response));
         } else {
             // All went well. Do something with your new JSONObject.
         }

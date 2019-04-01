@@ -98,5 +98,4 @@ public class PhoneNumber implements Serializable {
         this.extension = extension;
     }
 
-
 }
