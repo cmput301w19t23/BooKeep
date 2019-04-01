@@ -1,5 +1,6 @@
 package com.example.bookeep;
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.bookeep.RequestsOnBookFragment.OnListFragmentInteractionListener;
@@ -20,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * {@link RecyclerView.Adapter} that can display a  makes a call to the
@@ -61,11 +64,46 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         //mItem is the requester.
         holder.mItem = mValues.get(position);
-
+        String borrowerId = holder.mItem.getUserId();
         //holder.mIdView.setText(mValues.get(position).id);
         //holder.mContentView.setText(mValues.get(position).content);
         holder.txtRequesterName.setText(mValues.get(position).getFirstname() + " " + mValues.get(position).getLastname() );
         holder.txtRequesterUsername.setText("@" + mValues.get(position).getUserName());
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DownloadImageTask downloadImageTask = new DownloadImageTask();
+        try {
+            Bitmap bitmap = downloadImageTask.execute(holder.mItem.getImageURL()).get();
+            holder.imVRequesterPic.setImageBitmap(bitmap);
+
+        } catch (ExecutionException e) {
+            holder.imVRequesterPic.setImageResource(R.drawable.profile_pic);
+        } catch (InterruptedException e) {
+            holder.imVRequesterPic.setImageResource(R.drawable.profile_pic);
+        }
+        DatabaseReference ratingRef = database.getReference("borrowerRatings").child(holder.mItem.getUserId());
+        ratingRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Rating rating = dataSnapshot.getValue(LenderRating.class);
+                if (rating == null){
+                    rating = new LenderRating(holder.mItem.getUserId());
+                } else {
+                    rating.recalculateRating();
+                }
+                Float overallRating = rating.getRating();
+                int numRatings = rating.getNumRatings();
+                holder.borrowerRatingBar.setRating(overallRating);
+                String numReviewsString = "(" + numRatings +")";
+                holder.numReviews.setText(numReviewsString);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         holder.btnAcceptRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -190,6 +228,8 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
         public final Button btnAcceptRequest;
         public final Button btnDeclineRequest;
         public final ImageView imVRequesterPic;
+        public final RatingBar borrowerRatingBar;
+        public final TextView numReviews;
         public User mItem;
 
         public ViewHolder(View view) {
@@ -203,6 +243,8 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
             btnAcceptRequest = view.findViewById(R.id.accept_request);
             btnDeclineRequest = view.findViewById(R.id.decline_request);
             imVRequesterPic = view.findViewById(R.id.user_image_request);
+            borrowerRatingBar = view.findViewById(R.id.borrower_ratingbar);
+            numReviews = view.findViewById(R.id.review_count);
 
         }
 

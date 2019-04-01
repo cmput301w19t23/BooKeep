@@ -320,7 +320,7 @@ public class EditUserActivity extends AppCompatActivity {
                           || currentEmail.contains(email.getText().toString()));
         }
         String phone = phoneNumber.getText().toString().replace("-","");
-        //Checks to make sure a proper phone numebr is given and sets phoneValid accordingly
+        //Checks to make sure a proper phone number is given and sets phoneValid accordingly
         if (Patterns.PHONE.matcher(phone).matches() && phone.length() == 10) {
             phoneValid = true;
         }

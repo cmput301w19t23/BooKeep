@@ -227,7 +227,8 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
     public void onListFragmentInteraction(User item) {
 
         Intent intent = new Intent(BookDetailsActivity.this, UserProfileActivity.class);
-        intent.putExtra("User", item);
+        String uuid = item.getUserId();
+        intent.putExtra("uuid", uuid);
         startActivity(intent);
 
     }
