@@ -8,8 +8,8 @@ import android.util.Log;
 import java.io.InputStream;
 
 /**
- * Used to download images for ImageViews
- * @author Jeff Kirker
+ * Downloads an image from a url and displays it as the book image
+ * taken from https://stackoverflow.com/questions/6407324/how-to-display-image-from-url-on-android
  */
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     /**

@@ -6,12 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -47,7 +45,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -63,7 +60,6 @@ import java.util.concurrent.ExecutionException;
  * @version 1.0.1
  * */
 public class AddEditBookActivity extends AppCompatActivity {
-
 
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -84,7 +80,6 @@ public class AddEditBookActivity extends AppCompatActivity {
     private Button scanBook;
     private Button saveBook;
     private JSONObject jsonObject;
-    private Boolean newRequestBool;
 
     //private String bookLink;
 
@@ -94,9 +89,6 @@ public class AddEditBookActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        //super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_book_details);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_book);
 
@@ -186,18 +178,12 @@ public class AddEditBookActivity extends AppCompatActivity {
 
             @Override
             public void onFocusChange(View v,boolean hasFocus) {
-
                 if (!hasFocus) {
-
                     if (isbn.getText().toString().trim().length() == 13 ||
                             isbn.getText().toString().trim().length() == 10) {
-
                         setTextBoxes(isbn.getText().toString());
-
                     }
-
                 }
-
             }
 
         });
@@ -237,9 +223,8 @@ public class AddEditBookActivity extends AppCompatActivity {
             isbn.setError("Invalid isbn!");
             pass = Boolean.FALSE;
         }
-
-        if (pass) {//if all fields are entered properly the book is added to firebase
-
+        //if all fields are entered properly the book is added to firebase
+        if (pass) {
             //Get the user object
             currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
             if (book == null) {
@@ -261,18 +246,11 @@ public class AddEditBookActivity extends AppCompatActivity {
                 } else {
                     book.setBookImageURL(imageURL);
                 }
-                //book.setBookImage(drawable.getBitmap());
                 book.setStatus(BookStatus.AVAILABLE);
                 book.setISBN(isbn.getText().toString());
 
                 // Add book to "user-books" sorted by userID
                 databaseReference.child("user-books").child(currentUserID).child(book.getBookId()).setValue(book);
-
-
-
-
-
-
                 databaseReference.child("users").child(currentUserID).addListenerForSingleValueEvent(new ValueEventListener() {
 
                     @Override
@@ -312,7 +290,6 @@ public class AddEditBookActivity extends AppCompatActivity {
                     book.setBookImageURL(imageURL);
                 }
                 book.setDescription(bookDescription.getText().toString().trim());
-                //book.setBookImage(drawable.getBitmap());
                 book.setBookImageURL(book.getBookImageURL());
 
                 //Replace all requested instances of the book with the edited version.
@@ -339,7 +316,6 @@ public class AddEditBookActivity extends AppCompatActivity {
      */
     public void ImageUpload(View view) {
         Intent intent = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
         startActivityForResult(intent,69);
 
     }
@@ -366,7 +342,7 @@ public class AddEditBookActivity extends AppCompatActivity {
                     // Permission was granted.
                     new IntentIntegrator(AddEditBookActivity.this).initiateScan();
                 } else {
-                    // permission denied. Go back?
+                    // permission denied. Go back.
                 }
                 return;
             }
@@ -386,25 +362,17 @@ public class AddEditBookActivity extends AppCompatActivity {
 
             try {
                 jsonObject = (JSONObject) googleApiRequest.execute(ISBN).get();
-                //txtView.setText(obj.toString());
-
                 JSONArray jsonArray = (JSONArray) jsonObject.getJSONArray("items");
                 JSONObject item1 = jsonArray.getJSONObject(0);
                 JSONObject volumeInfo = item1.getJSONObject("volumeInfo");
-
-                //if (bookTitle.getText().toString().trim().isEmpty()) {
                 String title = volumeInfo.getString("title");
                 bookTitle.setText(title);
                 bookTitle.setError(null);
-                //}
 
-                //if (bookAuthors.getText().toString().trim().isEmpty()) {
                 String authors = volumeInfo.getJSONArray("authors").getString(0);
                 bookAuthors.setText(authors);
                 bookAuthors.setError(null);
-                //}
 
-                //String isbn = volumeInfo.getString()
                 JSONArray industryIdentifiers = (JSONArray) volumeInfo.getJSONArray("industryIdentifiers");
 
                 JSONObject isbn0 = industryIdentifiers.getJSONObject(0);
@@ -420,24 +388,16 @@ public class AddEditBookActivity extends AppCompatActivity {
                     isbn.setText(isbn1String);
                     isbn.setError(null);
                 }
-                //if (bookDescription.getText().toString().trim().isEmpty()) {
                 String description = volumeInfo.getString("description");
                 bookDescription.setText(description);
-                //}
 
                 JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
-                //bookLink = imageLinks.getString("thumbnail");
-                //bookImage.setImageBitmap(setPicture(bookLink));
                 imageURL = imageLinks.getString("thumbnail");
 
-                //Drawable bookImage = (Drawable) loadImageFromWebOperations(imageURL);
                 DownloadImageTask downloadImageTask = new DownloadImageTask();
                 Bitmap bookImageBitMap = downloadImageTask.execute(imageURL).get();
                 bookImage.setImageBitmap(bookImageBitMap);
 
-
-
-                //txtView.setText(author);
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
@@ -465,8 +425,7 @@ public class AddEditBookActivity extends AppCompatActivity {
             if (data != null) {
                 super.onActivityResult(requestCode,resultCode,data);
                 Uri selectedImage = data.getData();
-                //bookLink = selectedImage.toString();
-                //bookImage.setImageBitmap(setPicture(bookLink));
+
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),selectedImage);
                     bookImage.setImageBitmap(bitmap);
@@ -484,7 +443,7 @@ public class AddEditBookActivity extends AppCompatActivity {
                 } else {
                     Log.d("MainActivity","Scanned");
                     Toast.makeText(this,"Scanned: " + result.getContents(),Toast.LENGTH_LONG).show();
-                    //txtView = findViewById(R.id.text1);
+
                     if (isNetworkAvailable()) {
                         if (result.getContents().length() == 10 || result.getContents().length() == 13)
                             setTextBoxes(result.getContents());
@@ -510,36 +469,6 @@ public class AddEditBookActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 
     }
-
-
-    /**
-     * Downloads an image from a url and displays it as the book image
-     * taken from https://stackoverflow.com/questions/6407324/how-to-display-image-from-url-on-android
-     */
-    /*private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        protected Bitmap doInBackground(String... urls) {
-
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error",e.getMessage());
-                e.printStackTrace();
-            }
-
-            return mIcon11;
-
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            //bmImage.setImageBitmap(result);
-        }
-
-
-    }*/
 
     // resources used for this method:
     // https://firebase.google.com/docs/storage/android/upload-files#get_a_download_url
@@ -575,7 +504,6 @@ public class AddEditBookActivity extends AppCompatActivity {
                 if (!task.isSuccessful()) {
                     throw task.getException();
                 }
-
                 // Continue with the task to get the download URL
                 return imageRef.getDownloadUrl();
 

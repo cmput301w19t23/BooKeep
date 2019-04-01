@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,8 +33,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
-import static android.app.Activity.RESULT_OK;
-
 /**
  * A fragment representing a list of Items.
  *
@@ -43,12 +40,7 @@ import static android.app.Activity.RESULT_OK;
  */
 public class StandFragment extends Fragment {
 
-
-
-    private NotificationManagerCompat notificationManager;
-
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
@@ -180,19 +172,29 @@ public class StandFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * OnCreate method for the fragment.
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
+    /**
+     * OnCreateView method is similar to onCreate but occurs each time the view
+     * is refreshed.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         ((MainActivity) getActivity()).setToolBar("My Owned Books");
-
-
 
         currentUserID = firebaseUser.getUid();
         BookList = new ArrayList<>();
@@ -216,9 +218,6 @@ public class StandFragment extends Fragment {
 
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), AddEditBookActivity.class);
-                /** TODO: Get rid of entire startActivityForResult chain
-                 *
-                 */
                 startActivity(intent);
             }
 
@@ -285,13 +284,6 @@ public class StandFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 23) {
-            if (resultCode == RESULT_OK) {
-                /**TODO: Get rid of the entire startActivityForResult chain
-                 *
-                 */
-            }
-        }
     }
 
     /**
@@ -310,7 +302,7 @@ public class StandFragment extends Fragment {
     }
 
     /**
-     *
+     *  Detaches fragment from the parent activity.
      */
     @Override
     public void onDetach() {
@@ -338,32 +330,23 @@ public class StandFragment extends Fragment {
     public void setFilter(int type){
         BookList.clear();
 
-        Log.d("listsize1:", Integer.toString(BookList.size()));
-        Log.d("filterType:", Integer.toString(type));
         switch(type) {
             case 0:
-                Log.d("fullsize:", Integer.toString(fullBookList.size()));
                 BookList.addAll(fullBookList);
                 break;
             case 1:
-                Log.d("availsize:", Integer.toString(availableList.size()));
                 BookList.addAll(availableList);
                 break;
             case 2:
-                Log.d("acceptedsize:", Integer.toString(acceptedList.size()));
                 BookList.addAll(acceptedList);
                 break;
             case 3:
-
-                Log.d("reqsize:", Integer.toString(requestedList.size()));
                 BookList.addAll(requestedList);
                 break;
             case 4:
-                Log.d("borrowedsize:", Integer.toString(borrowedList.size()));
                 BookList.addAll(borrowedList);
                 break;
         }
-        Log.d("listsize2:", Integer.toString(BookList.size()));
         adapter.notifyDataSetChanged();
     }
 }

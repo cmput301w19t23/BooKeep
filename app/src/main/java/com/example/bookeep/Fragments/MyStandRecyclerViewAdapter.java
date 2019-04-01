@@ -2,13 +2,8 @@ package com.example.bookeep.Fragments;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,6 +16,7 @@ import android.widget.TextView;
 
 import com.example.bookeep.AddEditBookActivity;
 import com.example.bookeep.Book;
+import com.example.bookeep.DownloadImageTask;
 import com.example.bookeep.Fragments.StandFragment.OnListFragmentInteractionListener;
 import com.example.bookeep.R;
 import com.example.bookeep.User;
@@ -34,7 +30,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -266,29 +261,5 @@ public class MyStandRecyclerViewAdapter extends RecyclerView.Adapter<MyStandRecy
                 public void onCancelled(@NonNull DatabaseError databaseError) {}
             });
         }
-    }
-
-
-    /**
-     * This class downloads the images when passed a URL.
-     * TODO: Create a full class that can be called by the various methods that
-     * use this. Super redundant.
-     */
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        protected Bitmap doInBackground(String... urls) {
-
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-        protected void onPostExecute(Bitmap result) {}
     }
 }

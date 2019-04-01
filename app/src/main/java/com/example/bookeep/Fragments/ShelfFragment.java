@@ -32,8 +32,6 @@ import java.util.ArrayList;
  *
  */
 public class ShelfFragment extends Fragment {
-
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
 
     //Firebase references
@@ -133,7 +131,6 @@ public class ShelfFragment extends Fragment {
         recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
 
         databaseReference.child("user-borrowed").child(currentUserID).addChildEventListener(updateListener);
-
 
         return view;
     }
