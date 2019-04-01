@@ -95,6 +95,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 lenderRatingBar.setRating(overallRating);
                 String numRatingString ="(" + numRatings + ")";
                 numLenderReveiewsView.setText(numRatingString);
+
             }
 
             @Override
@@ -131,7 +132,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 String userFirstname = user.getFirstname();
                 String userLastname = user.getLastname();
 
-                String username = user.getUserName();
+                String username = "@" + user.getUserName();
                 PhoneNumber userPhoneNumber = user.getPhoneNumber();
                 String userEmail = user.getEmail();
                 if (userFirstname != null && userLastname != null) {
