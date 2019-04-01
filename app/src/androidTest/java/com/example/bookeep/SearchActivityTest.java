@@ -50,6 +50,7 @@ public class SearchActivityTest extends ActivityTestRule<SearchActivity>{
         solo.assertCurrentActivity("Wrong Activity", SearchActivity.class);
         solo.clickOnView(solo.getView(R.id.search_action));
         solo.typeText(0, "Harry");
+        solo.sendKey(Solo.ENTER);
         solo.clickOnImage(0);
         solo.sleep(1000);
         solo.assertCurrentActivity("Wrong Activity", BookDetailsActivity.class);

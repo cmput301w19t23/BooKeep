@@ -13,9 +13,9 @@
             android:id="@+id/imageLayout"
             android:layout_width="147dp"
             android:layout_height="150dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="30dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -34,15 +34,10 @@
             android:id="@+id/deleteImage"
             android:layout_width="23dp"
             android:layout_height="23dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             android:background="@color/zxing_viewfinder_laser"
             android:onClick="onDeleteButtonClicked"
-            app:layout_constraintEnd_toStartOf="@+id/editBookTitle"
+            app:layout_constraintBottom_toTopOf="@+id/imageLayout"
             app:layout_constraintStart_toEndOf="@+id/imageLayout"
-            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@android:drawable/ic_menu_delete" />
 
 
@@ -50,22 +45,22 @@
             android:id="@+id/editBookTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="30dp"
             android:layout_marginEnd="6dp"
             android:layout_marginRight="6dp"
             android:ems="10"
             android:hint="@string/book_title"
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/deleteImage"
+            app:layout_constraintStart_toEndOf="@+id/imageLayout"
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
             android:id="@+id/editBookAuthor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="6dp"
             android:layout_marginRight="6dp"
@@ -73,15 +68,13 @@
             android:hint="@string/book_authors"
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/deleteImage"
+            app:layout_constraintStart_toStartOf="@+id/editBookTitle"
             app:layout_constraintTop_toBottomOf="@+id/editBookTitle" />
 
         <EditText
             android:id="@+id/editISBN"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="6dp"
             android:layout_marginRight="6dp"
@@ -89,7 +82,7 @@
             android:hint="@string/isbn"
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/deleteImage"
+            app:layout_constraintStart_toStartOf="@+id/editBookTitle"
             app:layout_constraintTop_toBottomOf="@+id/editBookAuthor" />
 
         <EditText
