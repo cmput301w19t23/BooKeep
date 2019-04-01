@@ -68,7 +68,7 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
         holder.txtRequesterName.setText(mValues.get(position).getFirstname() + " " + mValues.get(position).getLastname() );
         holder.txtRequesterUsername.setText("@" + mValues.get(position).getUserName());
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ratingRef = database.getReference("lenderRatings").child(holder.mItem.getUserId());
+        DatabaseReference ratingRef = database.getReference("borrowerRatings").child(holder.mItem.getUserId());
         ratingRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
