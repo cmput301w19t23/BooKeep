@@ -57,7 +57,6 @@ public class RequestsOnBookFragment extends Fragment {
             Book changedBook = dataSnapshot.getValue(Book.class);
             if (changedBook.getBookId().equals(mBook.getBookId())){
                 if(isResumed) {
-
                     mBook = changedBook;
 
                     if (mListener != null) {
@@ -89,8 +88,6 @@ public class RequestsOnBookFragment extends Fragment {
                     }
 
                 }
-
-
             }
         }
 
@@ -138,7 +135,6 @@ public class RequestsOnBookFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            //mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             mBook = (Book) getArguments().getSerializable(ARG_PARAM_REQ);
         }
     }
@@ -149,26 +145,15 @@ public class RequestsOnBookFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_requests_on_book, container, false);
 
         // Set the adapter
-        //if (view instanceof RecyclerView) {
         Context context = view.getContext();
-        //isResumed = true;
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.requests_recycler_view);
-        /*
-        if (mColumnCount <= 1) {
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        } else {
-            recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-        }*/
-        //requests = new ArrayList<Request>();
+
         bookId = mBook.getBookId();
         adapter = new RequestsOnBookRecyclerViewAdapter(requesters, bookId, mListener, mBook.getRequesterIds());
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(context, 1));
-            //recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            //recyclerView.setAdapter(new RequestsOnBookRecyclerViewAdapter(requesters, mListener));
 
-            //context = view.getContext();
         databaseReference.child("books").child(bookId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -195,27 +180,16 @@ public class RequestsOnBookFragment extends Fragment {
                         }
 
                     });
-
                 }
-
                 databaseReference.child("books").addChildEventListener(updateListener);
-
             }
-
-
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
 
         });
-
-        //isResumed = true;
-
-        //}
         return view;
-
     }
 
 
@@ -232,14 +206,11 @@ public class RequestsOnBookFragment extends Fragment {
 
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
-
         }
-
     }
 
     @Override
     public void onDetach() {
-
         super.onDetach();
         mListener = null;
 
@@ -247,7 +218,6 @@ public class RequestsOnBookFragment extends Fragment {
 
     @Override
     public void onPause() {
-
         databaseReference.removeEventListener(updateListener);
         isResumed = false;
         super.onPause();
@@ -256,7 +226,6 @@ public class RequestsOnBookFragment extends Fragment {
 
     @Override
     public void onResume() {
-
         isResumed = true;
         super.onResume();
 

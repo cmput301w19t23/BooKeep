@@ -6,10 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,9 +16,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +36,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.io.InputStream;
 import java.util.concurrent.ExecutionException;
 
 import static com.example.bookeep.AddEditBookActivity.MY_PERMISSIONS_REQUEST_CAMERA;
@@ -99,17 +94,13 @@ public class BookDetailsFragment extends Fragment {
     Button abortButton;
     Button handOverButton;
     Button recieveButton;
-    //FloatingActionButton geoFAB;
 
     private ChildEventListener updateListener = new ChildEventListener() {
         @Override
-        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-        }
+        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
 
         @Override
         public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             Book changedBook = dataSnapshot.getValue(Book.class);
             if (changedBook.getBookId().equals(mBook.getBookId())) {
 
@@ -132,19 +123,13 @@ public class BookDetailsFragment extends Fragment {
         }
 
         @Override
-        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-        }
+        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {}
 
         @Override
-        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-        }
+        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
 
         @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-        }
+        public void onCancelled(@NonNull DatabaseError databaseError) {}
     };
 
     public BookDetailsFragment() {
@@ -158,7 +143,6 @@ public class BookDetailsFragment extends Fragment {
      * @param book Parameter 1.
      * @return A new instance of fragment BookDetailsFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static BookDetailsFragment newInstance(Book book) {
         BookDetailsFragment fragment = new BookDetailsFragment();
         Bundle args = new Bundle();
@@ -170,8 +154,6 @@ public class BookDetailsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         if (getArguments() != null) {
             mBook = (Book) getArguments().getSerializable(ARG_PARAM1);
         }
@@ -190,8 +172,8 @@ public class BookDetailsFragment extends Fragment {
         bookDescription = view.findViewById(R.id.book_description);
         bookOwner = view.findViewById(R.id.book_owner);
         bookCover = view.findViewById(R.id.book_cover);
-        //isResumed = true;
         currentUserId = firebaseUser.getUid();
+
         databaseReference.child("books").child(mBook.getBookId()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -208,7 +190,6 @@ public class BookDetailsFragment extends Fragment {
                     databaseReference.child("users").child(mBook.getOwner()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            //final User user = dataSnapshot.getValue(User.class);
                             mUser = dataSnapshot.getValue(User.class);
                             bookOwner.setText(mUser.getEmail());
                             bookOwner.setTextColor(Color.BLUE);
@@ -217,11 +198,8 @@ public class BookDetailsFragment extends Fragment {
                                 @Override
                                 public void onClick(View v) {
                                     Intent intent = new Intent(getActivity(), UserProfileActivity.class);
-//<<<<<<< HEAD
-                                    //intent.putExtra("Current User", mUser);
 
                                     intent.putExtra("uuid", mUser.getUserId());
-//>>>>>>> 31c4089b98632e213f9dc473010bd1208985d425
                                     startActivity(intent);
                                 }
                             });
@@ -256,7 +234,6 @@ public class BookDetailsFragment extends Fragment {
                             }
 
                         }
-
                     }
 
                     if (mBook.getStatus().equals(BookStatus.ACCEPTED)) {
@@ -283,20 +260,13 @@ public class BookDetailsFragment extends Fragment {
                     if (mBook.getOwner().equals(currentUserId)) {
                         isOwned = true;
                     }
-//"#344955" primary
-                    //"#ff0000" red
-                    // "#F9AA33" yellow
-                    // //gray equals #11000000
-                    //"#008000" green
                     if (isOwned) {
                         //you are the owner
                         instantiateOwnerButtonBar(view);
                         final FloatingActionButton geoFAB = (FloatingActionButton) view.findViewById(R.id.fab);
 
                         if (mBook.getStatus().equals(BookStatus.AVAILABLE) || mBook.getStatus().equals(BookStatus.REQUESTED)) {
-                            //Button button = (Button) view.findViewById(R.id.user_specific_button);
-                            //fab.setImageResource(R.drawable.pencil);
-                            //button.setText("EDIT BOOK");
+
                             //owner + accepted or requested
                             editButton.setTextColor(Color.parseColor("#344955"));//primary color
                             editButton.setEnabled(true);
@@ -332,7 +302,6 @@ public class BookDetailsFragment extends Fragment {
                                         new IntentIntegrator(getActivity()).initiateScan();
                                         handOverButton.setEnabled(false);
                                         handOverButton.setTextColor(Color.parseColor("#11000000"));
-                                        //fab.setVisibility(View.GONE);
 
                                     } else {
 
@@ -460,7 +429,6 @@ public class BookDetailsFragment extends Fragment {
                                         new IntentIntegrator(getActivity()).initiateScan();
                                         recieveButton.setEnabled(false);
                                         recieveButton.setTextColor(Color.parseColor("#11000000"));
-                                        //refresh();//**
 
                                     } else {
 
@@ -470,14 +438,10 @@ public class BookDetailsFragment extends Fragment {
                                                 new String[]{Manifest.permission.CAMERA},
                                                 MY_PERMISSIONS_REQUEST_CAMERA);
                                     }
-                                    //fab.setEnabled(false);
-                                    //fab.setVisibility(View.GONE);
                                 }
                             });
 
                         } else if (mBook.getStatus().equals(BookStatus.BORROWED) && !mBook.isInTransaction()) {
-                            //final FloatingActionButton geoFAB = (FloatingActionButton) view.findViewById(R.id.fab);
-
 
                             geoFAB.setEnabled(true);
 
@@ -494,9 +458,7 @@ public class BookDetailsFragment extends Fragment {
                     } else if (isRequested) {
                         //you are the requester
                         instantiateRequesterButtonBar(view);
-                        //cancelRequestButton = (Button) view.findViewById(R.id.edit_req_btn);
-                        //cancelRequestButton.setEnabled(true);
-                        //cancelRequestButton.setTextColor(Color.parseColor("11000000"))
+
                         final FloatingActionButton geoFAB = (FloatingActionButton) view.findViewById(R.id.fab);
                         cancelRequestButton.setEnabled(true);
                         geoFAB.setEnabled(false);
@@ -525,16 +487,9 @@ public class BookDetailsFragment extends Fragment {
 
                                 }
 
-                                //databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
                                 databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);
-                                //removeRequester(position);
                                 databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
 
-                                //cancelRequestButton.setEnabled(false);
-                                //cancelRequestButton.setTextColor(Color.parseColor("#11000000"));
-                                //cancelRequestButton.setTextColor(Color.parseColor("#11000000"));
-                                //databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
-                                //refresh();
                             }
 
                         });
@@ -616,12 +571,8 @@ public class BookDetailsFragment extends Fragment {
                                             == PackageManager.PERMISSION_GRANTED) {
                                         // Permission has already been granted
                                         new IntentIntegrator(getActivity()).initiateScan();
-                                        //fab.setEnabled(false);
-                                        //fab.setVisibility(View.GONE);
                                         recieveButton.setEnabled(false);
-                                        //abortButton.setEnabled(false);
                                         recieveButton.setTextColor(Color.parseColor("#11000000"));
-                                        //refresh();
 
                                     } else {
 
@@ -639,9 +590,6 @@ public class BookDetailsFragment extends Fragment {
                         //you are the borrower
                         instantiateRequesterButtonBar(view);
                         final FloatingActionButton geoFAB = (FloatingActionButton) view.findViewById(R.id.fab);
-
-                        //geoFAB.setEnabled(false);
-                        //geoFAB.setImageResource(R.drawable.baseline_place_black_36dp);
 
                         geoFAB.setImageResource(R.drawable.baseline_add_location_black_36dp);
                         geoFAB.setEnabled(true);
@@ -711,11 +659,6 @@ public class BookDetailsFragment extends Fragment {
                                     databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
                                     databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);
                                     databaseReference.child("user-requested").child(currentUserId).child(mBook.getBookId()).setValue(mBook);
-                                    //requestButton.setEnabled(false);
-                                    //requestButton.setTextColor(Color.parseColor("#11000000"));
-                                    //fab.setVisibility(View.GONE);
-
-
                                 }
                             });
 
@@ -724,13 +667,9 @@ public class BookDetailsFragment extends Fragment {
 
                     }
                 }
-
             }
-
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
         });
 
         databaseReference.child("books").addChildEventListener(updateListener);
@@ -740,24 +679,13 @@ public class BookDetailsFragment extends Fragment {
 
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-
-
-
-
         if(result != null) {
-
             if(result.getContents() == null) {
-
-                //Log.d("MainActivity", "Cancelled scan");
                 Toast.makeText(getContext(), "Cancelled", Toast.LENGTH_LONG).show();
-
             } else {
-
-                //Log.d("MainActivity", "Scanned");
                 Toast.makeText(getContext(), "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
 
                 if(mBook.getISBN().equals(result.getContents())){
-
                     if(mBook.getCurrentBorrowerId().equals(currentUserId) && mBook.getStatus().equals(BookStatus.ACCEPTED)){
                         mBook.setStatus(BookStatus.BORROWED);
                         mBook.endTransaction();
@@ -775,7 +703,6 @@ public class BookDetailsFragment extends Fragment {
                     } else if (mBook.getOwner().equals(currentUserId) && mBook.getStatus().equals(BookStatus.BORROWED)){
 
                         //end of transaction returning book
-
                         mBook.setStatus(BookStatus.AVAILABLE);
                         mBook.endTransaction();
                         databaseReference.child("users").child(mBook.getCurrentBorrowerId()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -802,11 +729,8 @@ public class BookDetailsFragment extends Fragment {
                         databaseReference.child("books").child(mBook.getBookId()).setValue(mBook);
                         databaseReference.child("user-books").child(mBook.getOwner()).child(mBook.getBookId()).setValue(mBook);
                         databaseReference.child("user-borrowed").child(mBook.getCurrentBorrowerId()).child(mBook.getBookId()).setValue(mBook);
-
                     }
-
                 }
-
             }
         } else {
             // This is important, otherwise the result will not be passed to the fragment
@@ -817,7 +741,6 @@ public class BookDetailsFragment extends Fragment {
 
 
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -837,18 +760,13 @@ public class BookDetailsFragment extends Fragment {
 
     @Override
     public void onPause() {
-
-        //super.onPause();
         databaseReference.removeEventListener(updateListener);
         isResumed = false;
         super.onPause();
-
     }
 
     @Override
     public void onResume() {
-
-        //super.onResume();
         isResumed = true;
         super.onResume();
 
@@ -862,9 +780,6 @@ public class BookDetailsFragment extends Fragment {
     }
 
     public void refresh( Book book){
-        //BookDetailsFragment fragment = null;
-        //fragment = (BookDetailsFragment) BookDetailsFragment.newInstance(mBook);
-
         if (mListener != null) {
             mListener.onBookUpdate(book);
         }
@@ -876,8 +791,6 @@ public class BookDetailsFragment extends Fragment {
             cancelRequestButton.setEnabled(false);
             cancelRequestButton.setTextColor(Color.parseColor("#11000000"));
         }
-        //abortButton.setTextColor(Color.parseColor("#11000000"));
-        //cancelRequestButton.setTextColor(Color.parseColor("#11000000"));
         if(requestButton != null){
             requestButton.setEnabled(false);
             requestButton.setTextColor(Color.parseColor("#11000000"));
@@ -894,12 +807,7 @@ public class BookDetailsFragment extends Fragment {
         BookDetailsFragment fragment = (BookDetailsFragment) BookDetailsFragment.newInstance(book);
         FragmentManager manager = getFragmentManager();
         manager.beginTransaction().replace(R.id.book_details_fragment_container, fragment).commit();
-        //}
-        //FragmentTransaction ft = getFragmentManager().beginTransaction();
-        //ft.setReorderingAllowed(false);
-        //ft.setAllowOptimization(false);
-        //ft.detach(BookDetailsFragment.this).attach(fragment).commit();
-        //ft.detach(fragment).attach(fragment).commitAllowingStateLoss();
+
     }
 
     public void instantiateOwnerButtonBar(View view){
@@ -907,13 +815,11 @@ public class BookDetailsFragment extends Fragment {
         handOverButton = (Button) view.findViewById(R.id.hand_over_btn);
         recieveButton = (Button) view.findViewById(R.id.recieve_btn);
         abortButton = (Button) view.findViewById(R.id.abort_btn);
-        //geoFAB = (FloatingActionButton) view.findViewById(R.id.fab);
 
         editButton.setEnabled(false);
         handOverButton.setEnabled(false);
         recieveButton.setEnabled(false);
         abortButton.setEnabled(false);
-        //geoFAB.setEnabled(false);
 
         editButton.setText(getResources().getString(R.string.edit_btn_txt));
         handOverButton.setText(getResources().getString(R.string.hand_over_btn_txt));
@@ -954,13 +860,11 @@ public class BookDetailsFragment extends Fragment {
         handOverButton = (Button) view.findViewById(R.id.hand_over_btn);
         recieveButton = (Button) view.findViewById(R.id.recieve_btn);
         abortButton = (Button) view.findViewById(R.id.abort_btn);
-        //final FloatingActionButton geoFAB = (FloatingActionButton) view.findViewById(R.id.fab);
 
         cancelRequestButton.setEnabled(false);
         handOverButton.setEnabled(false);
         recieveButton.setEnabled(false);
         abortButton.setEnabled(false);
-        //geoFAB.setEnabled(false);
 
         cancelRequestButton.setText(getResources().getString(R.string.cancel_request_btn_txt));
         handOverButton.setText(getResources().getString(R.string.hand_over_btn_txt));
@@ -985,38 +889,9 @@ public class BookDetailsFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
 
         public void onBookUpdate(Book book);
     }
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        protected Bitmap doInBackground(String... urls) {
-
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-
-            return mIcon11;
-
-        }
-
-        protected void onPostExecute(Bitmap result) {
-
-            //bmImage.setImageBitmap(result);
-
-        }
-
-    }
-
-
-
 
 }
