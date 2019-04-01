@@ -3,6 +3,7 @@ package com.example.bookeep;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
@@ -22,6 +23,10 @@ import org.w3c.dom.Text;
 
 import java.sql.Time;
 
+/**
+ * Search for BooKeep users. Reached via the Navigation drawer
+ * @see MainActivity
+ */
 public class SearchUserPopupActivity extends Activity {
     private EditText emailText;
     private ImageButton searchButton;
@@ -45,22 +50,38 @@ public class SearchUserPopupActivity extends Activity {
         final String userEmail = emailText.getText().toString().trim();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("users/");
-        myRef.addChildEventListener(new ChildEventListener() {
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot userDataSnapshot: dataSnapshot.getChildren()){
+                    User user = userDataSnapshot.getValue(User.class);
+                    if (user != null) {
+                        if (user.getEmail().equals(userEmail) || user.getUserName().equals(userEmail)) {
+                            Intent intent = new Intent(SearchUserPopupActivity.this, UserProfileActivity.class);
+                            intent.putExtra("uuid", user.getUserId());
+                            startActivity(intent);
+                            finish();
+                            return;
+
+                        }
+
+                    }
+                }
+                String error = "Please Enter an existing email or username";
+
+                emailText.setError(error);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+
+            }
+        });
+        /*myRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                 User user = dataSnapshot.getValue(User.class);
-                 if (user != null) {
 
-                     String userEmail1 = user.getEmail().toLowerCase();
-                     if (userEmail1.equals(userEmail.toLowerCase()) || user.getUserName().equals(userEmail)) {
-                        Intent intent = new Intent(SearchUserPopupActivity.this, UserProfileActivity.class);
-                        intent.putExtra("uuid", user.getUserId());
-                        startActivity(intent);
-                        finish();
-
-                     }
-
-                 }
 
             }
 
@@ -83,9 +104,7 @@ public class SearchUserPopupActivity extends Activity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
-        String error = "Please Enter an existing email or username";
+        });*/
 
-        emailText.setError(error);
     }
 }

@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.UUID;
 
 /**
+ * This class holds all of the necessary data that defines a Book in BooKeep.
  * @author Nafee Khan, Nolan Brost, Jeff Kirker, Dusan Krstic, Hugh Bagan, Kyle Fujishige
  * @see BookStatus
  * @version 1.0.1

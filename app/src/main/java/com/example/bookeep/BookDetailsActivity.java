@@ -135,11 +135,18 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                 if(book.getISBN().equals(result.getContents())){
 
                     if(book.getCurrentBorrowerId().equals(currentUserId) && book.getStatus().equals(BookStatus.ACCEPTED)){
+
                         book.setStatus(BookStatus.BORROWED);
                         book.endTransaction();
                         databaseReference.child("books").child(book.getBookId()).setValue(book);
                         databaseReference.child("user-books").child(book.getOwner()).child(book.getBookId()).setValue(book);
                         databaseReference.child("user-borrowed").child(currentUserId).child(book.getBookId()).setValue(book);
+
+                        //BookDetailsFragment fragment = (BookDetailsFragment) BookDetailsFragment.newInstance(book);
+                        //FragmentManager manager = getSupportFragmentManager();
+                        //manager.beginTransaction().replace(R.id.book_details_fragment_container,fragment).commit();
+
+
 
                     } else if (book.getOwner().equals(currentUserId) && book.getStatus().equals(BookStatus.ACCEPTED)){
 
@@ -147,6 +154,11 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                         databaseReference.child("books").child(book.getBookId()).setValue(book);
                         databaseReference.child("user-books").child(book.getOwner()).child(book.getBookId()).setValue(book);
                         databaseReference.child("user-borrowed").child(book.getCurrentBorrowerId()).child(book.getBookId()).setValue(book);
+
+                        //BookDetailsFragment fragment = (BookDetailsFragment) BookDetailsFragment.newInstance(book);
+                        //FragmentManager manager = getSupportFragmentManager();
+                        //manager.beginTransaction().replace(R.id.book_details_fragment_container,fragment).commit();
+
 
                     } else if (book.getOwner().equals(currentUserId) && book.getStatus().equals(BookStatus.BORROWED)){
                         Intent intent = new Intent(BookDetailsActivity.this,RatingPopupActivity.class);
@@ -175,6 +187,10 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                         book.setCurrentBorrower(null);
                         databaseReference.child("books").child(book.getBookId()).setValue(book);
                         databaseReference.child("user-books").child(book.getOwner()).child(book.getBookId()).setValue(book);
+                        //BookDetailsFragment fragment = (BookDetailsFragment) BookDetailsFragment.newInstance(book);
+                        //FragmentManager manager = getSupportFragmentManager();
+                        //manager.beginTransaction().replace(R.id.book_details_fragment_container,fragment).commit();
+
 
 
                     } else if (book.getCurrentBorrowerId().equals(currentUserId) && book.getStatus().equals(BookStatus.BORROWED)){
@@ -187,6 +203,9 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                         databaseReference.child("books").child(book.getBookId()).setValue(book);
                         databaseReference.child("user-books").child(book.getOwner()).child(book.getBookId()).setValue(book);
                         databaseReference.child("user-borrowed").child(book.getCurrentBorrowerId()).child(book.getBookId()).setValue(book);
+                        //BookDetailsFragment fragment = (BookDetailsFragment) BookDetailsFragment.newInstance(book);
+                        //FragmentManager manager = getSupportFragmentManager();
+                        //manager.beginTransaction().replace(R.id.book_details_fragment_container,fragment).commit();
 
                     }
 
@@ -209,15 +228,14 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
      */
     @Override
     public void onBookUpdate(Book book) {
-        this.book = book;
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(book.getTitle());
+        if(book != null) {
+            this.book = book;
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            toolbar.setTitle(book.getTitle());
+        }
     }
 
-    //@Override
-    public void onListFragmentInteraction(Request item) {
 
-    }
 
     /**
      * @param item user to be passed to intent
@@ -226,8 +244,13 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
     @Override
     public void onListFragmentInteraction(User item) {
 
+        String uuid = item.getUserId();
         Intent intent = new Intent(BookDetailsActivity.this, UserProfileActivity.class);
-        intent.putExtra("User", item);
+//<<<<<<< HEAD
+//=======
+        //String uuid = item.getUserId();
+//>>>>>>> baae088a0e87184069a421034f44ecca541803d0
+        intent.putExtra("uuid", uuid);
         startActivity(intent);
 
     }

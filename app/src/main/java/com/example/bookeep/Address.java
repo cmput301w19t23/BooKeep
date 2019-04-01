@@ -3,6 +3,7 @@ package com.example.bookeep;
 import java.io.Serializable;
 
 /**
+ * Represents a User's physical Address
  * @author Nafee Khan, Nolan Brost, Jeff Kirker, Dusan Krstic, Hugh Bagan, Kyle Fujishige
  * @see User
  * @version 1.0.1

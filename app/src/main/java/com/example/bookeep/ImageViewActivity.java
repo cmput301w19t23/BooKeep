@@ -16,6 +16,9 @@ import java.util.concurrent.ExecutionException;
 
 import cn.bluemobi.dylan.photoview.library.PhotoViewAttacher;
 
+/**
+ *  Sets and displays images assigned to books and users
+ */
 public class ImageViewActivity extends AppCompatActivity {
 
     @Override

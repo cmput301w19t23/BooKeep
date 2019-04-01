@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -62,10 +63,14 @@ public class RequestsOnBookFragment extends Fragment {
                     if (mListener != null) {
                         mListener.onBookUpdate(mBook);
                     }
+                    //refresh();
 
                     ArrayList<String> newRequesterIds = changedBook.getRequesterIds();
+                    int size = requesters.size();
                     requesters.clear();
-                    adapter.notifyDataSetChanged();
+                    //adapter.notifyDataSetChanged();
+                    adapter.notifyItemRangeRemoved(0,size);
+
                     for (String requesterId : newRequesterIds) {
                         databaseReference.child("users").child(requesterId).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -79,8 +84,10 @@ public class RequestsOnBookFragment extends Fragment {
                             public void onCancelled(@NonNull DatabaseError databaseError) {
 
                             }
+
                         });
                     }
+
                 }
 
 
@@ -252,6 +259,13 @@ public class RequestsOnBookFragment extends Fragment {
 
         isResumed = true;
         super.onResume();
+
+    }
+
+    public void refresh(){
+        BookDetailsFragment fragment = (BookDetailsFragment) BookDetailsFragment.newInstance(mBook);
+        FragmentManager manager = getFragmentManager();
+        manager.beginTransaction().replace(R.id.book_details_fragment_container,fragment).commit();
     }
 
     /**

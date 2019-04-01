@@ -63,10 +63,10 @@ public class RatingPopupActivity extends Activity {
                 rateUser.setText(text);
             }
             if (uuid == null){
-                finish();
+                return;
             }
         } else{
-             finish();
+             return;
         }
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override

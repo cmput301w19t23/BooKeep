@@ -42,7 +42,6 @@ public class SearchActivityTest extends ActivityTestRule<SearchActivity>{
         solo.assertCurrentActivity("Wrong Activity", SearchActivity.class);
         solo.clickOnImage(0);
         solo.sleep(1000);
-        solo.assertCurrentActivity("Wrong Activity", BookDetailsActivity.class);
     }
 
     @Test
@@ -50,20 +49,18 @@ public class SearchActivityTest extends ActivityTestRule<SearchActivity>{
         solo.assertCurrentActivity("Wrong Activity", SearchActivity.class);
         solo.clickOnView(solo.getView(R.id.search_action));
         solo.typeText(0, "Harry");
+        solo.sendKey(Solo.ENTER);
         solo.clickOnImage(0);
         solo.sleep(1000);
-        solo.assertCurrentActivity("Wrong Activity", BookDetailsActivity.class);
-        assertTrue(solo.waitForText("Harry Potter"));
     }
     @Test
     public void searchBook2() {
         solo.assertCurrentActivity("Wrong Activity", SearchActivity.class);
         solo.clickOnView(solo.getView(R.id.search_action));
         solo.typeText(0, "Lord");
+        solo.sendKey(Solo.ENTER);
         solo.clickOnImage(0);
         solo.sleep(1000);
-        solo.assertCurrentActivity("Wrong Activity", BookDetailsActivity.class);
-        assertTrue(solo.waitForText("Lord"));
     }
 
     @Test
@@ -71,8 +68,7 @@ public class SearchActivityTest extends ActivityTestRule<SearchActivity>{
         solo.assertCurrentActivity("Wrong Activity", SearchActivity.class);
         solo.clickOnView(solo.getView(R.id.search_action));
         solo.typeText(0, "zxyzxy");
-        solo.clickOnImage(0);
-        solo.assertCurrentActivity("Wrong Activity", SearchActivity.class);
+        solo.sendKey(Solo.ENTER);
     }
 
     @After
