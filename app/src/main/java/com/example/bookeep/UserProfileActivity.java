@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -77,6 +78,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 if (username.length() > 22) {
                     username = username.replace(" ","\n");
                 }
+
                 usernameView.setText(username);
                 phoneNumberView.setText(user.getPhoneNumber().toString());
                 emailAddressView.setText(user.getEmail());

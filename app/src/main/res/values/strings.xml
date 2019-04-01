@@ -127,6 +127,8 @@
     <string name="requests_to_borrow">Requests to Borrow</string>
     <string name="decline">DECLINE</string>
     <string name="accept">ACCEPT</string>
+    <string name="phone_number">Phone Number:</string>
+    <string name="lender_rating">Lender Rating</string>
 
 
 </resources>
