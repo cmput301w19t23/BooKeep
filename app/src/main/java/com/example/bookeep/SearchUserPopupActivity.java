@@ -57,6 +57,7 @@ public class SearchUserPopupActivity extends Activity {
                             intent.putExtra("uuid", user.getUserId());
                             startActivity(intent);
                             finish();
+                            return;
 
                         }
 

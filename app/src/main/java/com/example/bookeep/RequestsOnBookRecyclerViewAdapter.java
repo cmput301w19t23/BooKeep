@@ -1,5 +1,6 @@
 package com.example.bookeep;
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * {@link RecyclerView.Adapter} that can display a  makes a call to the
@@ -68,6 +70,16 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
         holder.txtRequesterName.setText(mValues.get(position).getFirstname() + " " + mValues.get(position).getLastname() );
         holder.txtRequesterUsername.setText("@" + mValues.get(position).getUserName());
         FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DownloadImageTask downloadImageTask = new DownloadImageTask();
+        try {
+            Bitmap bitmap = downloadImageTask.execute(holder.mItem.getImageURL()).get();
+            holder.imVRequesterPic.setImageBitmap(bitmap);
+
+        } catch (ExecutionException e) {
+            holder.imVRequesterPic.setImageResource(R.drawable.profile_pic);
+        } catch (InterruptedException e) {
+            holder.imVRequesterPic.setImageResource(R.drawable.profile_pic);
+        }
         DatabaseReference ratingRef = database.getReference("borrowerRatings").child(holder.mItem.getUserId());
         ratingRef.addValueEventListener(new ValueEventListener() {
             @Override
