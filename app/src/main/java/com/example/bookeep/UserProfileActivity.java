@@ -124,7 +124,7 @@ public class UserProfileActivity extends AppCompatActivity {
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
+                user = dataSnapshot.getValue(User.class);
                 String userFirstname = user.getFirstname();
                 String userLastname = user.getLastname();
 
@@ -164,6 +164,12 @@ public class UserProfileActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Checks to see if the profile shown is the current users and will show a button to
+     * allow editing your profile if it is
+     * @param menu
+     * @return true
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if(firebaseUser.getUid().equals(userId)) {
