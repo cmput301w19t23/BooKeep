@@ -124,6 +124,9 @@
     <string name="pending_requests">Pending Requests</string>
     <string name="my_stand">My Stand</string>
     <string name="my_shelf">My Shelf</string>
+    <string name="requests_to_borrow">Requests to Borrow</string>
+    <string name="decline">DECLINE</string>
+    <string name="accept">ACCEPT</string>
 
 
 </resources>

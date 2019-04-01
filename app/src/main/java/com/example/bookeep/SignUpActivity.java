@@ -1,6 +1,11 @@
 package com.example.bookeep;
 
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,10 +16,9 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseException;
@@ -40,6 +44,7 @@ public class SignUpActivity extends AppCompatActivity{
     private EditText edtLastName;
     private EditText edtPhone;
     private EditText edtUserName;
+    private ImageView userPhoto;
     private Button btnSignUp;
     private FireBaseController fireBaseController = new FireBaseController(this);
     private FirebaseDatabase database;
@@ -59,6 +64,7 @@ public class SignUpActivity extends AppCompatActivity{
         edtPassword = (EditText) findViewById(R.id.signup_password);
         edtPhone = (EditText) findViewById(R.id.phone);
         btnSignUp = (Button) findViewById(R.id.create_user);
+        userPhoto = findViewById(R.id.UserPhoto2);
 
         edtPhone.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -78,12 +84,16 @@ public class SignUpActivity extends AppCompatActivity{
                 if(validation()){
 
                     PhoneNumber phoneNumber = makePhoneNumber();
+                    Bitmap bitmap;
+                    userPhoto.setDrawingCacheEnabled(true);
+                    userPhoto.buildDrawingCache();
+                    bitmap = ((BitmapDrawable) userPhoto.getDrawable()).getBitmap();
                     fireBaseController.createNewUser(edtUserName.getText().toString(),
                             edtEmail.getText().toString(),
                             edtPassword.getText().toString(),
                             edtFirstName.getText().toString(),
                             edtLastName.getText().toString(),
-                            phoneNumber);
+                            phoneNumber, bitmap);
 
                     //Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
                     //startActivity(intent);
@@ -207,6 +217,39 @@ public class SignUpActivity extends AppCompatActivity{
 
 
 
+    }
+
+    /**
+     * Gets a user uploaded image
+     * @param view View
+     */
+    public void ImageUpload(View view) {
+        Intent intent = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        startActivityForResult(intent,69);
+
+    }
+
+    public void onActivityResult(int requestCode,int resultCode,Intent data) {
+
+        if (requestCode == 69 && resultCode == RESULT_OK) {
+            if (data != null) {
+                super.onActivityResult(requestCode,resultCode,data);
+                Uri selectedImage = data.getData();
+                //bookLink = selectedImage.toString();
+                //bookImage.setImageBitmap(setPicture(bookLink));
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),selectedImage);
+                    userPhoto.setImageBitmap(bitmap);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void onDeleteButtonClicked(View view) {
+        userPhoto.setImageResource(R.drawable.profile_pic);
     }
 
 

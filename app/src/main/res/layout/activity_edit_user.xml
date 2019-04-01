@@ -10,16 +10,28 @@
 					       android:layout_width="match_parent"
 					       android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/UserPhoto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="42dp"
-        android:layout_marginLeft="42dp"
-        android:layout_marginTop="48dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/EditUserInfoView"
-        tools:srcCompat="@tools:sample/avatars" />
+      <ImageView
+          android:id="@+id/UserPhoto2"
+          android:layout_width="123dp"
+          android:layout_height="126dp"
+          android:layout_marginStart="40dp"
+          android:layout_marginLeft="40dp"
+          android:layout_marginTop="44dp"
+          android:onClick="UploadImage"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/EditUserInfoView"
+          app:srcCompat="@drawable/profile_pic"
+          tools:srcCompat="@drawable/profile_pic" />
+
+      <ImageView
+          android:id="@+id/deleteImage"
+          android:layout_width="23dp"
+          android:layout_height="23dp"
+          android:background="@color/zxing_viewfinder_laser"
+          android:onClick="onDeleteButtonPressed"
+          app:layout_constraintBottom_toTopOf="@+id/UserPhoto2"
+          app:layout_constraintStart_toStartOf="@+id/EditUserName"
+          app:srcCompat="@android:drawable/ic_menu_delete" />
 
     <EditText
         android:id="@+id/EditUserName"
@@ -30,10 +42,10 @@
         android:ems="10"
         android:hint="User Name"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toBottomOf="@+id/UserPhoto"
+        app:layout_constraintBottom_toBottomOf="@+id/UserPhoto2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/UserPhoto"
-        app:layout_constraintTop_toTopOf="@+id/UserPhoto" />
+        app:layout_constraintStart_toEndOf="@+id/UserPhoto2"
+        app:layout_constraintTop_toTopOf="@+id/UserPhoto2" />
 
     <EditText
         android:id="@+id/EditFirstName"
@@ -46,8 +58,8 @@
         android:hint="First Name"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/UserPhoto"
-        app:layout_constraintTop_toBottomOf="@+id/UserPhoto" />
+        app:layout_constraintStart_toStartOf="@+id/UserPhoto2"
+        app:layout_constraintTop_toBottomOf="@+id/UserPhoto2" />
 
     <EditText
         android:id="@+id/EditLastName"

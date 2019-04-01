@@ -32,6 +32,7 @@ public class Book implements Serializable {
     private String returnLocation;
     private String calendarDate;
     private boolean inTransaction;
+    private String authorsString;
 
     /**
      * Creates a book object
@@ -235,6 +236,10 @@ public class Book implements Serializable {
 
         }
         return authorsString;
+    }
+
+    public void setAuthorsString(String string) {
+        this.authorsString = string;
     }
 
     /**

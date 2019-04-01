@@ -1,6 +1,7 @@
 package com.example.bookeep;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +21,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.concurrent.ExecutionException;
 
 /**
  * Displays a users profile, will allow editing that profile if it is the current user's
@@ -45,6 +48,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private DatabaseReference borrowerRef;
     private FirebaseUser firebaseUser;
     private FirebaseAuth firebaseAuth;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +60,7 @@ public class UserProfileActivity extends AppCompatActivity {
         } else{
             userId = "";
         }
-        Button button = findViewById(R.id.button4);
+        //Button button = findViewById(R.id.button4);            not sure where this came from but wasn't used so just commented out in case
         usernameView = findViewById(R.id.username_Profile);
         profilePicture = findViewById(R.id.profile_pic);
         nameView = findViewById(R.id.name_Profile);
@@ -123,6 +127,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 User user = dataSnapshot.getValue(User.class);
                 String userFirstname = user.getFirstname();
                 String userLastname = user.getLastname();
+
                 String username = user.getUserName();
                 PhoneNumber userPhoneNumber = user.getPhoneNumber();
                 String userEmail = user.getEmail();
@@ -139,6 +144,17 @@ public class UserProfileActivity extends AppCompatActivity {
                 if (userEmail != null) {
                     emailAddressView.setText(userEmail);
                 }
+                DownloadImageTask downloadImageTask = new DownloadImageTask();
+                try {
+                    Bitmap bitmap = downloadImageTask.execute(user.getImageURL()).get();
+                    profilePicture.setImageBitmap(bitmap);
+
+                } catch (ExecutionException e) {
+                    profilePicture.setImageResource(R.drawable.profile_pic);
+                } catch (InterruptedException e) {
+                    profilePicture.setImageResource(R.drawable.profile_pic);
+                }
+
             }
 
             @Override
@@ -168,6 +184,7 @@ public class UserProfileActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     /*public void onPopup(View view){
         Intent intent = new Intent(this, RatingPopupActivity.class);
         intent.putExtra("uuid",userId);
@@ -175,4 +192,10 @@ public class UserProfileActivity extends AppCompatActivity {
         startActivity(intent);
     }*/
 
+
+    public void onImageClick(View view) {
+        Intent intent = new Intent(this, ImageViewActivity.class);
+        intent.putExtra("image", user.getImageURL());
+        startActivity(intent);
+    }
 }

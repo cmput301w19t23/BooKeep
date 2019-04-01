@@ -169,15 +169,13 @@ public class BookDetailsFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param book Parameter 1.
-     * @param currUser Parameter 2.
      * @return A new instance of fragment BookDetailsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static BookDetailsFragment newInstance(Book book, User currUser) {
+    public static BookDetailsFragment newInstance(Book book) {
         BookDetailsFragment fragment = new BookDetailsFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_PARAM1, book);
-        args.putSerializable(ARG_PARAM2, currUser);
         fragment.setArguments(args);
         return fragment;
     }
@@ -189,8 +187,6 @@ public class BookDetailsFragment extends Fragment {
 
         if (getArguments() != null) {
             mBook = (Book) getArguments().getSerializable(ARG_PARAM1);
-            mUser = (User) getArguments().getSerializable(ARG_PARAM2);
-
         }
     }
 
