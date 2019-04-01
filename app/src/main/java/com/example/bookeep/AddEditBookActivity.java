@@ -15,6 +15,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -54,7 +55,7 @@ import java.util.concurrent.ExecutionException;
  * This activity will allow the user to add books to the database or edit a book already in it. It
  * allows the user to manually enter all the fields or to scan the isbn of the book to auto-populate
  * the required fields.
- * @author Nafee Khan, Kyle Fujishige
+ * @author Nafee Khan, Kyle Fujishige, jkirker
  * @see Book
  * @see User
  * @version 1.0.1
@@ -80,12 +81,8 @@ public class AddEditBookActivity extends AppCompatActivity {
     private Button scanBook;
     private Button saveBook;
     private JSONObject jsonObject;
-
-    //private String bookLink;
-
     private User currentUser;
     private String imageURL;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +94,11 @@ public class AddEditBookActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         setResult(RESULT_CANCELED,intent);
+
+        final ActionBar actionBar = getSupportActionBar();
+
+        actionBar.setTitle("Add a New Book");
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         bookImage = (ImageView) findViewById(R.id.bookImage);
         bookTitle = (EditText) findViewById(R.id.editBookTitle);
@@ -127,7 +129,6 @@ public class AddEditBookActivity extends AppCompatActivity {
                     DownloadImageTask downloadImageTask = new DownloadImageTask();
 
                     try {
-
                         Bitmap bitmap = downloadImageTask.execute(book.getBookImageURL()).get();
                         bookImage.setImageBitmap(bitmap);
 
@@ -136,30 +137,20 @@ public class AddEditBookActivity extends AppCompatActivity {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-
                 }
-
                 @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-
+                public void onCancelled(@NonNull DatabaseError databaseError) {}
             });
-
         }
-
         scanBook.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-
                 if (ContextCompat.checkSelfPermission(AddEditBookActivity.this,Manifest.permission.CAMERA)
                         == PackageManager.PERMISSION_GRANTED) {
                     // Permission has already been granted
                     new IntentIntegrator(AddEditBookActivity.this).initiateScan();
-
                 } else {
-
                     // Permission is NOT granted
                     // Prompt the user for permission
                     ActivityCompat.requestPermissions(
@@ -167,9 +158,7 @@ public class AddEditBookActivity extends AppCompatActivity {
                             new String[]{Manifest.permission.CAMERA},
                             MY_PERMISSIONS_REQUEST_CAMERA
                     );
-
                 }
-
             }
 
         });
@@ -191,6 +180,16 @@ public class AddEditBookActivity extends AppCompatActivity {
     }
 
     /**
+     * This function supports back navigation.
+     * @return
+     */
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
+    }
+
+    /**
      * When users presses save button this method is called. Will push the book to the database but
      * first check to make sure fields are properly filled out.
      * @param view View
@@ -200,21 +199,16 @@ public class AddEditBookActivity extends AppCompatActivity {
         Boolean pass = Boolean.TRUE;
 
         if (bookTitle.getText().toString().isEmpty()) {
-
             bookTitle.setError("Missing title!");
             pass = Boolean.FALSE;
-
         }
 
         if (bookAuthors.getText().toString().isEmpty()) {
-
             bookAuthors.setError("Missing authors!");
             pass = Boolean.FALSE;
-
         }
 
         if (isbn.getText().toString().trim().isEmpty()) {
-
             isbn.setError("Missing isbn!");
             pass = Boolean.FALSE;
         } else if (isbn.getText().toString().trim().length() == 10) {
@@ -228,7 +222,6 @@ public class AddEditBookActivity extends AppCompatActivity {
             //Get the user object
             currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
             if (book == null) {
-
                 book = new Book(isbn.getText().toString().trim(),currentUserID);
 
                 ArrayList<String> Authors = new ArrayList<>();
@@ -255,18 +248,13 @@ public class AddEditBookActivity extends AppCompatActivity {
 
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
                         currentUser = dataSnapshot.getValue(User.class);
                         currentUser.addToOwned(book.getBookId());
                         databaseReference.child("users").child(currentUserID).setValue(currentUser);
 
                     }
-
                     @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-
+                    public void onCancelled(@NonNull DatabaseError databaseError) {}
                 });
 
                 databaseReference.child("books").child(book.getBookId()).setValue(book);
@@ -300,7 +288,6 @@ public class AddEditBookActivity extends AppCompatActivity {
                             .child(book.getBookId())
                             .setValue(book);
                 }
-
                 databaseReference.child("user-books").child(currentUserID).child(book.getBookId()).setValue(book);
                 databaseReference.child("books").child(book.getBookId()).setValue(book);
 
@@ -319,9 +306,6 @@ public class AddEditBookActivity extends AppCompatActivity {
         startActivityForResult(intent,69);
 
     }
-
-
-
 
     /**
      * asks for camera persmission
@@ -346,8 +330,6 @@ public class AddEditBookActivity extends AppCompatActivity {
                 }
                 return;
             }
-
-            // Make more cases to check for other permissions.
         }
     }
 
