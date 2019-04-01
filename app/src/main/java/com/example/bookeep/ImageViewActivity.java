@@ -1,6 +1,6 @@
 /**
  * sets and displays images assigned to books and users
- * @author nafee, jkirker, fujishig
+ * @author jkirker, fujishig
  * @version 1.0.1
  */
 
