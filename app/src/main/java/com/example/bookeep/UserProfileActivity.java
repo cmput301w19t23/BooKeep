@@ -3,6 +3,7 @@ package com.example.bookeep;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -55,6 +56,7 @@ public class UserProfileActivity extends AppCompatActivity {
         } else{
             userId = "";
         }
+        final ActionBar actionBar = getSupportActionBar();
 
         usernameView = findViewById(R.id.username_Profile);
         profilePicture = findViewById(R.id.profile_pic);
@@ -78,6 +80,8 @@ public class UserProfileActivity extends AppCompatActivity {
                 if (username.length() > 22) {
                     username = username.replace(" ","\n");
                 }
+                actionBar.setTitle(username + "'s profile");
+                actionBar.setDisplayHomeAsUpEnabled(true);
 
                 usernameView.setText(username);
                 phoneNumberView.setText(user.getPhoneNumber().toString());
@@ -126,5 +130,11 @@ public class UserProfileActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ImageViewActivity.class);
         intent.putExtra("image", user.getImageURL());
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
     }
 }
