@@ -3,8 +3,10 @@ package com.example.bookeep;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,13 +44,14 @@ public class UserProfileActivity extends AppCompatActivity {
     private TextView phoneNumberView;
     private TextView emailAddressView;
     private String userId;
-    private FirebaseDatabase database;
-    private DatabaseReference myRef;
-    private DatabaseReference lenderRef;
-    private DatabaseReference borrowerRef;
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference databaseReference = database.getReference();
     private FirebaseUser firebaseUser;
     private FirebaseAuth firebaseAuth;
     private User user;
+    private DatabaseReference myRef;
+    private DatabaseReference lenderRef;
+    private DatabaseReference borrowerRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +63,8 @@ public class UserProfileActivity extends AppCompatActivity {
         } else{
             userId = "";
         }
-        //Button button = findViewById(R.id.button4);            not sure where this came from but wasn't used so just commented out in case
+        final ActionBar actionBar = getSupportActionBar();
+
         usernameView = findViewById(R.id.username_Profile);
         profilePicture = findViewById(R.id.profile_pic);
         nameView = findViewById(R.id.name_Profile);
@@ -70,7 +74,7 @@ public class UserProfileActivity extends AppCompatActivity {
         lenderRatingBar = findViewById(R.id.lender_ratingbar);
         numBorrowerReviewsView = findViewById(R.id.borrower_number_reviews);
         numLenderReveiewsView = findViewById(R.id.lender_number_reviews);
-        database = FirebaseDatabase.getInstance();
+
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         lenderRef = database.getReference("lenderRatings").child(userId);
@@ -89,7 +93,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 Float overallRating = rating.getRating();
                 int numRatings = rating.getNumRatings();
                 lenderRatingBar.setRating(overallRating);
-                String numRatingString = numRatings + " Lender Reviews";
+                String numRatingString ="(" + numRatings + ")";
                 numLenderReveiewsView.setText(numRatingString);
             }
 
@@ -111,7 +115,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 Float overallRating = rating.getRating();
                 int numRatings = rating.getNumRatings();
                 borrowerRatingBar.setRating(overallRating);
-                String numRatingString = numRatings + " Borrower Reviews";
+                String numRatingString = "(" + numRatings + ")";
                 numBorrowerReviewsView.setText(numRatingString);
             }
 
@@ -120,8 +124,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
             }
         });
-
-        myRef.addValueEventListener(new ValueEventListener() {
+        databaseReference.child("users").child(userId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
@@ -144,6 +147,12 @@ public class UserProfileActivity extends AppCompatActivity {
                 if (userEmail != null) {
                     emailAddressView.setText(userEmail);
                 }
+                actionBar.setTitle(username + "'s profile");
+                actionBar.setDisplayHomeAsUpEnabled(true);
+
+                usernameView.setText(username);
+                phoneNumberView.setText(user.getPhoneNumber().toString());
+                emailAddressView.setText(user.getEmail());
                 DownloadImageTask downloadImageTask = new DownloadImageTask();
                 try {
                     Bitmap bitmap = downloadImageTask.execute(user.getImageURL()).get();
@@ -203,5 +212,11 @@ public class UserProfileActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ImageViewActivity.class);
         intent.putExtra("image", user.getImageURL());
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
     }
 }
