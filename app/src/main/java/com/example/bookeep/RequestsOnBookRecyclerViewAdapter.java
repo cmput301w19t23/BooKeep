@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.bookeep.RequestsOnBookFragment.OnListFragmentInteractionListener;
@@ -61,11 +62,36 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         //mItem is the requester.
         holder.mItem = mValues.get(position);
-
+        String borrowerId = holder.mItem.getUserId();
         //holder.mIdView.setText(mValues.get(position).id);
         //holder.mContentView.setText(mValues.get(position).content);
         holder.txtRequesterName.setText(mValues.get(position).getFirstname() + " " + mValues.get(position).getLastname() );
         holder.txtRequesterUsername.setText("@" + mValues.get(position).getUserName());
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ratingRef = database.getReference("lenderRatings").child(holder.mItem.getUserId());
+        ratingRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Rating rating = dataSnapshot.getValue(LenderRating.class);
+                if (rating == null){
+                    rating = new LenderRating(holder.mItem.getUserId());
+                } else {
+                    rating.recalculateRating();
+                }
+                Float overallRating = rating.getRating();
+                int numRatings = rating.getNumRatings();
+                holder.borrowerRatingBar.setRating(overallRating);
+                String numReviewsString = "(" + numRatings +")";
+                holder.numReviews.setText(numReviewsString);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         holder.btnAcceptRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -190,6 +216,8 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
         public final Button btnAcceptRequest;
         public final Button btnDeclineRequest;
         public final ImageView imVRequesterPic;
+        public final RatingBar borrowerRatingBar;
+        public final TextView numReviews;
         public User mItem;
 
         public ViewHolder(View view) {
@@ -203,6 +231,8 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
             btnAcceptRequest = view.findViewById(R.id.accept_request);
             btnDeclineRequest = view.findViewById(R.id.decline_request);
             imVRequesterPic = view.findViewById(R.id.user_image_request);
+            borrowerRatingBar = view.findViewById(R.id.borrower_ratingbar);
+            numReviews = view.findViewById(R.id.review_count);
 
         }
 

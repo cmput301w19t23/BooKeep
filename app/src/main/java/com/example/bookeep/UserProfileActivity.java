@@ -95,6 +95,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 lenderRatingBar.setRating(overallRating);
                 String numRatingString ="(" + numRatings + ")";
                 numLenderReveiewsView.setText(numRatingString);
+
             }
 
             @Override
