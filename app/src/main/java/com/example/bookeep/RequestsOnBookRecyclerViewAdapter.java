@@ -132,6 +132,10 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
                         if(mBook.getRequesterIds().size() == 0){
                             mBook.setStatus(BookStatus.AVAILABLE);
                         }
+                        databaseReference.child("user-requested")
+                                .child(holder.mItem.getUserId())
+                                .child(mBook.getBookId())
+                                .removeValue();
 
                         for(int i = 0; i<mRequesters.size(); i++){
                             databaseReference.child("user-requested")
@@ -139,6 +143,7 @@ public class RequestsOnBookRecyclerViewAdapter extends RecyclerView.Adapter<Requ
                                     .child(mBook.getBookId())
                                     .setValue(mBook);
                         }
+
 
                         databaseReference.child("books").child(mBookId).setValue(mBook);
                         databaseReference.child("user-books").child(currentUserId).child(mBookId).setValue(mBook);
