@@ -135,11 +135,14 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                 if(book.getISBN().equals(result.getContents())){
 
                     if(book.getCurrentBorrowerId().equals(currentUserId) && book.getStatus().equals(BookStatus.ACCEPTED)){
+
                         book.setStatus(BookStatus.BORROWED);
                         book.endTransaction();
                         databaseReference.child("books").child(book.getBookId()).setValue(book);
                         databaseReference.child("user-books").child(book.getOwner()).child(book.getBookId()).setValue(book);
                         databaseReference.child("user-borrowed").child(currentUserId).child(book.getBookId()).setValue(book);
+
+
 
                     } else if (book.getOwner().equals(currentUserId) && book.getStatus().equals(BookStatus.ACCEPTED)){
 
@@ -147,6 +150,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                         databaseReference.child("books").child(book.getBookId()).setValue(book);
                         databaseReference.child("user-books").child(book.getOwner()).child(book.getBookId()).setValue(book);
                         databaseReference.child("user-borrowed").child(book.getCurrentBorrowerId()).child(book.getBookId()).setValue(book);
+
 
                     } else if (book.getOwner().equals(currentUserId) && book.getStatus().equals(BookStatus.BORROWED)){
 
@@ -170,6 +174,7 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
                         book.setCurrentBorrower(null);
                         databaseReference.child("books").child(book.getBookId()).setValue(book);
                         databaseReference.child("user-books").child(book.getOwner()).child(book.getBookId()).setValue(book);
+
 
 
                     } else if (book.getCurrentBorrowerId().equals(currentUserId) && book.getStatus().equals(BookStatus.BORROWED)){
