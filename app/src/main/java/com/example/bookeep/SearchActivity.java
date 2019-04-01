@@ -2,14 +2,13 @@ package com.example.bookeep;
 
 import android.app.SearchManager;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -79,12 +78,6 @@ public class SearchActivity extends AppCompatActivity implements SearchFragment.
 
             @Override
             public boolean onQueryTextChange(String s) {
-                /*Bundle bundle = new Bundle();
-                bundle.putString("query", s);
-                fragment = new SearchKeyWordsFragment();
-                fragment.setArguments(bundle);
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.search_fragment_container, fragment).commit();*/
                 return true;
             }
         });

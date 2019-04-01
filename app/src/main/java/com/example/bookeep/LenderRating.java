@@ -15,8 +15,6 @@ public class LenderRating implements Rating {
     private float overallRating;
     private String uuid;                                    //is same as user for which the rating represents
 
-
-
     public LenderRating(){}
 
     /**

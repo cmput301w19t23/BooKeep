@@ -135,8 +135,6 @@ public class StandFragment extends Fragment {
                     break;
                 }
             }
-
-
             adapter.notifyDataSetChanged();
         }
 

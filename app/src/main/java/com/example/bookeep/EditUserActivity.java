@@ -72,7 +72,6 @@ public class EditUserActivity extends AppCompatActivity {
     private ArrayList<String> currentUsername;
     private ArrayList<String> currentEmail;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
