@@ -49,7 +49,7 @@
             android:background="@color/zxing_viewfinder_laser"
             android:onClick="onDeleteButtonClicked"
             app:layout_constraintBottom_toTopOf="@+id/UserPhoto2"
-            app:layout_constraintStart_toStartOf="@+id/user_name"
+            app:layout_constraintStart_toEndOf="@+id/UserPhoto2"
             app:srcCompat="@android:drawable/ic_menu_delete" />
 
         <EditText
@@ -118,19 +118,19 @@
 
         <EditText
             android:id="@+id/user_name"
-            android:layout_width="158dp"
-            android:layout_height="59dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="70dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="85dp"
+            android:layout_marginLeft="85dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="85dp"
+            android:layout_marginRight="85dp"
             android:ems="10"
             android:hint="Enter Unique Username"
             android:inputType="textPersonName"
-            app:layout_constraintEnd_toEndOf="@+id/first_name"
-            app:layout_constraintStart_toEndOf="@+id/UserPhoto2"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/UserPhoto2" />
 
         <ImageView
             android:id="@+id/UserPhoto2"
@@ -139,7 +139,10 @@
             android:layout_marginStart="32dp"
             android:layout_marginLeft="32dp"
             android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginRight="32dp"
             android:onClick="ImageUpload"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/profile_pic" />
