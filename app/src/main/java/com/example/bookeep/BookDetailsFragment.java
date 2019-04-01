@@ -196,8 +196,9 @@ public class BookDetailsFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mBook = dataSnapshot.getValue(Book.class);
-                mListener.onBookUpdate(mBook);
-
+                if(mBook != null) {
+                    mListener.onBookUpdate(mBook);
+                }
                 bookAuthors.setText(mBook.getAuthorsString());
                 bookISBN.setText(mBook.getISBN());
                 bookStatus.setText(mBook.getStatus().toString());
