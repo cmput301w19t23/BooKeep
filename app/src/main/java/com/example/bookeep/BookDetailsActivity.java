@@ -228,9 +228,11 @@ public class BookDetailsActivity extends AppCompatActivity implements BookDetail
      */
     @Override
     public void onBookUpdate(Book book) {
-        this.book = book;
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(book.getTitle());
+        if(book != null) {
+            this.book = book;
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            toolbar.setTitle(book.getTitle());
+        }
     }
 
 
