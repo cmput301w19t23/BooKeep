@@ -19,6 +19,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 
 import static com.example.bookeep.AddEditBookActivity.MY_PERMISSIONS_REQUEST_CAMERA;
 
+
 public abstract class RawDump {
 /*
         if (currentUserId.equals(mBook.getOwner()) && !mBook.getStatus().equals(BookStatus.BORROWED) && !mBook.getStatus().equals(BookStatus.ACCEPTED)) {

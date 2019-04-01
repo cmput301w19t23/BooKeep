@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">535509198878-ie2gor6i65t4rcacjc47lbirhqaeph3b.apps.googleusercontent.com</string>
+    <string name="firebase_database_url" translatable="false">https://bookeep-684ab.firebaseio.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">535509198878</string>
+    <string name="google_api_key" translatable="false">AIzaSyDw0eQuCLOUk_oK46nNIzD_rSlxWZ5VCfI</string>
+    <string name="google_app_id" translatable="false">1:535509198878:android:3e4051afc2c6322c</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDw0eQuCLOUk_oK46nNIzD_rSlxWZ5VCfI</string>
+    <string name="google_storage_bucket" translatable="false">bookeep-684ab.appspot.com</string>
+    <string name="project_id" translatable="false">bookeep-684ab</string>
+</resources>

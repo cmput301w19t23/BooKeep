@@ -1,0 +1,26 @@
+{
+    "logs": [
+        {
+            "outputFile": "/home/nafee/AndroidStudioProjects/BooKeep/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-id/values-id.xml",
+            "map": [
+                {
+                    "source": "/home/nafee/.gradle/caches/transforms-1/files-1.1/zxing-android-embedded-3.0.2.aar/769ddaa16599ee94502da701872cdb7b/res/values-id/values.xml",
+                    "from": {
+                        "startLines": "4,5,6,7",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "195,254,301,433",
+                        "endColumns": "58,46,131,108",
+                        "endOffsets": "249,296,428,537"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,114,161,293",
+                        "endColumns": "58,46,131,108",
+                        "endOffsets": "109,156,288,397"
+                    }
+                }
+            ]
+        }
+    ]
+}
